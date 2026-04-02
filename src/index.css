@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --mapped\/surface\/primary\/background: #fbf6ff;
+  --32: 32px;
+  --gap-width-height\/8: 8px;
+  --gap-width-height\/12: 12px;
+  --gap-width-height\/0: 0px;
+  --gap-width-height\/16: 16px;
+  --static\/headline-small\/tracking: 0px;
+  --typeface\/nunito: 'Nunito', sans-serif;
+  --font-weight\/700-bold: 700;
+  --line-height\/h3: 28px;
+  --mapped\/text\/primary\/heading-1: #171519;
+  --font-size\/h3: 20px;
+  --font-weight\/400-medium: 500;
+  --line-height\/subtitle: 20px;
+  --mapped\/text\/primary\/heading-2: #171519;
+  --font-size\/subtitle: 14px;
+  --line-height\/h1: 36px;
+  --font-size\/h1: 28px;
+  --line-height\/paragraph: 24px;
+  --font-size\/paragraph: 16px;
+  --gap-width-height\/56: 56px;
+  --responsive-grid\/columns\/width: 384px;
+  --mapped\/surface\/ui-surface\/surface-universal-alternate: #171519;
+  --colours-universal\/neutral-primary\/neutral-primary-300: #c0bcc3;
+  --gap-width-height\/44: 44px;
+  --line-height\/h2: 32px;
+  --responsive-grid\/tracking\/h2: 0px;
+  --gap-width-height\/24: 24px;
+  --mapped\/surface\/ui-surface\/surface-elevated: #faf7fe;
+  ----radius-xl: 16px;
+  --font-size\/button-text: 16px;
+  --mapped\/text\/primary\/disabled: #a09da3;
+  --mapped\/button\/primary\/surface-disabled: #f0edf4;
+  --gap-width-height\/6: 6px;
+  --responsive-grid\/tracking\/buttons: 0.16px;
+  --font-weight\/600-semi-bold: 600;
+  --font-size\/caption: 12px;
+  ----radius-3xl: 32px;
+  --mapped\/button\/primary\/stroke-default: #c0bcc3;
+  --mapped\/surface\/primary\/surface-variant: #f8efff;
+  --alias-primary-950\/25: rgba(56,12,81,0.25);
+  --mapped\/text\/primary\/body: #171519;
+  --mapped\/text\/primary\/caption: #656268;
+  --line-height\/caption: 17px;
+  --mapped\/surface\/primary\/surface-universal-element-primary: #fbf6ff;
+  --mapped\/surface\/primary\/surface-universal-el-primary: #d5a0fa;
+  --mapped\/surface\/primary\/primary-light-400: #8c35be;
+  ----radius-lg: 12px;
+  --mapped\/surface\/primary\/surface: #fbf6ff;
+  --mapped\/button\/primary\/surface-default: #b7812f;
+  --mapped\/button\/primary\/surface-hover: #a7721b;
+  --mapped\/button\/primary\/stroke-secondary-disabled: #a09da3;
+  --mapped\/text\/primary\/body-alt: #f0edf4;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
