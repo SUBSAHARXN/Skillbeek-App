@@ -256,7 +256,7 @@ export function OfferPreviewView({
       <div className="flex-1 overflow-y-auto px-[16px] pb-[32px] pt-[8px]">
         <div className="flex flex-col gap-[16px] min-w-0 w-full">
           {/* Unpublished Badge */}
-          <div className="bg-surface-warning-alt px-gap-8 py-gap-8 rounded-lg self-start">
+          <div className="bg-[#FEF0EA] px-[8px] py-[8px] rounded-[8px] self-start">
             <span className="font-['Nunito'] font-black text-[#b85f38] text-[12px] leading-[16px] tracking-[1.1px] uppercase">
               Unpublished
             </span>
@@ -658,6 +658,14 @@ export function OfferPreviewView({
           tags={reviewSelectionModal.type === "offered" ? localReviewTags : localReceiveTags}
           proficiencies={reviewSelectionModal.type === "offered" ? localReviewProficiencies : localReceiveProficiencies}
           onAddMore={() => handleEditSkills(reviewSelectionModal.type)}
+          onRemoveSkill={(skill) => {
+            if (reviewSelectionModal.type === "offered") {
+              setLocalReviewSkills(prev => prev.filter(s => s !== skill));
+              // Also cleanup tags and proficiencies if needed, though they don't hurt
+            } else {
+              setLocalReceiveSkills(prev => prev.filter(s => s !== skill));
+            }
+          }}
         />
       </AnimatePresence>
     </div>

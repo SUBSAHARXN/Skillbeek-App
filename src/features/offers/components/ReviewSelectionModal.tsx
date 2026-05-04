@@ -1,5 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { CustomAnimatedCheckbox } from "../../../components/common/CustomAnimatedCheckbox";
 
 interface ReviewSelectionModalProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface ReviewSelectionModalProps {
   tags: Record<string, string[]>;
   proficiencies: Record<string, string>;
   onAddMore: () => void;
+  onRemoveSkill: (skill: string) => void;
 }
 
 export function ReviewSelectionModal({
@@ -18,7 +20,8 @@ export function ReviewSelectionModal({
   skills,
   tags,
   proficiencies,
-  onAddMore
+  onAddMore,
+  onRemoveSkill
 }: ReviewSelectionModalProps) {
   const formatProficiency = (p: string) => {
     if (!p) return "Basic";
@@ -92,6 +95,12 @@ export function ReviewSelectionModal({
                             </span>
                           </div>
                         </div>
+                        <button 
+                          onClick={() => onRemoveSkill(skill)}
+                          className="w-[44px] h-[44px] flex items-center justify-center"
+                        >
+                          <CustomAnimatedCheckbox checked={true} />
+                        </button>
                       </div>
 
                       {skillTags.length > 0 && (
