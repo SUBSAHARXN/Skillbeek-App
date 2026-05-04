@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CloseIcon, EyeClosedIcon, EyeOpenIcon } from "../../components/common/Icons";
+import { SuccessAuthModal } from "../../components/common/SuccessAuthModal";
 
-export function PasswordView({ email, onBack }: { email: string; onBack?: () => void }) {
+export function PasswordView({ email, onBack, onForgotPassword }: { email: string; onBack?: () => void; onForgotPassword?: () => void }) {
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [isSuccessAnimation, setIsSuccessAnimation] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -41,17 +44,35 @@ export function PasswordView({ email, onBack }: { email: string; onBack?: () => 
           {/* Password Input Wrapper */}
           <div className="w-[352px] flex flex-col items-start shrink-0">
             <div
-              className={`w-[352px] h-[56px] bg-[#fbf6ff] flex items-center justify-between px-[16px] cursor-text transition-all duration-300 shrink-0 ${
-                isActive
+              className={`w-[352px] h-[56px] relative bg-[#fbf6ff] flex items-center justify-between px-[16px] cursor-text transition-all duration-300 shrink-0 ${
+                isSuccessAnimation
+                  ? "border-[1.5px] border-transparent rounded-[16px] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-sm"
+                  : isActive
                   ? "border-2 border-[#b7812f] rounded-[16px] shadow-skillbeek-sm"
                   : "border-[1.5px] border-[#c0bcc3] rounded-[16px] shadow-skillbeek-xs hover:border-[#b7812f]"
               }`}
               onClick={() => {
-                if (!isActive) {
+                if (!isActive && !isSuccessAnimation) {
                    inputRef.current?.focus();
                 }
               }}
             >
+              {isSuccessAnimation && (
+                <svg className="absolute inset-0 z-50 pointer-events-none rounded-[16px]" width="352" height="56" style={{ overflow: "visible" }}>
+                  <motion.path
+                    d="M 16 1 L 336 1 A 15 15 0 0 1 351 16 L 351 40 A 15 15 0 0 1 336 55 L 16 55 A 15 15 0 0 1 1 40 L 1 16 A 15 15 0 0 1 16 1 Z"
+                    fill="none"
+                    stroke="#349024"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.65, ease: "easeOut" }}
+                    onAnimationComplete={() => setTimeout(() => setShowSuccessModal(true), 200)}
+                  />
+                </svg>
+              )}
+
               <div className="flex-1 relative h-full mr-[8px]">
                 {/* Floating Label (Pure CSS GPU transform) */}
                 <span 
@@ -93,7 +114,11 @@ export function PasswordView({ email, onBack }: { email: string; onBack?: () => 
             </div>
 
             <div className="w-full flex items-start mt-[16px]">
-              <button type="button" className="font-['Nunito'] font-bold text-[#06000c] text-[16px] leading-[24px] underline tracking-[0.16px] ml-[16px]">
+              <button 
+                type="button" 
+                onClick={onForgotPassword}
+                className="font-['Nunito'] font-bold text-[#06000c] text-[16px] leading-[24px] underline tracking-[0.16px]"
+              >
                 Forgot password?
               </button>
             </div>
@@ -102,10 +127,11 @@ export function PasswordView({ email, onBack }: { email: string; onBack?: () => 
             <div className="w-full flex justify-center mt-[24px]">
               <button
                 type="button"
-                disabled={!isContinueEnabled}
+                disabled={!isContinueEnabled || isSuccessAnimation}
                 onClick={(e) => {
                    e.preventDefault();
-                   // proceed logic
+                   setIsSuccessAnimation(true);
+                   setIsActive(false);
                 }}
                 className={`w-[352px] h-[48px] rounded-[16px] flex items-center justify-center font-['Nunito'] font-bold text-[16px] transition-all duration-300 ${
                   isContinueEnabled
@@ -124,6 +150,14 @@ export function PasswordView({ email, onBack }: { email: string; onBack?: () => 
       <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px]">
         <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
       </div>
+
+      <SuccessAuthModal
+        isOpen={showSuccessModal}
+        onProceed={() => setShowSuccessModal(false)}
+        title="Welcome back"
+        message="Your password is correct. You're all set to access your account."
+        ctaText="Continue to Skillbeek"
+      />
     </div>
   );
 }

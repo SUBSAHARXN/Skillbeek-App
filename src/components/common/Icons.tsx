@@ -72,7 +72,7 @@ export function PhoneIcon({ className }: { className?: string }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M12.6616 11.6252C12.7654 11.5561 12.8849 11.514 13.0091 11.5027C13.1334 11.4914 13.2585 11.5113 13.3731 11.5606L17.7944 13.5415C17.9434 13.6052 18.0677 13.7154 18.1489 13.8557C18.23 13.9959 18.2635 14.1587 18.2444 14.3196C18.0987 15.4081 17.5627 16.4066 16.736 17.1295C15.9093 17.8524 14.8482 18.2505 13.75 18.2496C10.3685 18.2496 7.12548 16.9063 4.73439 14.5152C2.3433 12.1241 1 8.88112 1 5.49961C0.999161 4.40143 1.3972 3.34032 2.12009 2.51361C2.84298 1.68691 3.84152 1.15089 4.93 1.00524C5.09091 0.986124 5.25368 1.01963 5.39395 1.10075C5.53422 1.18187 5.64444 1.30624 5.70813 1.45524L7.68906 5.88024C7.73774 5.99389 7.75756 6.11781 7.74676 6.24098C7.73596 6.36414 7.69489 6.48272 7.62719 6.58618L5.62375 8.96836C5.55269 9.0756 5.51066 9.19944 5.50179 9.32778C5.49291 9.45611 5.51749 9.58456 5.57313 9.70055C6.34844 11.2877 7.98906 12.9087 9.58094 13.6765C9.69755 13.7319 9.82658 13.7559 9.95531 13.7462C10.084 13.7365 10.208 13.6934 10.315 13.6212L12.6616 11.6252Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12.6616 11.6252C12.7654 11.5561 12.8849 11.514 13.0091 11.5027C13.1334 11.4914 13.2585 11.5113 13.3731 11.5606L17.7944 13.5415C17.9434 13.6052 18.0677 13.7154 18.1489 13.8557C18.23 13.9959 18.2635 14.1587 18.2444 14.3196C18.0987 15.4081 17.5627 16.4066 16.736 17.1295C15.9093 17.8524 14.8482 18.2505 13.75 18.2496C10.3685 18.2496 7.12548 16.9063 4.73439 14.5152C2.3433 12.1241 1 8.88112 1 5.49961C0.999161 4.40143 1.3972 3.34032 2.12009 2.51361C2.84298 1.68691 3.84152 1.15089 4.93 1.00524C5.09091 0.986124 5.25368 1.01963 5.39395 1.10075C5.53422 1.18187 5.64444 1.30624 5.70813 1.45524L7.68906 5.88024C7.73774 5.99389 7.75756 6.11781 7.74676 6.24098C7.73596 6.36414 7.69489 6.48272 7.62719 6.58618L5.62375 8.96836C5.55269 9.0756 5.51066 9.19944 5.50179 9.32778C5.49291 9.45611 5.51749 9.58456 5.57313 9.70055C6.34844 11.2877 7.98906 12.9087 9.58094 13.6765C9.69755 13.7319 9.82658 13.7559 9.95531 13.7462C10.084 13.7365 10.208 13.6934 10.315 13.6212L12.6616 11.6252Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -202,6 +202,289 @@ export function ChevronRightIcon({ className }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path d="M1 1L8.5 8.5L1 16" />
+    </svg>
+  );
+}
+
+export function ChevronDownIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 17 9.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M1 1L8.5 8.5L16 1" />
+    </svg>
+  );
+}
+
+export function CalendarIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  );
+}
+
+export function CheckCircleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="10" fill="#349024" />
+      <path d="M8 12L11 15L16 9" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function TimezoneIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
+}
+
+export function QuestionMarkIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  );
+}
+
+export function SearchIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+
+export function ClockIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+
+export function PencilIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  );
+}
+
+export function PlusIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
+export function InfoIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4" />
+      <path d="M12 8h.01" />
+    </svg>
+  );
+}
+
+export function ChevronLeftIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}
+
+export function TimerIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="13" r="7" stroke="currentColor" strokeWidth="2" />
+      <path d="M12 9V13L14 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10 3H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function UniversalSkillIcon({ className }: { className?: string }) {
+  return (
+    <svg preserveAspectRatio="none" overflow="visible" style={{ display: "block" }} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <g id="Frame" clipPath="url(#clip0_2960_11762)">
+        <path id="Vector" d="M29.4918 5.0558L32.0638 1.26598C24.9777 0.498782 25.0887 6.2773 26.03 9.26243L20.9892 17.2861L26.5744 20.0857C26.6796 19.8313 27.6364 17.8649 30.622 12.035C37.8137 12.408 37.5035 6.26743 36.4494 3.15051L33.4066 7.03775C31.4917 8.13211 29.7105 6.83811 29.4918 5.0558Z" fill="url(#paint0_linear_2960_11762)" />
+        <path id="Vector_2" d="M8.19277 20.0002C9.78974 20.0002 11.0843 18.7792 11.0843 17.273C11.0843 15.7667 9.78974 14.5457 8.19277 14.5457C6.5958 14.5457 5.3012 15.7667 5.3012 17.273C5.3012 18.7792 6.5958 20.0002 8.19277 20.0002Z" fill="var(--fill-0, #F4DCBF)" />
+        <path id="Vector_3" d="M32.2892 34.0912C33.8861 34.0912 35.1807 32.8701 35.1807 31.3639C35.1807 29.8576 33.8861 28.6366 32.2892 28.6366C30.6922 28.6366 29.3976 29.8576 29.3976 31.3639C29.3976 32.8701 30.6922 34.0912 32.2892 34.0912Z" fill="var(--fill-0, #F4DCBF)" />
+        <path id="Vector_4" d="M19.759 26.8184C21.356 26.8184 22.6506 25.5974 22.6506 24.0912C22.6506 22.5849 21.356 21.3639 19.759 21.3639C18.1621 21.3639 16.8675 22.5849 16.8675 24.0912C16.8675 25.5974 18.1621 26.8184 19.759 26.8184Z" fill="var(--fill-0, #F4DCBF)" />
+        <path id="Vector_5" d="M7.22892 34.0912C8.82588 34.0912 10.1205 32.8701 10.1205 31.3639C10.1205 29.8576 8.82588 28.6366 7.22892 28.6366C5.63195 28.6366 4.33735 29.8576 4.33735 31.3639C4.33735 32.8701 5.63195 34.0912 7.22892 34.0912Z" fill="var(--fill-0, #F4DCBF)" />
+        <path id="Vector_6" d="M19.2771 40.0002C20.8741 40.0002 22.1687 38.7792 22.1687 37.273C22.1687 35.7667 20.8741 34.5457 19.2771 34.5457C17.6801 34.5457 16.3855 35.7667 16.3855 37.273C16.3855 38.7792 17.6801 40.0002 19.2771 40.0002Z" fill="var(--fill-0, #F4DCBF)" />
+        <path id="Vector_7" d="M19.759 13.6366C21.356 13.6366 22.6506 12.4156 22.6506 10.9093C22.6506 9.4031 21.356 8.18206 19.759 8.18206C18.1621 8.18206 16.8675 9.4031 16.8675 10.9093C16.8675 12.4156 18.1621 13.6366 19.759 13.6366Z" fill="var(--fill-0, #F4DCBF)" />
+        <path id="Vector_8" d="M32.2892 20.0002C33.8861 20.0002 35.1807 18.7792 35.1807 17.273C35.1807 15.7667 33.8861 14.5457 32.2892 14.5457C30.6922 14.5457 29.3976 15.7667 29.3976 17.273C29.3976 18.7792 30.6922 20.0002 32.2892 20.0002Z" fill="var(--fill-0, #F4DCBF)" />
+        <path id="Vector_9" d="M19.759 24.5457V35.4548" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_10" d="M30.6019 30.3935L21.4453 25.3935" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_11" d="M31.0913 18.1173L21.4527 23.5718" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_12" d="M32.2892 19.5457V29.5457" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_13" d="M9.15663 18.6366L18.2623 36.1606" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_14" d="M7.76838 30.2395L17.8889 12.5122" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_15" d="M18.0342 25.3966L7.94651 30.7335" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_16" d="M18.0459 23.5603L9.37123 18.1057" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+
+        <path id="Vector_17" d="M4.46348 9.39137L4.22126 8.36332C4.14432 8.03673 4.26374 7.69673 4.53217 7.47805L9.21561 3.66319C9.33508 3.56587 9.48192 3.49645 9.63628 3.46526C12.3622 2.91441 13.6942 3.2382 14.4908 3.8292C15.1658 4.33001 14.4283 5.52164 13.5919 5.70551C12.4456 5.95746 11.5329 6.41464 11.0843 6.69673C10.5489 7.03337 10.936 8.43487 11.2513 9.24214C11.2985 9.36291 11.376 9.47019 11.4743 9.55951L17.3092 14.8664C17.7184 15.2385 17.699 15.8621 17.2674 16.211L15.3893 17.7293C15.0016 18.0427 14.422 18.0166 14.0678 17.6696L8.61368 12.3276C8.49575 12.2121 8.34761 12.1281 8.18419 12.0841L7.22534 11.8256C6.9252 11.7448 6.60216 11.806 6.3584 11.9899L6.04298 12.2279C5.73961 12.4568 5.61161 12.8351 5.71831 13.1875L5.86824 13.6824C5.96438 13.9998 5.87055 14.3415 5.62303 14.575L4.57819 15.5604C4.18604 15.9303 3.54468 15.9125 3.17625 15.5216L0.558901 12.7444C0.238682 12.4046 0.233805 11.8939 0.547484 11.5488L1.05806 10.987C1.29565 10.7255 1.66946 10.6131 2.02364 10.6966L2.84401 10.8901C3.17247 10.9675 3.51992 10.8767 3.75932 10.651L4.20412 10.2314C4.43715 10.0116 4.53497 9.69478 4.46348 9.39137Z" fill="url(#paint1_linear_2960_11762)" stroke="url(#paint2_linear_2960_11762)" strokeWidth="0.481928" />
+        <path id="Vector_18" d="M18.5377 11.3115L9.38112 15.857" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_19" d="M7.22892 29.0912V19.0912" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_20" d="M9.42959 31.8983L17.1404 36.8983" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_21" d="M21.4453 36.8797L30.6019 31.8797" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_22" d="M19.759 21.8184V13.1821" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+        <path id="Vector_23" d="M30.6278 15.8614L21.9531 11.7705" stroke="var(--stroke-0, #F4DCBF)" strokeWidth="0.963855" />
+      </g>
+      <defs>
+        <linearGradient id="paint0_linear_2960_11762" x1="33.9759" y1="1.81848" x2="26.4314" y2="13.8169" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F9F4EE" />
+          <stop offset="1" stopColor="#F4DCBF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="paint1_linear_2960_11762" x1="1.43859" y1="4.96128" x2="12.3893" y2="15.6389" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F9F4EE" />
+          <stop offset="1" stopColor="#F4DCBF" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="paint2_linear_2960_11762" x1="13.012" y1="14.5457" x2="6.06021" y2="5.51074" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F4DCBF" stopOpacity="0" />
+          <stop offset="1" stopColor="#F4DCBF" />
+        </linearGradient>
+        <clipPath id="clip0_2960_11762">
+          <rect width="40" height="40" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}
+
+export function DocumentIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+      <polyline points="14 2 14 8 20 8" />
+    </svg>
+  );
+}
+
+export function TrashIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6h18" />
+      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+      <line x1="10" y1="11" x2="10" y2="17" />
+      <line x1="14" y1="11" x2="14" y2="17" />
     </svg>
   );
 }

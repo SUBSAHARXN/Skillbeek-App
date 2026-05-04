@@ -1,3 +1,4 @@
+@import "overlayscrollbars/overlayscrollbars.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -56,6 +57,14 @@
   --mapped\/button\/primary\/surface-hover: #a7721b;
   --mapped\/button\/primary\/stroke-secondary-disabled: #a09da3;
   --mapped\/text\/primary\/body-alt: #f0edf4;
+
+  /* ── Warning semantic surface tokens ─────────────────────────── */
+  --mapped\/surface\/warning\/bg-surface: #fff6f3;
+  --mapped\/surface\/warning\/bg-surface-padding: #fef0ea;
+  --mapped\/surface\/warning\/icon-bg-surface: #b85f38;
+  --mapped\/surface\/warning\/icon-bg-surface-hover: #a3532f;
+  --mapped\/text\/warning\/text-default: #fff6f3;
+  --mapped\/surface\/ui-surface\/overlay-bg: rgba(47, 44, 50, 0.26);
 }
 
 body {
@@ -70,4 +79,13 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Hide scrollbar while keeping scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Opera */
 }

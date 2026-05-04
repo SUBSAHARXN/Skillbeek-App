@@ -1,0 +1,545 @@
+import React, { useState } from "react";
+import { OfferProgressBar } from "../components/OfferProgressBar";
+import { CustomAnimatedCheckbox } from "../../../components/common/CustomAnimatedCheckbox";
+import { SaveExitModal } from "../components/SaveExitModal";
+
+// Tag chip
+function TagChip({ label }: { label: string }) {
+  return (
+    <div className="flex items-center px-[12px] py-[6px] bg-[#f0edf4] rounded-[12px]">
+      <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[0.5px] whitespace-nowrap">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+// Badge components
+function BBadge({ size = 20 }: { size?: number }) {
+  return (
+    <div className="relative shrink-0 flex items-center justify-center" style={{ width: size, height: size }}>
+      {/* Star background */}
+      <svg
+        viewBox="0 0 15.7291 15.7291"
+        className="absolute inset-0 w-full h-full"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+        overflow="visible"
+      >
+        <path
+          d="M6.2127 0.917332C6.97429 -0.305777 8.75476 -0.305777 9.51636 0.917332C9.95654 1.62426 10.7978 1.97271 11.6089 1.7841C13.0123 1.45776 14.2713 2.71674 13.945 4.12014C13.7563 4.93127 14.1048 5.77251 14.8117 6.2127C16.0348 6.97429 16.0348 8.75476 14.8117 9.51636C14.1048 9.95654 13.7563 10.7978 13.945 11.6089C14.2713 13.0123 13.0123 14.2713 11.6089 13.945C10.7978 13.7563 9.95654 14.1048 9.51636 14.8117C8.75476 16.0348 6.97429 16.0348 6.2127 14.8117C5.77251 14.1048 4.93127 13.7563 4.12014 13.945C2.71674 14.2713 1.45776 13.0123 1.7841 11.6089C1.97271 10.7978 1.62426 9.95654 0.917332 9.51636C-0.305778 8.75476 -0.305777 6.97429 0.917332 6.21269C1.62426 5.77251 1.97271 4.93127 1.7841 4.12014C1.45776 2.71674 2.71674 1.45776 4.12014 1.7841C4.93127 1.97271 5.77251 1.62426 6.2127 0.917332Z"
+          fill="#171519"
+        />
+      </svg>
+      {/* B letterform */}
+      <svg
+        viewBox="0 0 5.33332 6.95357"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="relative z-10"
+        style={{ width: size * 0.42, height: size * 0.55 }}
+        preserveAspectRatio="none"
+        overflow="visible"
+      >
+        <path
+          d="M4.66673 2.33333C4.72229 1.72222 4.36673 0.500001 2.50006 0.500001C2.00217 0.500001 1.69713 0.500001 1.49894 0.5C0.946668 0.499998 0.500057 0.947703 0.50005 1.49998L0.500027 3.33333M0.500027 3.33333L0.5 5.4754C0.499994 5.96898 0.860115 6.39461 1.35244 6.42968C3.20057 6.56133 4.83332 6.15745 4.83332 5C4.83332 3.33333 3.16666 3.33333 2.33332 3.33333C1.66666 3.33333 0.833348 3.33333 0.500027 3.33333Z"
+          stroke="#F4FBF2"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  );
+}
+
+function PBadge({ size = 16 }: { size?: number }) {
+  return (
+    <div
+      className="shrink-0 rounded-full flex items-center justify-center"
+      style={{ backgroundColor: "#eacfff", width: size, height: size }}
+    >
+      <span
+        className="font-['Nunito'] font-semibold text-center w-full"
+        style={{ fontSize: `${size * 0.5}px`, color: "#380157", letterSpacing: "1.1px", lineHeight: "1" }}
+      >
+        P
+      </span>
+    </div>
+  );
+}
+
+const MAX_VISIBLE_TAGS = 4;
+
+interface SkillReviewViewProps {
+  selectedSkills: string[];
+  skillTagsMap: Record<string, string[]>;
+  onBack: () => void;
+  onAddMore: (skills: string[], tagsMap: Record<string, string[]>) => void;
+  onNext: (confirmedSkills: string[], confirmedTagsMap: Record<string, string[]>) => void;
+  hideBadge?: boolean;
+}
+
+export function SkillReviewView({
+  selectedSkills: initialSkills,
+  skillTagsMap,
+  onBack,
+  onNext,
+  onAddMore,
+  hideBadge = false
+}: SkillReviewViewProps) {
+  // Track which skills are still shown — unchecking removes the card
+  const [visibleSkills, setVisibleSkills] = useState<string[]>(initialSkills);
+  // Track a skill currently animating out
+  const [removingSkill, setRemovingSkill] = useState<string | null>(null);
+  const [expandedSkills, setExpandedSkills] = useState<Record<string, boolean>>({});
+  // Badge info tooltip
+  const [isBadgeInfoOpen, setIsBadgeInfoOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+
+  // Tag editing state
+  const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
+  const [skillForTags, setSkillForTags] = useState<string>("");
+  const [localTagsMap, setLocalTagsMap] = useState<Record<string, string[]>>(skillTagsMap);
+  const [tempTags, setTempTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+
+  const handleOpenTagsModal = (skill: string) => {
+    setSkillForTags(skill);
+    setTempTags(localTagsMap[skill] || []);
+    setTagInput("");
+    setIsTagsModalOpen(true);
+  };
+
+  const handleApplyTags = () => {
+    setLocalTagsMap(prev => ({ ...prev, [skillForTags]: tempTags }));
+    setIsTagsModalOpen(false);
+  };
+
+  const handleClearTags = () => {
+    setLocalTagsMap(prev => ({ ...prev, [skillForTags]: [] }));
+    setTempTags([]);
+    setIsTagsModalOpen(false);
+  };
+
+  const toggleTag = (tag: string) => {
+    setTempTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag].slice(0, 5)
+    );
+  };
+
+  const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "," || e.key === "Enter") {
+      e.preventDefault();
+      const val = tagInput.trim().replace(/,$/, "");
+      if (val && !tempTags.includes(val) && tempTags.length < 5) {
+        setTempTags(prev => [...prev, val]);
+      }
+      setTagInput("");
+    }
+  };
+
+  const handleUncheck = (skill: string) => {
+    setRemovingSkill(skill);
+    setTimeout(() => {
+      setRemovingSkill(null);
+      setVisibleSkills(prev => {
+        const next = prev.filter(s => s !== skill);
+        if (next.length === 0) {
+          const currentTagsMap: Record<string, string[]> = {};
+          next.forEach((s) => {
+            currentTagsMap[s] = skillTagsMap[s] || [];
+          });
+          onAddMore?.(next, currentTagsMap);
+        }
+        return next;
+      });
+    }, 300);
+  };
+
+  const toggleExpand = (skill: string) => {
+    setExpandedSkills((prev) => ({ ...prev, [skill]: !prev[skill] }));
+  };
+
+  const isNextEnabled = visibleSkills.length >= 1;
+
+  const handleNext = () => {
+    if (isNextEnabled) {
+      const confirmedTagsMap: Record<string, string[]> = {};
+      visibleSkills.forEach((s) => {
+        confirmedTagsMap[s] = skillTagsMap[s] || [];
+      });
+      onNext?.(visibleSkills, confirmedTagsMap);
+    }
+  };
+
+  return (
+    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+      {/* Status Bar */}
+      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[#fbf6ff]">
+        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
+      </div>
+
+      {/* Header Action Buttons */}
+      <div className="w-full px-[16px] flex justify-between items-center pt-[16px] mb-[40px] shrink-0 relative z-10 bg-[#fbf6ff]">
+        <button
+          onClick={() => setIsSaveModalOpen(true)}
+          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
+        >
+          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+            Save and Exit
+          </span>
+        </button>
+        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors">
+          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+            Questions?
+          </span>
+        </button>
+      </div>
+
+
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto px-[16px] pb-[248px] flex flex-col pt-[8px]">
+        {/* Page Header */}
+        <div className="w-full pb-[16px] flex flex-col">
+          <div className="flex items-center gap-[4px]">
+            <h1 className="font-['Nunito'] font-bold text-[28px] leading-[36px] text-[#171519] tracking-[-1.2px]">
+              Review your selection
+            </h1>
+            {/* Info icon — tappable, opens badge legend */}
+            <button
+              onClick={() => {
+                console.log("Info icon clicked");
+                setIsBadgeInfoOpen(true);
+              }}
+              className="shrink-0 flex items-center justify-center w-[44px] h-[44px] -mr-[14px]"
+              aria-label="What do these badges mean"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </button>
+          </div>
+          <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#49464c] tracking-[0.1px] mt-[8px]">
+            Double-check your selected skills and specific tags before moving to the next step.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-[16px]">
+          {visibleSkills.map((skill) => {
+            const tags = localTagsMap[skill] || [];
+            const isExpanded = expandedSkills[skill] ?? false;
+            const shownTags = isExpanded ? tags : tags.slice(0, MAX_VISIBLE_TAGS);
+            const isRemoving = removingSkill === skill;
+
+            return (
+              <div
+                key={skill}
+                onClick={() => handleOpenTagsModal(skill)}
+                className="w-full bg-[#faf7fe] rounded-[16px] flex flex-col items-start px-[16px] py-[16px] gap-[16px] overflow-hidden min-h-[148px] cursor-pointer active:scale-[0.99]"
+                style={{
+                  boxShadow: "0px 4px 12px 0px rgba(18,9,0,0.15)",
+                  opacity: isRemoving ? 0 : 1,
+                  maxHeight: isRemoving ? "0px" : "600px",
+                  paddingTop: isRemoving ? "0px" : undefined,
+                  paddingBottom: isRemoving ? "0px" : undefined,
+                  marginBottom: isRemoving ? "-16px" : "0px",
+                  transition: "opacity 0.25s ease, max-height 0.3s ease, margin-bottom 0.3s ease, padding 0.3s ease",
+                }}
+              >
+                {/* Header row: skill name + badge + checkbox */}
+                <div className="flex items-center justify-between w-full gap-[4px]">
+                  {/* Left: skill name + P badge */}
+                  <div className="flex items-center gap-[4px] flex-1 min-w-0">
+                    <h2 className="font-['Nunito'] font-bold text-[24px] leading-[32px] text-[#171519] tracking-[-0.7px] shrink-0">
+                      {skill.toLowerCase()}
+                    </h2>
+                    {/* PBadge hidden on Receive side — verification status is irrelevant when selecting desired partner skills */}
+                    {!hideBadge && <PBadge size={16} />}
+                  </div>
+
+                  {/* Checkbox — tap to remove this card, uses same component as skill select */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleUncheck(skill);
+                    }}
+                    className="shrink-0"
+                  >
+                    <CustomAnimatedCheckbox checked={true} />
+                  </button>
+                </div>
+
+                {/* Tags — always visible on both Give and Receive sides */}
+                {tags.length > 0 && (
+                  <div className="flex flex-wrap gap-[12px] items-start">
+                    {shownTags.map((tag) => (
+                      <div
+                        key={tag}
+                        className="bg-[#f0edf4] rounded-[12px] p-[12px] flex items-center shrink-0"
+                      >
+                        <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[1px] whitespace-nowrap">
+                          {tag}
+                        </span>
+                      </div>
+                    ))}
+                    {!isExpanded && tags.length > MAX_VISIBLE_TAGS && (
+                      <div className="bg-[#f0edf4] rounded-[12px] p-[12px] flex items-center shrink-0">
+                        <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[1px]">
+                          +{tags.length - MAX_VISIBLE_TAGS}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* View More/Less */}
+                {tags.length > MAX_VISIBLE_TAGS && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleExpand(skill);
+                    }}
+                    className="mt-[16px] flex items-center gap-[4px]"
+                  >
+                    <span className="font-['Nunito'] font-bold text-[16px] leading-[24px] text-[#49464c] tracking-[0.16px] underline decoration-solid">
+                      {isExpanded ? "View less" : "View more"}
+                    </span>
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+
+      {/* Floating "+" Add More button — absolute, anchored bottom-right, 40px above footer */}
+      <button
+        onClick={() => {
+          const currentTagsMap: Record<string, string[]> = {};
+          visibleSkills.forEach((s) => {
+            currentTagsMap[s] = skillTagsMap[s] || [];
+          });
+          onAddMore?.(visibleSkills, currentTagsMap);
+        }}
+        className="absolute right-[24px] z-30 active:scale-95 transition-transform"
+        style={{
+          bottom: "172px", /* footer height ~132px + 40px design spec gap */
+          width: "56px",
+          height: "56px",
+          backgroundColor: "#b7812f",
+          borderRadius: "16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0px 12px 32px 0px rgba(18,9,0,0.15), 0px 8px 4px 0px rgba(18,9,0,0.05)",
+        }}
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fbf6ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+
+      {/* Fixed Footer */}
+      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
+        {/* Progress Bar */}
+        <div className="w-full flex justify-center">
+          <OfferProgressBar currentStep={1} subStepProgress={100} />
+        </div>
+
+        {/* Buttons */}
+        <div className="w-full flex items-center justify-between px-[16px]">
+          <button
+            onClick={onBack}
+            className="flex h-[48px] items-center justify-center px-[16px] py-[12px] font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] tracking-[0.16px] underline"
+          >
+            Back
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={!isNextEnabled}
+            className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
+                ? "bg-[#171519] text-[#fbf6ff]"
+                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              }`}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+      {/* Home Indicator */}
+      <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30">
+        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
+      </div>
+
+      {/* ── Add Tags Modal ─────────────────────────────── */}
+      {/* Overlay */}
+      <div
+        className={`absolute inset-0 z-50 bg-[#2f2c32]/26 backdrop-blur-[4px] transition-opacity duration-300 ${isTagsModalOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+        onClick={() => setIsTagsModalOpen(false)}
+      />
+      {/* Bottom Sheet */}
+      <div
+        className={`absolute bottom-0 left-0 w-full bg-[#faf7fe] rounded-t-[24px] flex flex-col pt-[8px] pb-[44px] z-[60] transition-transform duration-300 ${isTagsModalOpen ? "translate-y-0 ease-out" : "translate-y-full ease-in"
+          }`}
+      >
+        <div className="w-full flex flex-col items-center gap-[32px]">
+          {/* Header */}
+          <div className="w-full px-[16px] flex flex-col gap-[16px] items-center">
+            <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px]" />
+            <div className="w-full flex items-center justify-between relative h-[24px]">
+              <div className="flex-1 flex justify-center">
+                <h3 className="font-['Nunito'] font-bold text-[20px] leading-[28px] text-[#171519] tracking-[-0.2px]">
+                  Add tags
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsTagsModalOpen(false)}
+                className="absolute right-0 w-[24px] h-[24px] flex items-center justify-center"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div className="w-full h-px bg-[#e0dce3]" />
+            <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#49464c] text-center px-[16px]">
+              Add up to 5 specific tags to help others discover you. Separate each with a comma.
+            </p>
+          </div>
+
+          {/* Tags */}
+          <div className="w-full px-[16px] flex flex-col gap-[24px]">
+            {tempTags.length > 0 && (
+              <div className="flex flex-wrap gap-[12px]">
+                {tempTags.map(tag => (
+                  <div
+                    key={tag}
+                    onClick={() => toggleTag(tag)}
+                    className="flex items-center gap-[12px] px-[12px] py-[12px] rounded-[12px] bg-[#f0edf4] cursor-pointer transition-all duration-200 active:scale-95"
+                  >
+                    <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[1px]">
+                      {tag}
+                    </span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b7812f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="w-full bg-[#faf7fe] rounded-[12px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] px-[12px] py-[16px]">
+              <input
+                type="text"
+                placeholder="wireframing, prototyping,"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagInputKeyDown}
+                className="w-full bg-transparent border-none outline-none font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#171519] placeholder-[#a09da3]"
+              />
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="w-full flex items-center justify-between px-[16px]">
+            <button
+              onClick={handleClearTags}
+              className="font-['Nunito'] font-bold text-[16px] leading-[24px] text-[#49464c] underline px-[16px] py-[12px]"
+            >
+              Clear all
+            </button>
+            <button
+              onClick={handleApplyTags}
+              disabled={tempTags.length === 0}
+              className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] transition-colors ${tempTags.length > 0 ? "bg-[#171519] text-[#fbf6ff]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+                }`}
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+      </div>
+      {/* ──────────────────────────────────────────────────── */}
+
+      {/* ── Badge Info Overlay ─────────────────────────────── */}
+      {/* Blurred backdrop */}
+      <div
+        className={`absolute inset-0 z-50 transition-opacity duration-300 ${isBadgeInfoOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+        style={{ backgroundColor: "rgba(47,44,50,0.26)", backdropFilter: "blur(4px)" }}
+        onClick={() => setIsBadgeInfoOpen(false)}
+      />
+
+      {/* Tooltip card — centred horizontally, positioned below the header */}
+      <div
+        className={`absolute z-[60] left-[16px] right-[16px] transition-all duration-300 ${isBadgeInfoOpen
+            ? "opacity-100 translate-y-0 pointer-events-auto"
+            : "opacity-0 -translate-y-2 pointer-events-none"
+          }`}
+        style={{ top: "200px" }} // Moved up by 44px from 244px
+      >
+        {/* Arrow pointing up — aligned to info icon */}
+        <div
+          className="absolute"
+          style={{
+            top: "-8px",
+            right: "58px", // Moved left by another 4px (increased from 54px)
+            width: 0,
+            height: 0,
+            borderLeft: "8px solid transparent",
+            borderRight: "8px solid transparent",
+            borderBottom: "8px solid #f9f4ee"
+          }}
+        />
+
+        {/* Card */}
+        <div className="w-full bg-[#f9f4ee] rounded-[12px] p-[12px] flex gap-[12px] items-start">
+          {/* Content column */}
+          <div className="flex-1 flex flex-col gap-[8px]">
+            <p className="font-['Nunito'] font-bold text-[18px] leading-[28px] text-[#171519] tracking-[0px]">
+              What do these badges mean
+            </p>
+
+            <div className="flex flex-col gap-[12px]">
+              {/* B badge row */}
+              <div className="flex gap-[12px] items-start">
+                <BBadge size={24} />
+                <p className="flex-1 font-['Nunito'] font-medium text-[14px] leading-[20px] text-[#2f2c32] tracking-[1px]">
+                  This badge indicates a high level of trust, verified by consistent, high-quality sessions on the platform.
+                </p>
+              </div>
+
+              {/* P badge row */}
+              <div className="flex gap-[12px] items-start">
+                <PBadge size={24} />
+                <p className="flex-1 font-['Nunito'] font-medium text-[14px] leading-[20px] text-[#2f2c32] tracking-[1px]">
+                  A skill in progress. The user is claiming this skill but has not yet verified it through a session or provided full details.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* X close button */}
+          <button
+            onClick={() => setIsBadgeInfoOpen(false)}
+            className="shrink-0 w-[44px] h-[44px] flex items-center justify-center"
+            aria-label="Close"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      {/* ──────────────────────────────────────────────────── */}
+    </div>
+  );
+}
