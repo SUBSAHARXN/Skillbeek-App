@@ -9,7 +9,19 @@ import { EditAvailabilityModal } from "../components/EditAvailabilityModal";
 import { DurationPickerModal } from "../components/DurationPickerModal";
 import { SkillsEditModal } from "../components/SkillsEditModal";
 import { ReviewSelectionModal } from "../components/ReviewSelectionModal";
+import { EditRateModal } from "../components/EditRateModal";
 import { AvailabilityData, getRecurringDaysText, getSpecificDatesText } from "./AvailabilityView";
+
+function TimeCreditIcon({ className }: { className?: string }) {
+  return (
+    <div className={`relative shrink-0 flex items-center justify-center ${className || "w-[24px] h-[24px]"}`}>
+      <svg className="w-[18px] h-[14.19px]" viewBox="0 0 18 14.1942" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fillRule="evenodd" clipRule="evenodd" d="M3.90166 7.37403C3.84628 7.38554 3.85484 7.46211 3.9114 7.46211H10.0626C10.1044 7.46211 10.1447 7.44666 10.1752 7.41811C10.8649 6.743 11.2097 5.82588 11.2097 4.6666C11.2097 3.7274 10.9603 2.90559 10.4614 2.20117C9.96241 1.49684 9.27268 0.953893 8.39218 0.572336C7.49707 0.190779 6.45517 0 5.2665 0C4.16583 0 3.15333 0.161389 2.22882 0.484252C1.43631 0.748423 0.751534 1.12582 0.174705 1.61645C0.00126823 1.76397 -0.0451224 2.009 0.0448947 2.21814L0.346566 2.91902C0.49378 3.26104 0.931373 3.36043 1.23607 3.14639C1.72106 2.8057 2.22803 2.54198 2.75699 2.35526C3.50549 2.07648 4.35661 1.93709 5.3105 1.93709C6.44039 1.93709 7.32829 2.17187 7.97401 2.64143C8.60496 3.11107 8.92051 3.7494 8.92051 4.55652C8.92051 5.20216 8.72235 5.70849 8.32618 6.07536C7.91523 6.44222 7.24012 6.721 6.301 6.91177L3.90166 7.37403Z" fill="#B7812F" />
+        <path d="M14.4785 8.49306C14.7824 8.49306 15.0288 8.24668 15.0288 7.94276V7.44107C15.0288 7.24124 14.9205 7.05711 14.7458 6.96004L14.7242 6.94805C14.6424 6.90262 14.5504 6.87877 14.4569 6.87877H1.82154C1.51762 6.87877 1.27124 7.12515 1.27124 7.42908L1.27124 7.94276C1.27124 8.24669 1.51762 8.49306 1.82154 8.49306L5.91691 8.49306C6.14685 8.49306 6.3123 8.71569 6.27392 8.94241C6.23332 9.18223 6.213 9.436 6.213 9.70373C6.213 10.5988 6.45517 11.384 6.93934 12.059C7.40906 12.734 8.08401 13.2624 8.96451 13.6439C9.84502 14.0108 10.8869 14.1942 12.0902 14.1942C13.3376 14.1942 14.4675 14.0401 15.48 13.7319C16.3434 13.4566 17.1108 13.0854 17.782 12.6181C17.9864 12.4758 18.0535 12.2079 17.9558 11.9788L17.629 11.2133C17.4881 10.8832 17.074 10.7751 16.7728 10.9705C16.4576 11.1752 16.1367 11.3546 15.8102 11.5087C15.2673 11.7582 14.6949 11.9489 14.0934 12.081C13.477 12.1984 12.8093 12.2571 12.0902 12.2571C10.8575 12.2571 9.95502 12.037 9.38268 11.5967C8.79573 11.1565 8.50218 10.5768 8.50218 9.85782C8.50218 9.36606 8.63297 8.96311 8.89456 8.64885C8.98306 8.54252 9.11959 8.49306 9.25794 8.49306H14.4785Z" fill="#B7812F" />
+      </svg>
+    </div>
+  );
+}
 
 interface OfferPreviewViewProps {
   offerTitle?: string;
@@ -24,6 +36,8 @@ interface OfferPreviewViewProps {
   receiveRoles?: Record<string, string>;
   receiveProficiencies?: Record<string, string>;
   sessionDuration?: { type: "preset" | "custom"; minutes: number };
+  isTimeCredit?: boolean;
+  timeCreditRate?: number;
   onPublish?: () => void;
   onBack?: () => void;
 }
@@ -107,6 +121,8 @@ export function OfferPreviewView({
   receiveRoles = {},
   receiveProficiencies = {},
   sessionDuration = { type: "preset", minutes: 30 },
+  isTimeCredit = false,
+  timeCreditRate: initialRate = 0,
   onPublish,
   onBack,
 }: OfferPreviewViewProps) {
@@ -119,6 +135,8 @@ export function OfferPreviewView({
   const [localReceiveTags, setLocalReceiveTags] = useState<Record<string, string[]>>(receiveTags || {});
   const [localReceiveRoles, setLocalReceiveRoles] = useState<Record<string, string>>(receiveRoles || {});
   const [localReceiveProficiencies, setLocalReceiveProficiencies] = useState<Record<string, string>>(receiveProficiencies || {});
+  const [localTimeCreditRate, setLocalTimeCreditRate] = useState<number>(initialRate);
+  const [isRateModalOpen, setIsRateModalOpen] = useState(false);
 
   const [localSessionDuration, setLocalSessionDuration] = useState<{ type: "preset" | "custom"; minutes: number }>(sessionDuration);
   const [isDurationModalOpen, setIsDurationModalOpen] = useState(false);
@@ -489,6 +507,17 @@ export function OfferPreviewView({
                 )}
               </SectionCard>
 
+              {isTimeCredit && (
+                <SectionCard title="Rate (per session)" onEdit={() => setIsRateModalOpen(true)}>
+                  <div className="flex items-center gap-[12px]">
+                    <TimeCreditIcon className="w-[24px] h-[24px]" />
+                    <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px]">
+                      {localTimeCreditRate}
+                    </span>
+                  </div>
+                </SectionCard>
+              )}
+
               <SectionCard title="Session length" onEdit={() => setIsDurationModalOpen(true)}>
                 <div className="flex items-center gap-[6px]">
                   <TimerIcon className="w-[24px] h-[24px] text-[#171519]" />
@@ -502,11 +531,12 @@ export function OfferPreviewView({
         </div>
       </div>
 
-      <div className="w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] pt-[8px] pb-[40px]">
-        <div className="px-[16px] mt-[16px]">
+      <div className="absolute bottom-0 left-0 w-full flex flex-col items-center pointer-events-none z-30">
+        {/* Gradient Overlay for Floating Effect */}
+        <div className="w-full h-[156px] bg-gradient-to-t from-[#faf7fe] via-[#faf7fe]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-auto">
           <button
             onClick={onPublish}
-            className="w-full h-[56px] bg-[#171519] rounded-[16px] flex items-center justify-center gap-[8px] hover:bg-[#2f2c32] transition-colors"
+            className="w-full max-w-[352px] h-[48px] bg-[#171519] rounded-[16px] flex items-center justify-center hover:bg-[#2f2c32] transition-colors shadow-[0px_4px_12px_rgba(0,0,0,0.15)]"
           >
             <span className="font-['Nunito'] font-bold text-[#fbf6ff] text-[16px]">
               Go Live
@@ -529,6 +559,17 @@ export function OfferPreviewView({
             onApply={(h, m) => {
               setLocalSessionDuration({ type: "custom", minutes: h * 60 + m });
               setIsDurationModalOpen(false);
+            }}
+          />
+        )}
+        {isRateModalOpen && (
+          <EditRateModal
+            isOpen={isRateModalOpen}
+            onClose={() => setIsRateModalOpen(false)}
+            initialRate={localTimeCreditRate}
+            onApply={(rate) => {
+              setLocalTimeCreditRate(rate);
+              setIsRateModalOpen(false);
             }}
           />
         )}

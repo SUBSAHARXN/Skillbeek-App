@@ -789,6 +789,8 @@ function App() {
                   receiveRoles={receiveRoles}
                   receiveProficiencies={receiveProficiencies}
                   sessionDuration={sessionLength}
+                  isTimeCredit={exchangeType === "time-credit"}
+                  timeCreditRate={timeCreditRate}
                   onBack={() => navigateTo("sessionLength", -1)}
                   onPublish={() => console.log("Publish offer")}
                 />
