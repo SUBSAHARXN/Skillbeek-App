@@ -126,7 +126,7 @@ export function SessionLengthView({
               className="w-full h-[56px] bg-[#faf7fe] rounded-[16px] flex items-center justify-between px-[16px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#f0edf4] transition-colors"
             >
               <div className="flex items-center gap-[8px]">
-                <TimerIcon className="w-[24px] h-[24px] text-[#49464c]" />
+                <TimerIcon className="w-[24px] h-[24px] text-[#171519]" />
                 <span className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px]">
                   Custom
                 </span>

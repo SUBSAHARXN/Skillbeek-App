@@ -2,17 +2,19 @@ import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CloseIcon } from "../../../components/common/Icons";
 
-interface SpecificDatesModalProps {
+export interface SpecificDatesModalProps {
   isOpen: boolean;
   onClose: () => void;
   onApply: (start: Date, end: Date) => void;
   mode?: "single" | "range";
+  initialRange?: { start: Date; end: Date } | null;
+  disabledRanges?: { start: Date; end: Date }[];
 }
 
 const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DOW = ["S", "M", "T", "W", "T", "F", "S"];
 
-export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range" }: SpecificDatesModalProps) {
+export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", initialRange, disabledRanges }: SpecificDatesModalProps) {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -126,11 +128,13 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range" }:
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col items-center shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] select-none"
+            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)]"
           >
-            <div className="w-full flex flex-col items-center">
+            <div className="w-full flex flex-col px-0">
               {/* Drag Handle */}
-              <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
+              <div className="w-full flex justify-center px-[16px]">
+                <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
+              </div>
 
               {/* Header */}
               <div className="w-full flex items-center justify-between px-[16px] mb-[16px]">
@@ -157,7 +161,7 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range" }:
               </div>
 
               {/* Scroll Area */}
-              <div className="w-full max-h-[400px] overflow-y-auto px-[16px] custom-scrollbar relative">
+              <div className="w-full max-h-[400px] overflow-y-auto px-0 modal-scrollbar relative">
                 {months.map(({ year, month }, idx) => {
                   const firstDow = new Date(year, month, 1).getDay();
                   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -165,7 +169,7 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range" }:
                   const days = Array.from({ length: daysInMonth }).map((_, i) => i + 1);
 
                   return (
-                    <div key={idx} className="w-full flex flex-col items-center mb-[24px]">
+                    <div key={idx} className="w-full flex flex-col items-center mb-[24px] px-[16px]">
                       <h4 className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px] mb-[16px] uppercase">
                         {MONTH_NAMES[month]} {year}
                       </h4>

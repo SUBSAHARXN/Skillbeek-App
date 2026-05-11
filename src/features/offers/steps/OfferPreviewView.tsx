@@ -11,7 +11,7 @@ import { TimePickerModal } from "../components/TimePickerModal";
 import { DurationPickerModal } from "../components/DurationPickerModal";
 import { SkillsEditModal } from "../components/SkillsEditModal";
 import { ReviewSelectionModal } from "../components/ReviewSelectionModal";
-import { AvailabilityData } from "../steps/AvailabilityView";
+import { AvailabilityData, getRecurringDaysText, getSpecificDatesText } from "./AvailabilityView";
 
 interface OfferPreviewViewProps {
   offerTitle?: string;
@@ -36,29 +36,12 @@ function BackArrowIcon({ className }: { className?: string }) {
   );
 }
 
-function StarIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-    </svg>
-  );
-}
-
 function MoreIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="12" cy="5" r="1.5" fill="currentColor" />
       <circle cx="12" cy="12" r="1.5" fill="currentColor" />
       <circle cx="12" cy="19" r="1.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-function EyeIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
 }
@@ -71,7 +54,17 @@ function formatDuration(minutes: number): string {
   return `${h} hr ${m} min`;
 }
 
-// Reusable section card
+function NeumorphicDivider() {
+  return (
+    <div className="w-full flex items-center justify-center my-[16px]">
+      <div
+        className="w-full h-[2px] rounded-full bg-[#fbf6ff]"
+        style={{ boxShadow: "inset 2px 2px 12px rgba(192, 188, 195, 0.5), inset -2px -2px 12px rgba(255, 255, 255, 0.9)" }}
+      />
+    </div>
+  );
+}
+
 function SectionCard({
   title,
   onEdit,
@@ -135,6 +128,8 @@ export function OfferPreviewView({
   const [isTimePickerModalOpen, setIsTimePickerModalOpen] = useState(false);
   const [pendingDays, setPendingDays] = useState<string[]>([]);
   const [pendingDateRange, setPendingDateRange] = useState<{ start: Date; end: Date } | null>(null);
+  const [pendingStartTime, setPendingStartTime] = useState<string | undefined>();
+  const [pendingEndTime, setPendingEndTime] = useState<string | undefined>();
 
   // Skills editing state
   const [skillsEditModal, setSkillsEditModal] = useState<{ open: boolean; type: "offered" | "wanted" }>({
@@ -165,13 +160,26 @@ export function OfferPreviewView({
 
   const handleEditAvailability = () => {
     if (localAvailability?.type === "Recurring Weekly") {
+      const slot = localAvailability.recurringSlots[0];
+      setPendingDays(slot?.days || []);
+      setPendingStartTime(slot?.timeRange.start);
+      setPendingEndTime(slot?.timeRange.end);
       setIsRecurringModalOpen(true);
     } else if (localAvailability?.type === "Specific Dates") {
+      const slot = localAvailability.specificSlots[0];
+      setPendingDateRange(slot?.dateRange || null);
+      setPendingStartTime(slot?.timeRange.start);
+      setPendingEndTime(slot?.timeRange.end);
       setIsSpecificModalOpen(true);
     }
   };
 
   const handleDaysApply = (days: string[]) => {
+    const dayRemoved = pendingDays.some(d => !days.includes(d));
+    if (dayRemoved) {
+      setPendingStartTime(undefined);
+      setPendingEndTime(undefined);
+    }
     setPendingDays(days);
     setIsRecurringModalOpen(false);
     setIsTimePickerModalOpen(true);
@@ -202,8 +210,9 @@ export function OfferPreviewView({
 
   const formatProficiency = (p: string) => {
     if (!p) return "Basic";
-    return p.split(" — ")[0]; // Safely takes 'Open to all' from the long string, or keeps 'Beginner' as is
+    return p.split(" — ")[0];
   };
+
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDesc);
 
@@ -221,15 +230,12 @@ export function OfferPreviewView({
     else if (editModal.field === "description") setDescription(value);
   };
 
-
   return (
     <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-3xl overflow-hidden relative flex flex-col mx-auto shadow-2xl">
-      {/* Status Bar */}
       <div className="relative z-[60] w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
         <div className="w-[140px] h-[36px] bg-[#171519] rounded-3xl" />
       </div>
 
-      {/* Top Nav */}
       <div className="relative z-[60] w-full px-[16px] py-[8px] flex items-center shrink-0 h-[64px]">
         <div className="flex flex-[1_0_0] items-center gap-[4px] min-w-0">
           <button
@@ -244,32 +250,28 @@ export function OfferPreviewView({
             </h1>
           </div>
         </div>
-        <button 
-          onClick={() => setIsMenuOpen(true)} 
+        <button
+          onClick={() => setIsMenuOpen(true)}
           className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors relative shrink-0"
         >
           <MoreIcon className="w-[24px] h-[24px] text-[#171519]" />
         </button>
       </div>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-[16px] pb-[32px] pt-[8px]">
-        <div className="flex flex-col gap-[16px] min-w-0 w-full">
-          {/* Unpublished Badge */}
+      <div className="flex-1 overflow-y-auto px-0 pb-[32px] pt-[8px] preview-scrollbar">
+        <div className="flex flex-col gap-[16px] min-w-0 w-full px-[16px]">
           <div className="bg-[#FEF0EA] px-[8px] py-[8px] rounded-[8px] self-start">
             <span className="font-['Nunito'] font-black text-[#b85f38] text-[12px] leading-[16px] tracking-[1.1px] uppercase">
               Unpublished
             </span>
-            </div>
+          </div>
 
           <div className="flex flex-col gap-[24px] min-w-0 w-full">
-            {/* Profile Card */}
             <div className="w-full min-w-0 bg-[#faf7fe] rounded-[12px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]">
               <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">
                 Profile
               </span>
               <div className="flex flex-col items-center gap-[12px]">
-                {/* Avatar */}
                 <PersonaPfpSet className="w-[109px] h-[109px]" persona="01" />
                 <div className="flex flex-col items-center gap-[8px] w-full">
                   <span className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[32px] text-center w-full">
@@ -287,239 +289,232 @@ export function OfferPreviewView({
             </div>
 
             <div className="flex flex-col gap-[16px] min-w-0 w-full">
-              {/* Topic Card */}
-          <SectionCard title="Topic" onEdit={() => openEdit("title")}>
-            <p className="font-['Nunito'] font-medium text-[#49464c] text-[20px] leading-[28px] tracking-[-0.2px] overflow-hidden text-ellipsis whitespace-nowrap min-w-0">
-              {title}
-            </p>
-          </SectionCard>
+              <SectionCard title="Topic" onEdit={() => openEdit("title")}>
+                <p className="font-['Nunito'] font-medium text-[#49464c] text-[20px] leading-[28px] tracking-[-0.2px] overflow-hidden text-ellipsis whitespace-nowrap min-w-0">
+                  {title}
+                </p>
+              </SectionCard>
 
-          {/* Offer Description Card */}
-          <SectionCard title="Offer description" onEdit={() => openEdit("description")}>
-            <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[1px] line-clamp-5 overflow-hidden break-words break-all w-full min-w-0">
-              {description}
-            </p>
-          </SectionCard>
+              <SectionCard title="Offer description" onEdit={() => openEdit("description")}>
+                <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[1px] line-clamp-5 overflow-hidden break-words break-all w-full min-w-0">
+                  {description}
+                </p>
+              </SectionCard>
 
-          <SectionCard title="Availability" onEdit={handleEditAvailability}>
-            <div className="flex flex-col gap-[12px]">
-              {localAvailability?.type === "Recurring Weekly" && localAvailability.recurringSlots.length > 0 ? (
-                <>
-                  <div className="flex items-center gap-[8px]">
-                    <CalendarIcon className="w-[24px] h-[24px] text-[#656268]" />
-                    <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
-                      {localAvailability.recurringSlots[0].days.join(", ")}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-[8px]">
-                    <ClockIcon className="w-[24px] h-[24px] text-[#656268]" />
-                    <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
-                      {localAvailability.recurringSlots[0].timeRange.start} - {localAvailability.recurringSlots[0].timeRange.end}
-                    </span>
-                  </div>
-                </>
-              ) : localAvailability?.type === "Specific Dates" && localAvailability.specificSlots.length > 0 ? (
-                <>
-                  <div className="flex items-center gap-[8px]">
-                    <CalendarIcon className="w-[24px] h-[24px] text-[#656268]" />
-                    <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
-                      {(() => {
-                        const range = localAvailability.specificSlots[0].dateRange;
-                        const s = new Date(range.start).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-                        const e = new Date(range.end).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-                        return s === e ? s : `${s} – ${e}`;
-                      })()}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-[8px]">
-                    <ClockIcon className="w-[24px] h-[24px] text-[#656268]" />
-                    <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
-                      {localAvailability.specificSlots[0].timeRange.start} - {localAvailability.specificSlots[0].timeRange.end}
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
-                  Not set
-                </span>
-              )}
-
-              <button
-                onClick={() => setIsTimezoneModalOpen(true)}
-                className="flex items-center gap-[4px] self-start mt-[4px]"
-              >
-                <span className="font-['Nunito'] font-bold text-[#b7812f] text-[16px] leading-[24px]">
-                  {localAvailability?.timezone?.split("/").pop()?.replace(/_/g, " ") || "Lagos"}
-                </span>
-                <PencilIcon className="w-[16px] h-[16px] text-[#b7812f]" />
-              </button>
-            </div>
-          </SectionCard>
-
-          {/* Offered Skills Card */}
-          <SectionCard title="Offered skills" onEdit={() => handleEditSkills("offered")}>
-            {localReviewSkills.length > 0 ? (() => {
-              const firstSkill = localReviewSkills[0];
-              const firstTags = localReviewTags[firstSkill] || [];
-              const displayedTags = firstTags.slice(0, 2);
-              const extraTags = firstTags.length - 2;
-
-              return (
-                <div className="flex items-start gap-[16px]">
-                  <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
-                  <div className="flex-1 flex flex-col gap-[16px]">
-                    <div className="flex items-center gap-[8px]">
-                      <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
-                        {firstSkill}
-                      </span>
-                      <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                        <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
-                          {formatProficiency(localReviewProficiencies[firstSkill])}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Tags row */}
-                    {firstTags.length > 0 && (
-                      <div className="flex flex-wrap gap-[6px]">
-                        {displayedTags.map(tag => (
-                          <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
-                            <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] whitespace-nowrap">
-                              {tag}
+              <SectionCard title="Availability" onEdit={handleEditAvailability}>
+                <div className="flex flex-col gap-[12px]">
+                  {localAvailability?.type === "Recurring Weekly" && localAvailability.recurringSlots.length > 0 ? (
+                    localAvailability.recurringSlots.map((slot, i) => (
+                      <React.Fragment key={i}>
+                        <div className="flex flex-col gap-[12px]">
+                          <div className="flex items-center gap-[8px]">
+                            <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
+                            <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                              {getRecurringDaysText(slot.days)}
                             </span>
                           </div>
-                        ))}
-                        {extraTags > 0 && (
-                          <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
-                            <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
-                              +{extraTags}
+                          <div className="flex items-center gap-[8px]">
+                            <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
+                            <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                              {slot.timeRange.start} - {slot.timeRange.end}
                             </span>
                           </div>
-                        )}
-                      </div>
-                    )}
+                        </div>
+                        {i < localAvailability.recurringSlots.length - 1 && <NeumorphicDivider />}
+                      </React.Fragment>
+                    ))
+                  ) : localAvailability?.type === "Specific Dates" && localAvailability.specificSlots.length > 0 ? (
+                    localAvailability.specificSlots.map((slot, i) => (
+                      <React.Fragment key={i}>
+                        <div className="flex flex-col gap-[12px]">
+                          <div className="flex items-center gap-[8px]">
+                            <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
+                            <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                              {getSpecificDatesText(slot.dateRange)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-[8px]">
+                            <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
+                            <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                              {slot.timeRange.start} - {slot.timeRange.end}
+                            </span>
+                          </div>
+                        </div>
+                        {i < localAvailability.specificSlots.length - 1 && <NeumorphicDivider />}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                      Not set
+                    </span>
+                  )}
 
-                    {localReviewSkills.length > 1 && (
-                      <button
-                        onClick={() => setReviewSelectionModal({ open: true, type: "offered" })}
-                        className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start"
-                      >
-                        <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
-                          + {localReviewSkills.length - 1} more
-                        </span>
-                      </button>
-                    )}
-                  </div>
+                  <button
+                    onClick={() => setIsTimezoneModalOpen(true)}
+                    className="flex items-center gap-[4px] self-start mt-[4px]"
+                  >
+                    <span className="font-['Nunito'] font-bold text-[#b7812f] text-[16px] leading-[24px]">
+                      {localAvailability?.timezone?.split("/").pop()?.replace(/_/g, " ") || "Lagos"}
+                    </span>
+                    <PencilIcon className="w-[16px] h-[16px] text-[#b7812f]" />
+                  </button>
                 </div>
-              );
-            })() : (
-              <div className="flex items-center gap-[16px]">
-                <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
-                <div className="flex-1 flex flex-col gap-[6px]">
-                  <div className="flex items-center gap-[8px]">
-                    <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
-                      3D modelling
-                    </span>
-                    <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                      <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
-                        Intermediate
-                      </span>
-                    </div>
-                  </div>
-                  <span className="font-['Nunito'] font-semibold text-[#656268] text-[14px] leading-[20px] tracking-[1px]">
-                    + 2 more
-                  </span>
-                </div>
-              </div>
-            )}
-          </SectionCard>
+              </SectionCard>
 
-          {/* Skills You Want Card */}
-          <SectionCard title="Skills you want" onEdit={() => handleEditSkills("wanted")}>
-            {localReceiveSkills.length > 0 ? (() => {
-              const firstSkill = localReceiveSkills[0];
-              const firstTags = localReceiveTags[firstSkill] || [];
-              const displayedTags = firstTags.slice(0, 2);
-              const extraTags = firstTags.length - 2;
+              <SectionCard title="Offered skills" onEdit={() => handleEditSkills("offered")}>
+                {localReviewSkills.length > 0 ? (() => {
+                  const firstSkill = localReviewSkills[0];
+                  const firstTags = localReviewTags[firstSkill] || [];
+                  const displayedTags = firstTags.slice(0, 2);
+                  const extraTags = firstTags.length - 2;
 
-              return (
-                <div className="flex items-start gap-[16px]">
-                  <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
-                  <div className="flex-1 flex flex-col gap-[16px]">
-                    <div className="flex items-center gap-[8px]">
-                      <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
-                        {firstSkill}
-                      </span>
-                      <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                        <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
-                          {formatProficiency(localReceiveProficiencies[firstSkill])}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Tags row */}
-                    {firstTags.length > 0 && (
-                      <div className="flex flex-wrap gap-[6px]">
-                        {displayedTags.map(tag => (
-                          <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
-                            <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] whitespace-nowrap">
-                              {tag}
+                  return (
+                    <div className="flex items-start gap-[16px]">
+                      <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
+                      <div className="flex-1 flex flex-col gap-[16px]">
+                        <div className="flex items-center gap-[8px]">
+                          <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
+                            {firstSkill}
+                          </span>
+                          <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                            <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
+                              {formatProficiency(localReviewProficiencies[firstSkill])}
                             </span>
                           </div>
-                        ))}
-                        {extraTags > 0 && (
-                          <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
-                            <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
-                              +{extraTags}
-                            </span>
+                        </div>
+
+                        {firstTags.length > 0 && (
+                          <div className="flex flex-wrap gap-[6px]">
+                            {displayedTags.map(tag => (
+                              <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
+                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] whitespace-nowrap">
+                                  {tag}
+                                </span>
+                              </div>
+                            ))}
+                            {extraTags > 0 && (
+                              <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
+                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
+                                  +{extraTags}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         )}
-                      </div>
-                    )}
 
-                    {localReceiveSkills.length > 1 && (
-                      <button
-                        onClick={() => setReviewSelectionModal({ open: true, type: "wanted" })}
-                        className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start"
-                      >
-                        <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
-                          + {localReceiveSkills.length - 1} more
+                        {localReviewSkills.length > 1 && (
+                          <button
+                            onClick={() => setReviewSelectionModal({ open: true, type: "offered" })}
+                            className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start"
+                          >
+                            <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
+                              + {localReviewSkills.length - 1} more
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })() : (
+                  <div className="flex items-center gap-[16px]">
+                    <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
+                    <div className="flex-1 flex flex-col gap-[6px]">
+                      <div className="flex items-center gap-[8px]">
+                        <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
+                          3D modelling
                         </span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })() : (
-              <div className="flex items-center gap-[16px]">
-                <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
-                <div className="flex-1 flex flex-col gap-[6px]">
-                  <div className="flex items-center gap-[8px]">
-                    <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
-                      UI design
-                    </span>
-                    <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                      <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
-                        Basic
-                      </span>
+                        <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                          <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
+                            Intermediate
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <span className="font-['Nunito'] font-semibold text-[#656268] text-[14px] leading-[20px] tracking-[1px]">
-                    + 1 more
+                )}
+              </SectionCard>
+
+              <SectionCard title="Skills you want" onEdit={() => handleEditSkills("wanted")}>
+                {localReceiveSkills.length > 0 ? (() => {
+                  const firstSkill = localReceiveSkills[0];
+                  const firstTags = localReceiveTags[firstSkill] || [];
+                  const displayedTags = firstTags.slice(0, 2);
+                  const extraTags = firstTags.length - 2;
+
+                  return (
+                    <div className="flex items-start gap-[16px]">
+                      <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
+                      <div className="flex-1 flex flex-col gap-[16px]">
+                        <div className="flex items-center gap-[8px]">
+                          <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
+                            {firstSkill}
+                          </span>
+                          <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                            <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
+                              {formatProficiency(localReceiveProficiencies[firstSkill])}
+                            </span>
+                          </div>
+                        </div>
+
+                        {firstTags.length > 0 && (
+                          <div className="flex flex-wrap gap-[6px]">
+                            {displayedTags.map(tag => (
+                              <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
+                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] whitespace-nowrap">
+                                  {tag}
+                                </span>
+                              </div>
+                            ))}
+                            {extraTags > 0 && (
+                              <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
+                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
+                                  +{extraTags}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {localReceiveSkills.length > 1 && (
+                          <button
+                            onClick={() => setReviewSelectionModal({ open: true, type: "wanted" })}
+                            className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start"
+                          >
+                            <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
+                              + {localReceiveSkills.length - 1} more
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })() : (
+                  <div className="flex items-center gap-[16px]">
+                    <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
+                    <div className="flex-1 flex flex-col gap-[6px]">
+                      <div className="flex items-center gap-[8px]">
+                        <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
+                          UI design
+                        </span>
+                        <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                          <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
+                            Basic
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </SectionCard>
+
+              <SectionCard title="Session length" onEdit={() => setIsDurationModalOpen(true)}>
+                <div className="flex items-center gap-[6px]">
+                  <TimerIcon className="w-[24px] h-[24px] text-[#171519]" />
+                  <span className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px] tracking-[0.1px]">
+                    {formatDuration(localSessionDuration.minutes)}
                   </span>
                 </div>
-              </div>
-            )}
-          </SectionCard>
-
-          <SectionCard title="Session length" onEdit={() => setIsDurationModalOpen(true)}>
-            <div className="flex items-center gap-[6px]">
-              <TimerIcon className="w-[24px] h-[24px] text-[#656268]" />
-              <span className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px] tracking-[0.1px]">
-                {formatDuration(localSessionDuration.minutes)}
-              </span>
-            </div>
-          </SectionCard>
+              </SectionCard>
             </div>
           </div>
         </div>
@@ -572,10 +567,7 @@ export function OfferPreviewView({
               className="absolute right-[28px] top-[120px] w-[279px] bg-[#faf7fe] rounded-[16px] p-[8px] flex flex-col gap-[8px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]"
             >
               <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  // Add save draft logic here
-                }}
+                onClick={() => setIsMenuOpen(false)}
                 className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
               >
                 <DocumentIcon className="w-[24px] h-[24px] text-[#171519]" />
@@ -584,7 +576,6 @@ export function OfferPreviewView({
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  // Add delete offer logic here
                 }}
                 className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
               >
@@ -623,6 +614,7 @@ export function OfferPreviewView({
             isOpen={isRecurringModalOpen}
             onClose={() => setIsRecurringModalOpen(false)}
             onApply={handleDaysApply}
+            initialDays={pendingDays}
           />
         )}
         {isSpecificModalOpen && (
@@ -637,6 +629,8 @@ export function OfferPreviewView({
             isOpen={isTimePickerModalOpen}
             onClose={() => setIsTimePickerModalOpen(false)}
             onApply={handleTimeApply}
+            initialStartTime={pendingStartTime}
+            initialEndTime={pendingEndTime}
           />
         )}
         {skillsEditModal.open && (
@@ -661,7 +655,6 @@ export function OfferPreviewView({
           onRemoveSkill={(skill) => {
             if (reviewSelectionModal.type === "offered") {
               setLocalReviewSkills(prev => prev.filter(s => s !== skill));
-              // Also cleanup tags and proficiencies if needed, though they don't hurt
             } else {
               setLocalReceiveSkills(prev => prev.filter(s => s !== skill));
             }

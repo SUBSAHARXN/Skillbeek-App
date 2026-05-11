@@ -1,4 +1,4 @@
-@import "overlayscrollbars/overlayscrollbars.css";
+/* @import "overlayscrollbars/overlayscrollbars.css"; */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -88,4 +88,31 @@ code {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;             /* Chrome, Safari, Opera */
+}
+
+/* Modal and Preview Custom Scrollbars */
+.modal-scrollbar::-webkit-scrollbar { width: 2px !important; height: 2px !important; }
+.preview-scrollbar::-webkit-scrollbar { width: 2px !important; height: 2px !important; }
+.availability-scrollbar::-webkit-scrollbar { width: 2px !important; height: 2px !important; }
+
+.modal-scrollbar::-webkit-scrollbar-button,
+.preview-scrollbar::-webkit-scrollbar-button,
+.availability-scrollbar::-webkit-scrollbar-button {
+  display: none !important;
+}
+
+.modal-scrollbar::-webkit-scrollbar-track { background: transparent !important; margin: 0 !important; }
+.preview-scrollbar::-webkit-scrollbar-track { background: transparent !important; margin: 0 !important; }
+.availability-scrollbar::-webkit-scrollbar-track { background: transparent !important; margin: 0 !important; }
+
+.modal-scrollbar::-webkit-scrollbar-thumb { background: #c0bcc3 !important; border-radius: 2px !important; }
+.preview-scrollbar::-webkit-scrollbar-thumb { background: #c0bcc3 !important; border-radius: 2px !important; }
+.availability-scrollbar::-webkit-scrollbar-thumb { background: #c0bcc3 !important; border-radius: 2px !important; }
+
+/* Firefox Support */
+.modal-scrollbar,
+.preview-scrollbar,
+.availability-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: #c0bcc3 transparent !important;
 }

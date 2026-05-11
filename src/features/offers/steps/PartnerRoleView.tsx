@@ -2,48 +2,27 @@ import React, { useState } from "react";
 import { OfferProgressBar } from "../components/OfferProgressBar";
 import { SaveExitModal } from "../components/SaveExitModal";
 import { CustomAnimatedRadioButton } from "../../../components/common/CustomAnimatedRadioButton";
+import { NeumorphicDivider } from "../../../components/common/NeumorphicDivider";
 
-interface PartnerProficiencyViewProps {
+interface PartnerRoleViewProps {
   selectedSkills: string[];
   onBack: () => void;
-  onNext: (proficiencies: Record<string, string>) => void;
+  onNext: (roles: Record<string, string>) => void;
 }
 
-const PROFICIENCY_LEVELS = [
-  "Open to all",
-  "Beginner",
-  "Intermediate",
-  "Advanced"
-];
+const PARTNER_ROLES = ["Mentor", "Collaborator", "Reviewer", "Mentee / Learner"];
 
-function NeumorphicDivider() {
-  return (
-    <div className="w-full flex items-center justify-center my-[16px]">
-      <div
-        className="w-full h-[2px] rounded-full bg-[#fbf6ff]"
-        style={{
-          boxShadow: "inset 2px 2px 12px rgba(192, 188, 195, 0.5), inset -2px -2px 12px rgba(255, 255, 255, 0.9)"
-        }}
-      />
-    </div>
-  );
-}
-
-export function PartnerProficiencyView({
-  selectedSkills,
-  onBack,
-  onNext
-}: PartnerProficiencyViewProps) {
-  const [proficiencies, setProficiencies] = useState<Record<string, string>>(
-    Object.fromEntries(selectedSkills.map(skill => [skill, ""]))
+export function PartnerRoleView({ selectedSkills, onBack, onNext }: PartnerRoleViewProps) {
+  const [roles, setRoles] = useState<Record<string, string>>(
+    Object.fromEntries(selectedSkills.map((skill) => [skill, ""]))
   );
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
-  const handleSelect = (skill: string, level: string) => {
-    setProficiencies(prev => ({ ...prev, [skill]: level }));
+  const handleSelect = (skill: string, role: string) => {
+    setRoles((prev) => ({ ...prev, [skill]: role }));
   };
 
-  const isNextEnabled = selectedSkills.every(skill => proficiencies[skill] !== "");
+  const isNextEnabled = selectedSkills.every((skill) => roles[skill] !== "");
 
   return (
     <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
@@ -70,14 +49,13 @@ export function PartnerProficiencyView({
           </button>
         </div>
 
-
         {/* Page Header */}
         <div className="w-full px-[16px] flex flex-col gap-[12px] mb-[32px]">
           <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
-            Partner's skill level
+            Who are you looking for
           </h1>
           <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
-            Select the minimum experience level you expect from your swap partner.
+            Choose the role you want your session partner to fill. This sets clear expectations for whoever accepts your offer.
           </p>
         </div>
 
@@ -90,17 +68,19 @@ export function PartnerProficiencyView({
                   {skill}
                 </h3>
                 <div className="flex flex-col">
-                  {PROFICIENCY_LEVELS.map(level => {
-                    const isSelected = proficiencies[skill] === level;
+                  {PARTNER_ROLES.map((role) => {
+                    const isSelected = roles[skill] === role;
                     return (
                       <div
-                        key={level}
-                        onClick={() => handleSelect(skill, level)}
+                        key={role}
+                        onClick={() => handleSelect(skill, role)}
                         className="flex items-center gap-[6px] cursor-pointer group py-[10px]"
                       >
                         <CustomAnimatedRadioButton checked={isSelected} />
-                        <span className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] leading-[24px] text-[#2f2c32] tracking-[0.1px] transition-all`}>
-                          {level}
+                        <span
+                          className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] leading-[24px] text-[#2f2c32] tracking-[0.1px] transition-all`}
+                        >
+                          {role}
                         </span>
                       </div>
                     );
@@ -120,7 +100,7 @@ export function PartnerProficiencyView({
       <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
         {/* Progress Bar */}
         <div className="w-full flex justify-center">
-          <OfferProgressBar currentStep={2} subStepProgress={75} />
+          <OfferProgressBar currentStep={3} subStepProgress={20} />
         </div>
 
         {/* Buttons */}
@@ -132,12 +112,13 @@ export function PartnerProficiencyView({
             Back
           </button>
           <button
-            onClick={() => isNextEnabled && onNext(proficiencies)}
+            onClick={() => isNextEnabled && onNext(roles)}
             disabled={!isNextEnabled}
-            className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
+            className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${
+              isNextEnabled
                 ? "bg-[#171519] text-[#fbf6ff]"
                 : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
-              }`}
+            }`}
           >
             Next
           </button>

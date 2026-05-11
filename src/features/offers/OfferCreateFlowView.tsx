@@ -139,9 +139,9 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto w-full flex flex-col relative pt-[16px] pb-[40px] px-[16px]">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full flex flex-col relative pt-[16px] pb-[40px] px-0 availability-scrollbar">
         {/* Header Action Buttons */}
-        <div className="w-full flex justify-between items-center mb-[40px] shrink-0">
+        <div className="w-full flex justify-between items-center mb-[40px] px-[16px] shrink-0">
           <button 
             onClick={() => setIsSaveModalOpen(true)}
             className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
@@ -158,7 +158,7 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
         </div>
 
         {/* Header Texts */}
-        <div className="w-full flex flex-col gap-[12px] mt-[8px] mb-[32px]">
+        <div className="w-full flex flex-col gap-[12px] mt-[8px] mb-[32px] px-[16px]">
           <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[0px]">
             Create an Offer on Skillbeek
           </h1>
@@ -170,7 +170,7 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
         </div>
 
         {/* Steps List */}
-        <div className="w-full flex flex-col gap-[8px]">
+        <div className="w-full flex flex-col gap-[8px] px-[16px]">
           {steps.map((step, index) => {
             const isLast = index === steps.length - 1;
             const canPlay = isLast ? (finishedSteps >= steps.length - 1 && isStep5Visible) : finishedSteps >= index;
@@ -215,7 +215,7 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
         </div>
 
         {/* Bottom CTA Block */}
-        <div ref={bottomRef} className="w-full pt-[40px] pb-[24px] flex justify-center">
+        <div ref={bottomRef} className="w-full pt-[40px] pb-[24px] flex justify-center px-[16px]">
           <button 
             disabled={!isBottomSeen}
             onClick={onContinue}

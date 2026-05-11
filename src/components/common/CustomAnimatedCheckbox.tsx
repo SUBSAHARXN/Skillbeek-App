@@ -6,9 +6,12 @@ interface CustomAnimatedCheckboxProps {
 }
 
 export function CustomAnimatedCheckbox({ checked, disabled }: CustomAnimatedCheckboxProps) {
-  const bgColor = checked
-    ? "#171519"        // active checked
-    : "transparent";  // unchecked or disabled
+  const effectiveChecked = disabled || checked;
+  const bgColor = disabled 
+    ? "#c0bcc3"       // disabled state fill
+    : checked
+      ? "#171519"     // active checked
+      : "transparent"; // unchecked
 
   return (
     <div className="w-[44px] h-[44px] p-[10px] relative flex items-center justify-center shrink-0 pointer-events-none">
@@ -16,7 +19,7 @@ export function CustomAnimatedCheckbox({ checked, disabled }: CustomAnimatedChec
         className="w-[24px] h-[24px] rounded-[6px] flex items-center justify-center transition-all duration-300 ease-in-out"
         style={{
           backgroundColor: bgColor,
-          border: checked ? "none" : "1.5px solid #c0bcc3",
+          border: effectiveChecked ? "none" : "1.5px solid #c0bcc3",
         }}
       >
         <svg viewBox="0 0 24 24" fill="none" className="w-[14px] h-[14px]">
@@ -29,8 +32,8 @@ export function CustomAnimatedCheckbox({ checked, disabled }: CustomAnimatedChec
             className="transition-all duration-300 ease-in-out"
             style={{
               strokeDasharray: 24,
-              strokeDashoffset: checked ? 0 : 24,
-              opacity: checked ? 1 : 0,
+              strokeDashoffset: effectiveChecked ? 0 : 24,
+              opacity: effectiveChecked ? 1 : 0,
             }}
           />
         </svg>

@@ -41,7 +41,7 @@ const SKILL_TAGS_SUGGESTIONS: Record<string, string[]> = {
 };
 
 const OFFERED_LEVELS = ["Beginner", "Intermediate", "Advanced"];
-const WANTED_LEVELS = ["Open to all — No experience needed", "Beginner", "Intermediate", "Advanced"];
+const WANTED_LEVELS = ["Open to all", "Beginner", "Intermediate", "Advanced"];
 
 export function SkillsEditModal({
   isOpen,
@@ -156,32 +156,36 @@ export function SkillsEditModal({
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col items-center shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] h-[85%]"
+            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] h-[85%]"
           >
-            <div className="w-full flex flex-col items-center px-[16px] h-full">
+            <div className="w-full flex flex-col px-0 h-full">
               {/* Drag Handle */}
-              <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px] shrink-0" />
+              <div className="w-full flex justify-center px-[16px] shrink-0">
+                <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
+              </div>
 
               {/* Header */}
-              <div className="w-full flex items-center justify-center relative mb-[16px] h-[24px] shrink-0">
+              <div className="w-full flex items-center justify-center relative mb-[16px] h-[24px] shrink-0 px-[16px]">
                 <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
                   {step === "skills" ? `Edit ${type === "offered" ? "Offered" : "Wanted"} Skills` : "Set Proficiency"}
                 </h3>
                 <button
                   onClick={onClose}
-                  className="absolute right-0 w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-gray-200 transition-colors"
+                  className="absolute right-[16px] w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-gray-200 transition-colors"
                 >
                   <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
                 </button>
               </div>
 
               {/* Divider */}
-              <div className="w-full h-[1px] bg-[#e0dce3] mb-[12px] shrink-0" />
+              <div className="w-full px-[16px] mb-[12px] shrink-0">
+                <div className="w-full h-[1px] bg-[#e0dce3]" />
+              </div>
 
               {/* Content Area */}
-              <div className="w-full flex-1 overflow-y-auto flex flex-col gap-[16px] pb-[24px] pr-[4px]">
+              <div className="w-full flex-1 overflow-y-auto flex flex-col gap-[16px] pb-[24px] pr-0 modal-scrollbar">
                 {step === "skills" ? (
-                  <div className="flex flex-col gap-[20px]">
+                  <div className="flex flex-col gap-[20px] px-[16px]">
                     {/* Search */}
                     <div className="w-full h-[56px] bg-[#faf7fe] rounded-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] flex items-center px-[12px]">
                       <div className="flex items-center gap-[8px] flex-1">
@@ -245,7 +249,7 @@ export function SkillsEditModal({
                     })}
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-[24px]">
+                  <div className="flex flex-col gap-[24px] px-[16px]">
                     {selectedSkills.map(skill => (
                       <div key={skill} className="flex flex-col gap-[12px]">
                         <h3 className="font-['Nunito'] font-bold text-[#171519] text-[18px]">
@@ -275,7 +279,7 @@ export function SkillsEditModal({
               </div>
 
               {/* Action Buttons */}
-              <div className="w-full flex items-center justify-between mt-[16px] shrink-0">
+              <div className="w-full flex items-center justify-between mt-[16px] shrink-0 px-[16px]">
                 {step === "skills" ? (
                   <>
                     <button

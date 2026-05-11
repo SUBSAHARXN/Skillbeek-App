@@ -7,6 +7,8 @@ interface TimePickerModalProps {
   onClose: () => void;
   onApply: (start: string, end: string) => void;
   mode?: "single" | "range";
+  initialStartTime?: string;
+  initialEndTime?: string;
 }
 
 const HOURS = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
@@ -14,11 +16,27 @@ const MINUTES = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0
 const PERIODS = ["AM", "PM"];
 const ITEM_HEIGHT = 44;
 
-export function TimePickerModal({ isOpen, onClose, onApply, mode = "range" }: TimePickerModalProps) {
+export function TimePickerModal({ isOpen, onClose, onApply, mode = "range", initialStartTime, initialEndTime }: TimePickerModalProps) {
   const [step, setStep] = useState<"start" | "end">("start");
   
-  const [startTime, setStartTime] = useState({ h: "9", m: "00", p: "AM" });
-  const [endTime, setEndTime] = useState({ h: "5", m: "00", p: "PM" });
+  const parseTime = (timeStr?: string, defaultTime = { h: "9", m: "00", p: "AM" }) => {
+    if (!timeStr) return defaultTime;
+    const [time, period] = timeStr.split(" ");
+    const [h, m] = time.split(":");
+    return { h, m, p: period as "AM" | "PM" };
+  };
+
+  const [startTime, setStartTime] = useState(() => parseTime(initialStartTime, { h: "9", m: "00", p: "AM" }));
+  const [endTime, setEndTime] = useState(() => parseTime(initialEndTime, { h: "5", m: "00", p: "PM" }));
+
+  // Re-sync if initial props change while open (or when opening)
+  useEffect(() => {
+    if (isOpen) {
+      setStartTime(parseTime(initialStartTime, { h: "9", m: "00", p: "AM" }));
+      setEndTime(parseTime(initialEndTime, { h: "5", m: "00", p: "PM" }));
+      setStep("start");
+    }
+  }, [isOpen, initialStartTime, initialEndTime]);
 
   const hourRef = useRef<HTMLDivElement>(null);
   const minRef = useRef<HTMLDivElement>(null);

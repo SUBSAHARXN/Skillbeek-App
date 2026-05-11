@@ -9,21 +9,29 @@ import { TimePickerModal } from "../components/TimePickerModal";
 import { TimezoneModal } from "../components/TimezoneModal";
 
 // ─── Day helpers ──────────────────────────────────────────────────────────────
-const DAY_ORDER = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+export const DAY_ORDER = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const DAY_ABBR: Record<string, string> = {
   Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", Thursday: "Thu",
   Friday: "Fri", Saturday: "Sat", Sunday: "Sun",
 };
 
-const getRecurringDaysText = (days: string[]) => {
+export const getRecurringDaysText = (days: string[]) => {
   if (!days || days.length === 0) return "Select days";
   const sorted = [...days].sort((a, b) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b));
+  
   if (sorted.length === 7) return "Every day";
-  const isWeekdays = sorted.length === 5 && ["Monday","Tuesday","Wednesday","Thursday","Friday"].every(d => sorted.includes(d));
+  
+  const isWeekdays = sorted.length === 5 && ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].every(d => sorted.includes(d));
   if (isWeekdays) return "Weekdays";
-  const isWeekends = sorted.length === 2 && ["Saturday","Sunday"].every(d => sorted.includes(d));
+  
+  const isWeekends = sorted.length === 2 && ["Saturday", "Sunday"].every(d => sorted.includes(d));
   if (isWeekends) return "Weekends";
-  // Truncate after 3 days if 4+ selected
+
+  // New logic: 1-2 days show full spelling, 3+ days use abbreviations
+  if (sorted.length <= 2) {
+    return sorted.join(", ");
+  }
+
   const abbrs = sorted.map(d => DAY_ABBR[d] ?? d.substring(0, 3));
   if (abbrs.length > 3) {
     return `${abbrs.slice(0, 3).join(", ")} +${abbrs.length - 3}`;
@@ -31,7 +39,7 @@ const getRecurringDaysText = (days: string[]) => {
   return abbrs.join(", ");
 };
 
-const getSpecificDatesText = (range: { start: Date; end: Date } | null) => {
+export const getSpecificDatesText = (range: { start: Date; end: Date } | null) => {
   if (!range) return "Select dates";
   const fmt: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
   const s = range.start.toLocaleDateString("en-US", fmt);
@@ -40,11 +48,11 @@ const getSpecificDatesText = (range: { start: Date; end: Date } | null) => {
 };
 
 // ─── Data types ───────────────────────────────────────────────────────────────
-interface RecurringSlot {
+export interface RecurringSlot {
   days: string[];
   timeRange: { start: string; end: string };
 }
-interface SpecificSlot {
+export interface SpecificSlot {
   dateRange: { start: Date; end: Date };
   timeRange: { start: string; end: string };
 }
@@ -69,7 +77,7 @@ function NeumorphicDivider() {
 }
 
 // ─── Slot card ────────────────────────────────────────────────────────────────
-function SlotCard({
+export function SlotCard({
   label,
   daysText,
   timeText,
@@ -103,7 +111,7 @@ function SlotCard({
         className="bg-[#faf7fe] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] rounded-[12px] px-[16px] py-[24px] flex items-center justify-between cursor-pointer"
       >
         <div className="flex items-center gap-[6px]">
-          <CalendarIcon className="w-[24px] h-[24px] text-[#656268]" />
+          <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
           <span className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px]">
             {label}
           </span>
@@ -126,7 +134,7 @@ function SlotCard({
         className="bg-[#faf7fe] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] rounded-[12px] px-[16px] py-[24px] flex items-center justify-between cursor-pointer"
       >
         <div className="flex items-center gap-[6px]">
-          <ClockIcon className="w-[24px] h-[24px] text-[#656268]" />
+          <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
           <span className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px]">
             Time
           </span>
@@ -168,6 +176,8 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
   const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
   const [isSpecificDatesModalOpen, setIsSpecificDatesModalOpen] = useState(false);
   const [isTimePickerModalOpen, setIsTimePickerModalOpen] = useState(false);
+  const [pendingStartTime, setPendingStartTime] = useState<string | undefined>();
+  const [pendingEndTime, setPendingEndTime] = useState<string | undefined>();
 
   // ── timezone ──
   const [timezone, setTimezone] = useState("");
@@ -201,30 +211,49 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
     setEditingSlotIndex(null);
     setPendingDays([]);
     setPendingDateRange(null);
+    setPendingStartTime(undefined);
+    setPendingEndTime(undefined);
     if (availabilityType === "Recurring Weekly") {
       setIsRecurringModalOpen(true);
     } else {
       setIsSpecificDatesModalOpen(true);
     }
   };
-
   const handleEditSlotDays = (index: number) => {
     setEditingSlotIndex(index);
     if (availabilityType === "Recurring Weekly") {
       setPendingDays(recurringSlots[index].days);
+      setPendingStartTime(recurringSlots[index].timeRange.start);
+      setPendingEndTime(recurringSlots[index].timeRange.end);
       setIsRecurringModalOpen(true);
     } else {
       setPendingDateRange(specificSlots[index].dateRange);
+      setPendingStartTime(specificSlots[index].timeRange.start);
+      setPendingEndTime(specificSlots[index].timeRange.end);
       setIsSpecificDatesModalOpen(true);
     }
   };
 
   const handleEditSlotTime = (index: number) => {
     setEditingSlotIndex(index);
+    if (availabilityType === "Recurring Weekly") {
+      setPendingDays(recurringSlots[index].days);
+      setPendingStartTime(recurringSlots[index].timeRange.start);
+      setPendingEndTime(recurringSlots[index].timeRange.end);
+    } else {
+      setPendingDateRange(specificSlots[index].dateRange);
+      setPendingStartTime(specificSlots[index].timeRange.start);
+      setPendingEndTime(specificSlots[index].timeRange.end);
+    }
     setIsTimePickerModalOpen(true);
   };
 
   const handleDaysApply = (days: string[]) => {
+    const dayRemoved = pendingDays.some(d => !days.includes(d));
+    if (dayRemoved) {
+      setPendingStartTime(undefined);
+      setPendingEndTime(undefined);
+    }
     setPendingDays(days);
     setIsRecurringModalOpen(false);
     setIsTimePickerModalOpen(true);
@@ -303,7 +332,7 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 px-[16px] pt-[16px] overflow-y-auto">
+      <div className="flex-1 px-[16px] pt-[16px] overflow-y-auto availability-scrollbar">
         <div className="flex flex-col gap-[12px] mb-[24px]">
           <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
             Set your availability
@@ -320,7 +349,7 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
             className="bg-[#faf7fe] rounded-[12px] p-[24px] flex items-center justify-between shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] border border-[#e0dce3] cursor-pointer"
           >
             <div className="flex items-center gap-[6px]">
-              <CalendarIcon className="w-[24px] h-[24px] text-[#656268]" />
+              <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
               <span className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px]">
                 {availabilityType === "Recurring Weekly" ? "Recurring days" : availabilityType === "Specific Dates" ? "Specific dates" : "availability type"}
               </span>
@@ -354,33 +383,33 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
             {/* Slot cards separated by NeumorphicDivider */}
             {availabilityType === "Recurring Weekly"
               ? recurringSlots.map((slot, i) => (
-                  <React.Fragment key={i}>
-                    <SlotCard
-                      label="Available days"
-                      daysText={getRecurringDaysText(slot.days)}
-                      timeText={`${slot.timeRange.start} – ${slot.timeRange.end}`}
-                      isRecurring={true}
-                      onEditDays={() => handleEditSlotDays(i)}
-                      onEditTime={() => handleEditSlotTime(i)}
-                      onDelete={() => setRecurringSlots(prev => prev.filter((_, idx) => idx !== i))}
-                    />
-                    {i < recurringSlots.length - 1 && <NeumorphicDivider />}
-                  </React.Fragment>
-                ))
+                <React.Fragment key={i}>
+                  <SlotCard
+                    label="Available days"
+                    daysText={getRecurringDaysText(slot.days)}
+                    timeText={`${slot.timeRange.start} – ${slot.timeRange.end}`}
+                    isRecurring={true}
+                    onEditDays={() => handleEditSlotDays(i)}
+                    onEditTime={() => handleEditSlotTime(i)}
+                    onDelete={() => setRecurringSlots(prev => prev.filter((_, idx) => idx !== i))}
+                  />
+                  {i < recurringSlots.length - 1 && <NeumorphicDivider />}
+                </React.Fragment>
+              ))
               : specificSlots.map((slot, i) => (
-                  <React.Fragment key={i}>
-                    <SlotCard
-                      label="Available dates"
-                      daysText={getSpecificDatesText(slot.dateRange)}
-                      timeText={`${slot.timeRange.start} – ${slot.timeRange.end}`}
-                      isRecurring={false}
-                      onEditDays={() => handleEditSlotDays(i)}
-                      onEditTime={() => handleEditSlotTime(i)}
-                      onDelete={() => setSpecificSlots(prev => prev.filter((_, idx) => idx !== i))}
-                    />
-                    {i < specificSlots.length - 1 && <NeumorphicDivider />}
-                  </React.Fragment>
-                ))
+                <React.Fragment key={i}>
+                  <SlotCard
+                    label="Available dates"
+                    daysText={getSpecificDatesText(slot.dateRange)}
+                    timeText={`${slot.timeRange.start} – ${slot.timeRange.end}`}
+                    isRecurring={false}
+                    onEditDays={() => handleEditSlotDays(i)}
+                    onEditTime={() => handleEditSlotTime(i)}
+                    onDelete={() => setSpecificSlots(prev => prev.filter((_, idx) => idx !== i))}
+                  />
+                  {i < specificSlots.length - 1 && <NeumorphicDivider />}
+                </React.Fragment>
+              ))
             }
 
             {/* Add more hours */}
@@ -407,9 +436,8 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
           <button
             onClick={() => onNext && onNext({ type: availabilityType, recurringSlots, specificSlots, timezone })}
             disabled={!hasSlots}
-            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${
-              hasSlots ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
-            }`}
+            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${hasSlots ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              }`}
           >
             Next
           </button>
@@ -433,6 +461,7 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
         isOpen={isRecurringModalOpen}
         onClose={() => setIsRecurringModalOpen(false)}
         onApply={handleDaysApply}
+        initialDays={pendingDays}
         disabledDays={usedDaysExcludingEdited}
       />
 
@@ -446,6 +475,8 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
         isOpen={isTimePickerModalOpen}
         onClose={() => setIsTimePickerModalOpen(false)}
         onApply={handleTimeApply}
+        initialStartTime={pendingStartTime}
+        initialEndTime={pendingEndTime}
       />
 
       <TimezoneModal
