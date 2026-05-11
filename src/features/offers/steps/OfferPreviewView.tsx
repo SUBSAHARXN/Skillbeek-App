@@ -11,6 +11,7 @@ import { SkillsEditModal } from "../components/SkillsEditModal";
 import { ReviewSelectionModal } from "../components/ReviewSelectionModal";
 import { EditRateModal } from "../components/EditRateModal";
 import { DeleteOfferModal } from "../components/DeleteOfferModal";
+import { GoLiveModal } from "../components/GoLiveModal";
 import { AvailabilityData, getRecurringDaysText, getSpecificDatesText } from "./AvailabilityView";
 
 function TimeCreditIcon({ className }: { className?: string }) {
@@ -139,6 +140,7 @@ export function OfferPreviewView({
   const [localTimeCreditRate, setLocalTimeCreditRate] = useState<number>(initialRate);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isGoLiveModalOpen, setIsGoLiveModalOpen] = useState(false);
 
   const [localSessionDuration, setLocalSessionDuration] = useState<{ type: "preset" | "custom"; minutes: number }>(sessionDuration);
   const [isDurationModalOpen, setIsDurationModalOpen] = useState(false);
@@ -537,7 +539,7 @@ export function OfferPreviewView({
         {/* Gradient Overlay for Floating Effect */}
         <div className="w-full h-[156px] bg-gradient-to-t from-[#faf7fe] via-[#faf7fe]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-auto">
           <button
-            onClick={onPublish}
+            onClick={() => setIsGoLiveModalOpen(true)}
             className="w-full max-w-[352px] h-[48px] bg-[#171519] rounded-[16px] flex items-center justify-center hover:bg-[#2f2c32] transition-colors shadow-[0px_4px_12px_rgba(0,0,0,0.15)]"
           >
             <span className="font-['Nunito'] font-bold text-[#fbf6ff] text-[16px]">
@@ -619,6 +621,16 @@ export function OfferPreviewView({
               // Handle actual deletion logic here if needed
               setIsDeleteModalOpen(false);
               if (onBack) onBack();
+            }}
+          />
+        )}
+        {isGoLiveModalOpen && (
+          <GoLiveModal
+            isOpen={isGoLiveModalOpen}
+            onClose={() => setIsGoLiveModalOpen(false)}
+            onViewLive={() => {
+              console.log("View live page clicked");
+              setIsGoLiveModalOpen(false);
             }}
           />
         )}
