@@ -12,7 +12,9 @@ interface SkillsEditModalProps {
   initialTags: Record<string, string[]>;
   initialRoles: Record<string, string>;
   initialProficiencies: Record<string, string>;
+  initialActiveSkillForTags?: string;
   onApply: (skills: string[], tags: Record<string, string[]>, roles: Record<string, string>, proficiencies: Record<string, string>) => void;
+  onApplyTagsOnly?: (skill: string, tags: string[]) => void;
 }
 
 const SKILL_CATEGORIES = [
@@ -52,7 +54,9 @@ export function SkillsEditModal({
   initialTags,
   initialRoles,
   initialProficiencies,
-  onApply
+  initialActiveSkillForTags,
+  onApply,
+  onApplyTagsOnly
 }: SkillsEditModalProps) {
   const [step, setStep] = useState<"skills" | "roles" | "levels">("skills");
   const [selectedSkills, setSelectedSkills] = useState<string[]>(initialSkills);
@@ -66,6 +70,18 @@ export function SkillsEditModal({
   const [activeSkillForTags, setActiveSkillForTags] = useState<string>("");
   const [tempTags, setTempTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+
+  React.useEffect(() => {
+    if (initialActiveSkillForTags && isOpen) {
+      setActiveSkillForTags(initialActiveSkillForTags);
+      setTempTags(initialTags[initialActiveSkillForTags] || []);
+      setTagInput("");
+      // Small delay to ensure parent animation context is ready for the child pop-up
+      setTimeout(() => {
+        setIsTagModalOpen(true);
+      }, 50);
+    }
+  }, [initialActiveSkillForTags, isOpen, initialTags]);
 
   const levels = type === "offered" ? OFFERED_LEVELS : WANTED_LEVELS;
 
@@ -107,6 +123,13 @@ export function SkillsEditModal({
 
   const handleApplyTags = () => {
     if (tempTags.length === 0) return; // Must have at least 1 tag
+    
+    if (onApplyTagsOnly) {
+      onApplyTagsOnly(activeSkillForTags, tempTags);
+      onClose();
+      return;
+    }
+
     if (!selectedSkills.includes(activeSkillForTags)) {
       setSelectedSkills(prev => [...prev, activeSkillForTags]);
     }
@@ -115,6 +138,13 @@ export function SkillsEditModal({
   };
 
   const handleClearSkillTags = () => {
+    if (onApplyTagsOnly) {
+      // If we are in tags-only mode, "Remove skill" should actually remove it from the parent's state
+      onApplyTagsOnly(activeSkillForTags, []); // Sending empty array means removal
+      onClose();
+      return;
+    }
+
     setSelectedSkills(prev => prev.filter(s => s !== activeSkillForTags));
     setTags(prev => {
       const next = { ...prev };
@@ -151,252 +181,274 @@ export function SkillsEditModal({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 z-40 bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
-          />
+          {/* Backdrop - Only show if not editing tags directly */}
+          {!initialActiveSkillForTags && (
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={onClose}
+              className="absolute inset-0 z-40 bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
+            />
+          )}
 
-          {/* Bottom Sheet */}
-          <motion.div
-            key="bottom-sheet"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] h-[85%]"
-          >
-            <div className="w-full flex flex-col px-0 h-full">
-              {/* Drag Handle */}
-              <div className="w-full flex justify-center px-[16px] shrink-0">
-                <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
-              </div>
+          {/* Bottom Sheet - Only show if not editing tags directly */}
+          {!initialActiveSkillForTags && (
+            <motion.div
+              key="bottom-sheet"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className={`absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] h-[85%] ${isTagModalOpen ? "opacity-0 pointer-events-none" : ""}`}
+            >
+              <div className="w-full flex flex-col px-0 h-full">
+                {/* Drag Handle */}
+                <div className="w-full flex justify-center px-[16px] shrink-0">
+                  <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
+                </div>
 
-              {/* Header */}
-              <div className="w-full flex items-center justify-center relative mb-[16px] h-[24px] shrink-0 px-[16px]">
-                <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
-                  {step === "skills" ? `Edit ${type === "offered" ? "Offered" : "Wanted"} Skills` : 
-                   step === "roles" ? (type === "offered" ? "How will you share this skill" : "Who are you looking for") : 
-                   "Set Proficiency"}
-                </h3>
-                <button
-                  onClick={onClose}
-                  className="absolute right-[16px] w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-gray-200 transition-colors"
-                >
-                  <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
-                </button>
-              </div>
-
-              {/* Divider */}
-              <div className="w-full px-[16px] mb-[12px] shrink-0">
-                <div className="w-full h-[1px] bg-[#e0dce3]" />
-              </div>
-
-              {/* Content Area */}
-              <div className="w-full flex-1 overflow-y-auto flex flex-col gap-[16px] pb-[24px] pr-0 modal-scrollbar">
-                {step === "skills" ? (
-                  <div className="flex flex-col gap-[20px] px-[16px]">
-                    {/* Search */}
-                    <div className="w-full h-[56px] bg-[#faf7fe] rounded-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] flex items-center px-[12px]">
-                      <div className="flex items-center gap-[8px] flex-1">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a09da3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="11" cy="11" r="8"></circle>
-                          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                        <input
-                          type="text"
-                          placeholder="Search Skills"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="flex-1 bg-transparent border-none outline-none font-['Nunito'] font-medium text-[16px] tracking-[0.1px] text-[#171519] placeholder-[#a09da3]"
-                        />
-                      </div>
+                {/* Header */}
+                {!isTagModalOpen && (
+                  <>
+                    <div className="w-full flex items-center justify-center relative mb-[16px] h-[24px] shrink-0 px-[16px]">
+                      <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
+                        {step === "skills" ? `Edit ${type === "offered" ? "Offered" : "Wanted"} Skills` : 
+                         step === "roles" ? (type === "offered" ? "How will you share this skill" : "Who are you looking for") : 
+                         "Set Proficiency"}
+                      </h3>
+                      <button
+                        onClick={onClose}
+                        className="absolute right-[16px] w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-gray-200 transition-colors"
+                      >
+                        <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
+                      </button>
                     </div>
 
-                    {/* Selection Counter */}
-                    {selectedSkills.length > 0 && (
-                      <div className="w-full bg-[#faf7fe] rounded-[12px] p-[10px] flex items-center">
-                        <p className="font-['Nunito'] font-bold text-[20px] tracking-[-0.2px] text-[#171519] leading-[28px]">
-                          <span>{selectedSkills.length}</span>
-                          <span>/3 Selected</span>
-                        </p>
-                      </div>
-                    )}
+                    {/* Divider */}
+                    <div className="w-full px-[16px] mb-[12px] shrink-0">
+                      <div className="w-full h-[1px] bg-[#e0dce3]" />
+                    </div>
+                  </>
+                )}
 
-                    {/* Categories */}
-                    {SKILL_CATEGORIES.map(category => {
-                      const filteredSkills = category.skills.filter(s =>
-                        s.toLowerCase().includes(searchQuery.toLowerCase())
-                      );
-                      if (filteredSkills.length === 0) return null;
-                      return (
-                        <div key={category.name} className="flex flex-col gap-[12px]">
-                          <h3 className="font-['Nunito'] font-bold text-[#656268] text-[14px] uppercase tracking-wider">
-                            {category.name}
-                          </h3>
-                          <div className="flex flex-col gap-[8px]">
-                            {filteredSkills.map(skill => {
-                              const isSelected = selectedSkills.includes(skill);
-                              const isDisabled = !isSelected && selectedSkills.length >= 3;
-                              return (
-                                <div
-                                  key={skill}
-                                  onClick={() => !isDisabled && handleToggleSkill(skill)}
-                                  className={`w-full bg-[#faf7fe] flex items-center justify-between p-[12px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] transition-colors ${
-                                    isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer hover:bg-[#f0edf4]"
-                                  }`}
-                                >
-                                  <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] pl-[8px]">
-                                    {skill}
-                                  </span>
-                                  <CustomAnimatedCheckbox checked={isSelected} disabled={isDisabled} />
-                                </div>
-                              );
-                            })}
+                {/* Content Area */}
+                {!isTagModalOpen && (
+                  <div className="w-full flex-1 overflow-y-auto flex flex-col gap-[16px] pb-[24px] pr-0 modal-scrollbar">
+                    {step === "skills" ? (
+                      <div className="flex flex-col gap-[20px] px-[16px]">
+                        {/* Search */}
+                        <div className="w-full h-[56px] bg-[#faf7fe] rounded-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] flex items-center px-[12px]">
+                          <div className="flex items-center gap-[8px] flex-1">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a09da3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="11" cy="11" r="8"></circle>
+                              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input
+                              type="text"
+                              placeholder="Search Skills"
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              className="flex-1 bg-transparent border-none outline-none font-['Nunito'] font-medium text-[16px] tracking-[0.1px] text-[#171519] placeholder-[#a09da3]"
+                            />
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                ) : step === "roles" ? (
-                  <div className="flex flex-col gap-[24px] px-[16px]">
-                    {selectedSkills.map(skill => (
-                      <div key={skill} className="flex flex-col gap-[12px]">
-                        <h3 className="font-['Nunito'] font-bold text-[#171519] text-[18px]">
-                          {skill}
-                        </h3>
-                        <div className="flex flex-col gap-[8px]">
-                          {["Mentor", "Collaborator", "Reviewer", "Mentee / Learner"].map(role => {
-                            const isSelected = roles[skill] === role;
-                            return (
-                              <div
-                                key={role}
-                                onClick={() => setRoles(prev => ({ ...prev, [skill]: role }))}
-                                className="w-full bg-[#faf7fe] flex items-center justify-between p-[12px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#f0edf4] transition-colors"
-                              >
-                                <span className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] pl-[8px] text-[#171519]`}>
-                                  {role}
-                                </span>
-                                <CustomAnimatedRadioButton checked={isSelected} />
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-[24px] px-[16px]">
-                    {selectedSkills.map(skill => (
-                      <div key={skill} className="flex flex-col gap-[12px]">
-                        <h3 className="font-['Nunito'] font-bold text-[#171519] text-[18px]">
-                          {skill}
-                        </h3>
-                        <div className="flex flex-col gap-[8px]">
-                          {levels.map(level => {
-                            const isSelected = proficiencies[skill] === level;
-                            return (
-                              <div
-                                key={level}
-                                onClick={() => setProficiencies(prev => ({ ...prev, [skill]: level }))}
-                                className="w-full bg-[#faf7fe] flex items-center justify-between p-[12px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#f0edf4] transition-colors"
-                              >
-                                <span className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] pl-[8px] text-[#171519]`}>
-                                  {level}
-                                </span>
-                                <CustomAnimatedRadioButton checked={isSelected} />
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
 
-              {/* Action Buttons */}
-              <div className="w-full flex items-center justify-between mt-[16px] shrink-0 px-[16px]">
-                {step === "skills" ? (
-                  <>
-                    <button
-                      onClick={() => { setSelectedSkills([]); setTags({}); }}
-                      className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
-                    >
-                      <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">
-                        Clear all
-                      </span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (selectedSkills.length > 0) handleApplySkills();
-                      }}
-                      className={`px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center transition-colors ${
-                        selectedSkills.length > 0 ? "bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
-                      }`}
-                    >
-                      <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
-                        Next
-                      </span>
-                    </button>
-                  </>
-                ) : step === "roles" ? (
-                  <>
-                    <button
-                      onClick={() => setStep("skills")}
-                      className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
-                    >
-                      <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">
-                        Back
-                      </span>
-                    </button>
-                    <button
-                      onClick={handleApplyRoles}
-                      className="px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center transition-colors bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#2f2c32]"
-                    >
-                      <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
-                        Next
-                      </span>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => setStep("roles")}
-                      className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
-                    >
-                      <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">
-                        Back
-                      </span>
-                    </button>
-                    <button
-                      onClick={handleApplyAll}
-                      className="px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center transition-colors bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#2f2c32]"
-                    >
-                      <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
-                        Apply
-                      </span>
-                    </button>
-                  </>
+                        {/* Selection Counter */}
+                        {selectedSkills.length > 0 && (
+                          <div className="w-full bg-[#faf7fe] rounded-[12px] p-[10px] flex items-center">
+                            <p className="font-['Nunito'] font-bold text-[20px] tracking-[-0.2px] text-[#171519] leading-[28px]">
+                              <span>{selectedSkills.length}</span>
+                              <span>/3 Selected</span>
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Categories */}
+                        {SKILL_CATEGORIES.map(category => {
+                          const filteredSkills = category.skills.filter(s =>
+                            s.toLowerCase().includes(searchQuery.toLowerCase())
+                          );
+                          if (filteredSkills.length === 0) return null;
+                          return (
+                            <div key={category.name} className="flex flex-col gap-[12px]">
+                              <h3 className="font-['Nunito'] font-bold text-[#656268] text-[14px] uppercase tracking-wider">
+                                {category.name}
+                              </h3>
+                              <div className="flex flex-col gap-[8px]">
+                                {filteredSkills.map(skill => {
+                                  const isSelected = selectedSkills.includes(skill);
+                                  const isDisabled = !isSelected && selectedSkills.length >= 3;
+                                  return (
+                                    <div
+                                      key={skill}
+                                      onClick={() => !isDisabled && handleToggleSkill(skill)}
+                                      className={`w-full bg-[#faf7fe] flex items-center justify-between p-[12px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.15)] transition-colors ${
+                                        isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer hover:bg-[#f0edf4]"
+                                      }`}
+                                    >
+                                      <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] pl-[8px]">
+                                        {skill}
+                                      </span>
+                                      <CustomAnimatedCheckbox checked={isSelected} disabled={isDisabled} />
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : step === "roles" ? (
+                      <div className="flex flex-col gap-[24px] px-[16px]">
+                        {selectedSkills.map(skill => (
+                          <div key={skill} className="flex flex-col gap-[12px]">
+                            <h3 className="font-['Nunito'] font-bold text-[#171519] text-[18px]">
+                              {skill}
+                            </h3>
+                            <div className="flex flex-col gap-[8px]">
+                              {["Mentor", "Collaborator", "Reviewer", "Mentee / Learner"].map(role => {
+                                const isSelected = roles[skill] === role;
+                                return (
+                                  <div
+                                    key={role}
+                                    onClick={() => setRoles(prev => ({ ...prev, [skill]: role }))}
+                                    className="w-full bg-[#faf7fe] flex items-center justify-between p-[12px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.15)] cursor-pointer hover:bg-[#f0edf4] transition-colors"
+                                  >
+                                    <span className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] pl-[8px] text-[#171519]`}>
+                                      {role}
+                                    </span>
+                                    <CustomAnimatedRadioButton checked={isSelected} />
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-[24px] px-[16px]">
+                        {selectedSkills.map(skill => (
+                          <div key={skill} className="flex flex-col gap-[12px]">
+                            <h3 className="font-['Nunito'] font-bold text-[#171519] text-[18px]">
+                              {skill}
+                            </h3>
+                            <div className="flex flex-col gap-[8px]">
+                              {levels.map(level => {
+                                const isSelected = proficiencies[skill] === level;
+                                return (
+                                  <div
+                                    key={level}
+                                    onClick={() => setProficiencies(prev => ({ ...prev, [skill]: level }))}
+                                    className="w-full bg-[#faf7fe] flex items-center justify-between p-[12px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.15)] cursor-pointer hover:bg-[#f0edf4] transition-colors"
+                                  >
+                                    <span className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] pl-[8px] text-[#171519]`}>
+                                      {level}
+                                    </span>
+                                    <CustomAnimatedRadioButton checked={isSelected} />
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                {!isTagModalOpen && (
+                  <div className="w-full flex items-center justify-between mt-[16px] shrink-0 px-[16px]">
+                    {step === "skills" ? (
+                      <>
+                        <button
+                          onClick={() => { setSelectedSkills([]); setTags({}); }}
+                          className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
+                        >
+                          <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">
+                            Clear all
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (selectedSkills.length > 0) handleApplySkills();
+                          }}
+                          className={`px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center transition-colors ${
+                            selectedSkills.length > 0 ? "bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+                          }`}
+                        >
+                          <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
+                            Next
+                          </span>
+                        </button>
+                      </>
+                    ) : step === "roles" ? (
+                      <>
+                        <button
+                          onClick={() => setStep("skills")}
+                          className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
+                        >
+                          <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">
+                            Back
+                          </span>
+                        </button>
+                        <button
+                          onClick={handleApplyRoles}
+                          className="px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center transition-colors bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#2f2c32]"
+                        >
+                          <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
+                            Next
+                          </span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => setStep("roles")}
+                          className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
+                        >
+                          <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">
+                            Back
+                          </span>
+                        </button>
+                        <button
+                          onClick={handleApplyAll}
+                          className="px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center transition-colors bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#2f2c32]"
+                        >
+                          <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
+                            Apply
+                          </span>
+                        </button>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          )}
 
           {/* Add Tags Pop-up Modal */}
           {isTagModalOpen && (
             <>
               {/* Overlay for Tag Modal */}
-              <div
-                className="absolute inset-0 z-[60] bg-[#2f2c32]/26 backdrop-blur-[4px] transition-opacity duration-300"
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-[60] bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
                 onClick={() => setIsTagModalOpen(false)}
               />
               {/* Tag Bottom Sheet */}
-              <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] rounded-t-[24px] flex flex-col pt-[8px] pb-[44px] z-[70] transition-transform duration-300">
+              <motion.div
+                key={`tag-modal-${activeSkillForTags}`}
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="absolute bottom-0 left-0 w-full bg-[#faf7fe] rounded-t-[24px] flex flex-col pt-[8px] pb-[44px] z-[70]"
+              >
                 <div className="w-full flex flex-col items-center gap-[32px]">
                   {/* Header Section */}
                   <div className="w-full px-[16px] flex flex-col gap-[16px] items-center">
@@ -476,7 +528,7 @@ export function SkillsEditModal({
                     </button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </>
           )}
         </>

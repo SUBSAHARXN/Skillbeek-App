@@ -198,6 +198,10 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
     ? remainingDays.length > 0
     : true;
 
+  const disabledDateRangesExcludingEdited = specificSlots
+    .filter((_, i) => i !== editingSlotIndex)
+    .map(s => s.dateRange);
+
   const timezoneLabel = timezone.split("/").slice(1).join(" ").replace(/_/g, " ") || timezone;
 
   // ── handlers ──
@@ -463,6 +467,7 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
         isOpen={isSpecificDatesModalOpen}
         onClose={() => setIsSpecificDatesModalOpen(false)}
         onApply={handleDateRangeApply}
+        disabledRanges={disabledDateRangesExcludingEdited}
       />
 
       <TimePickerModal

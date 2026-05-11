@@ -45,7 +45,17 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
 
     const msSel = toMs(sel);
     if (msSel === null) return;
-    if (msSel > (toMs(maxDate) || Infinity) || msSel < (toMs(today) || 0)) return; // Disabled
+    
+    // Check built-in limits (today/90 days)
+    if (msSel > (toMs(maxDate) || Infinity) || msSel < (toMs(today) || 0)) return;
+    
+    // Check disabled ranges (already selected)
+    const isAlreadySelected = disabledRanges?.some(range => {
+      const startMs = range.start.getTime();
+      const endMs = range.end.getTime();
+      return msSel >= startMs && msSel <= endMs;
+    });
+    if (isAlreadySelected) return;
 
     if (mode === "single") {
       setStartDate(sel);
@@ -78,9 +88,21 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
     const thisDate = new Date(year, month, day);
     thisDate.setHours(0, 0, 0, 0);
     const ms = toMs(thisDate);
-    if (ms === null) return { isDisabled: true, isStart: false, isEnd: false, isMid: false };
+    if (ms === null) return { isDisabled: true, isStart: false, isEnd: false, isMid: false, isAlreadySelected: false };
 
-    const isDisabled = ms > (toMs(maxDate) || Infinity) || ms < (toMs(today) || 0);
+    const isOutOfRange = ms > (toMs(maxDate) || Infinity) || ms < (toMs(today) || 0);
+    
+    const isAlreadySelected = disabledRanges?.some(range => {
+      const startMs = range.start.getTime();
+      const endMs = range.end.getTime();
+      return ms >= startMs && ms <= endMs;
+    }) || false;
+
+    const isAlreadyStart = disabledRanges?.some(range => sameDay(thisDate, range.start)) || false;
+    const isAlreadyEnd = disabledRanges?.some(range => sameDay(thisDate, range.end)) || false;
+    const isAlreadyMid = isAlreadySelected && !isAlreadyStart && !isAlreadyEnd;
+
+    const isDisabled = isOutOfRange || isAlreadySelected;
     
     // Sort visually so start is always left and end is right
     const rStart = startDate && endDate && (toMs(startDate) || 0) > (toMs(endDate) || 0) ? endDate : startDate;
@@ -90,7 +112,7 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
     const isEnd = rEnd && sameDay(thisDate, rEnd);
     const isMid = rStart && rEnd && ms > (toMs(rStart) || 0) && ms < (toMs(rEnd) || 0);
 
-    return { isDisabled, isStart, isEnd, isMid };
+    return { isDisabled, isStart, isEnd, isMid, isAlreadySelected, isAlreadyStart, isAlreadyEnd, isAlreadyMid };
   };
 
   const hasSelection = startDate !== null; // Active on ANY selection, doesn't need to be a full range
@@ -188,16 +210,18 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
                         {blanks.map((_, i) => <div key={`blank-${idx}-${i}`} className="h-[44px]" />)}
                         
                         {days.map((day) => {
-                          const { isDisabled, isStart, isEnd, isMid } = getDayClass(year, month, day);
+                          const { isDisabled, isStart, isEnd, isMid, isAlreadySelected, isAlreadyStart, isAlreadyEnd, isAlreadyMid } = getDayClass(year, month, day);
 
                           // Logic for text and inner circle
                           let textClass = "text-[#171519]";
                           let innerCircleClass = "bg-transparent";
-                          if (isDisabled) {
+                          if (isDisabled && !isAlreadySelected) {
                             textClass = "text-[#c0bcc3]";
                           } else if (isStart || isEnd) {
                             textClass = "text-[#f0edf4]";
                             innerCircleClass = "bg-[#b7812f]";
+                          } else if (isAlreadySelected) {
+                            textClass = "text-[#171519]/50";
                           }
 
                           return (
@@ -206,7 +230,10 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
                               className={`relative h-[44px] flex items-center justify-center ${isDisabled ? "cursor-default pointer-events-none" : "cursor-pointer"}`}
                               onClick={() => handleDayClick(year, month, day)}
                             >
-                              {/* Background for range */}
+                              {/* Background for already selected range (previously saved) - solid rectangle fill */}
+                              {isAlreadySelected && <div className="absolute inset-y-0 w-full bg-[#b7812f]/10" />}
+
+                              {/* Background for active selection range */}
                               {isMid && <div className="absolute inset-y-0 w-full bg-[#f4dcbf]" />}
                               {isStart && !isEnd && (startDate && endDate) && <div className="absolute inset-y-0 right-0 w-[50%] bg-[#f4dcbf]" />}
                               {isEnd && !isStart && (startDate && endDate) && <div className="absolute inset-y-0 left-0 w-[50%] bg-[#f4dcbf]" />}

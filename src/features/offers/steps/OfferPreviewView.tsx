@@ -75,7 +75,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full min-w-0 bg-[#faf7fe] rounded-[12px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]">
+    <div className="w-full min-w-0 bg-[#faf7fe] rounded-[12px] px-[16px] py-[16px] flex flex-col gap-[12px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]">
       <div className="flex items-center justify-between">
         <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px]">
           {title}
@@ -83,7 +83,7 @@ function SectionCard({
         {onEdit && (
           <button
             onClick={onEdit}
-            className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] px-[16px] py-[12px] -mr-[16px] hover:text-[#49464c] transition-colors"
+            className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] py-[12px] hover:text-[#49464c] transition-colors"
           >
             Edit
           </button>
@@ -129,11 +129,9 @@ export function OfferPreviewView({
   // Availability editing state
   const [isEditAvailabilityOpen, setIsEditAvailabilityOpen] = useState(false);
 
-  // Skills editing state
-  const [skillsEditModal, setSkillsEditModal] = useState<{ open: boolean; type: "offered" | "wanted" }>({
-    open: false,
-    type: "offered"
-  });
+  const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
+  const [skillsModalType, setSkillsModalType] = useState<"offered" | "wanted">("offered");
+  const [activeSkillForTags, setActiveSkillForTags] = useState<string | undefined>(undefined);
 
   const [reviewSelectionModal, setReviewSelectionModal] = useState<{ open: boolean; type: "offered" | "wanted" }>({
     open: false,
@@ -141,11 +139,41 @@ export function OfferPreviewView({
   });
 
   const handleEditSkills = (type: "offered" | "wanted") => {
-    setSkillsEditModal({ open: true, type });
+    setSkillsModalType(type);
+    setActiveSkillForTags(undefined);
+    setIsSkillsModalOpen(true);
+  };
+
+  const handleEditTagsFromReview = (skill: string) => {
+    setReviewSelectionModal({ ...reviewSelectionModal, open: false });
+    setSkillsModalType(reviewSelectionModal.type as "offered" | "wanted");
+    setActiveSkillForTags(skill);
+    setIsSkillsModalOpen(true);
+  };
+
+  const handleApplyTagsFromReview = (skill: string, tags: string[]) => {
+    const isOffered = skillsModalType === "offered";
+    if (tags.length === 0) {
+      // Remove skill
+      if (isOffered) {
+        setLocalReviewSkills(prev => prev.filter(s => s !== skill));
+      } else {
+        setLocalReceiveSkills(prev => prev.filter(s => s !== skill));
+      }
+    } else {
+      // Update tags
+      if (isOffered) {
+        setLocalReviewTags(prev => ({ ...prev, [skill]: tags }));
+      } else {
+        setLocalReceiveTags(prev => ({ ...prev, [skill]: tags }));
+      }
+    }
+    setIsSkillsModalOpen(false);
+    setReviewSelectionModal(prev => ({ ...prev, open: true }));
   };
 
   const handleApplySkillsUpdate = (skills: string[], tags: Record<string, string[]>, roles: Record<string, string>, profs: Record<string, string>) => {
-    if (skillsEditModal.type === "offered") {
+    if (skillsModalType === "offered") {
       setLocalReviewSkills(skills);
       setLocalReviewTags(tags);
       setLocalReviewRoles(roles);
@@ -323,31 +351,34 @@ export function OfferPreviewView({
                   const extraTags = firstTags.length - 2;
 
                   return (
-                    <div className="flex items-start gap-[16px]">
+                    <div
+                      onClick={() => setReviewSelectionModal({ open: true, type: "offered" })}
+                      className="flex items-start gap-[16px] cursor-pointer"
+                    >
                       <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
                       <div className="flex-1 flex flex-col gap-[16px]">
                         <div className="flex items-center gap-[8px]">
-                          <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
+                          <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
                             {firstSkill}
                           </span>
                           <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
                             <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
-                              {localReviewRoles[firstSkill] ? `${localReviewRoles[firstSkill]} • ` : ""}{formatProficiency(localReviewProficiencies[firstSkill])}
+                              {formatProficiency(localReviewProficiencies[firstSkill])}
                             </span>
                           </div>
                         </div>
 
                         {firstTags.length > 0 && (
-                          <div className="flex flex-wrap gap-[6px]">
+                          <div className="flex flex-nowrap items-center gap-[6px] overflow-hidden">
                             {displayedTags.map(tag => (
-                              <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
-                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] whitespace-nowrap">
+                              <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0 max-w-[100px]">
+                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] truncate block">
                                   {tag}
                                 </span>
                               </div>
                             ))}
                             {extraTags > 0 && (
-                              <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
+                              <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0">
                                 <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
                                   +{extraTags}
                                 </span>
@@ -357,14 +388,11 @@ export function OfferPreviewView({
                         )}
 
                         {localReviewSkills.length > 1 && (
-                          <button
-                            onClick={() => setReviewSelectionModal({ open: true, type: "offered" })}
-                            className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start"
-                          >
+                          <div className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start">
                             <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
                               + {localReviewSkills.length - 1} more
                             </span>
-                          </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -396,31 +424,34 @@ export function OfferPreviewView({
                   const extraTags = firstTags.length - 2;
 
                   return (
-                    <div className="flex items-start gap-[16px]">
+                    <div
+                      onClick={() => setReviewSelectionModal({ open: true, type: "wanted" })}
+                      className="flex items-start gap-[16px] cursor-pointer"
+                    >
                       <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
                       <div className="flex-1 flex flex-col gap-[16px]">
                         <div className="flex items-center gap-[8px]">
-                          <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
+                          <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
                             {firstSkill}
                           </span>
                           <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
                             <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
-                              {localReceiveRoles[firstSkill] ? `${localReceiveRoles[firstSkill]} • ` : ""}{formatProficiency(localReceiveProficiencies[firstSkill])}
+                              {formatProficiency(localReceiveProficiencies[firstSkill])}
                             </span>
                           </div>
                         </div>
 
                         {firstTags.length > 0 && (
-                          <div className="flex flex-wrap gap-[6px]">
+                          <div className="flex flex-nowrap items-center gap-[6px] overflow-hidden">
                             {displayedTags.map(tag => (
-                              <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
-                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] whitespace-nowrap">
+                              <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0 max-w-[100px]">
+                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] truncate block">
                                   {tag}
                                 </span>
                               </div>
                             ))}
                             {extraTags > 0 && (
-                              <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center">
+                              <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0">
                                 <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
                                   +{extraTags}
                                 </span>
@@ -430,14 +461,11 @@ export function OfferPreviewView({
                         )}
 
                         {localReceiveSkills.length > 1 && (
-                          <button
-                            onClick={() => setReviewSelectionModal({ open: true, type: "wanted" })}
-                            className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start"
-                          >
+                          <div className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start">
                             <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
                               + {localReceiveSkills.length - 1} more
                             </span>
-                          </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -572,16 +600,18 @@ export function OfferPreviewView({
             setIsEditAvailabilityOpen(false);
           }}
         />
-        {skillsEditModal.open && (
+        {isSkillsModalOpen && (
           <SkillsEditModal
-            isOpen={skillsEditModal.open}
-            onClose={() => setSkillsEditModal({ ...skillsEditModal, open: false })}
-            type={skillsEditModal.type}
-            initialSkills={skillsEditModal.type === "offered" ? localReviewSkills : localReceiveSkills}
-            initialTags={skillsEditModal.type === "offered" ? localReviewTags : localReceiveTags}
-            initialRoles={skillsEditModal.type === "offered" ? localReviewRoles : localReceiveRoles}
-            initialProficiencies={skillsEditModal.type === "offered" ? localReviewProficiencies : localReceiveProficiencies}
+            isOpen={isSkillsModalOpen}
+            onClose={() => setIsSkillsModalOpen(false)}
+            type={skillsModalType}
+            initialSkills={skillsModalType === "offered" ? localReviewSkills : localReceiveSkills}
+            initialTags={skillsModalType === "offered" ? localReviewTags : localReceiveTags}
+            initialRoles={skillsModalType === "offered" ? localReviewRoles : localReceiveRoles}
+            initialProficiencies={skillsModalType === "offered" ? localReviewProficiencies : localReceiveProficiencies}
+            initialActiveSkillForTags={activeSkillForTags}
             onApply={handleApplySkillsUpdate}
+            onApplyTagsOnly={activeSkillForTags ? handleApplyTagsFromReview : undefined}
           />
         )}
         <ReviewSelectionModal
@@ -593,6 +623,7 @@ export function OfferPreviewView({
           roles={reviewSelectionModal.type === "offered" ? localReviewRoles : localReceiveRoles}
           proficiencies={reviewSelectionModal.type === "offered" ? localReviewProficiencies : localReceiveProficiencies}
           onAddMore={() => handleEditSkills(reviewSelectionModal.type)}
+          onEditTags={handleEditTagsFromReview}
           onRemoveSkill={(skill) => {
             if (reviewSelectionModal.type === "offered") {
               setLocalReviewSkills(prev => prev.filter(s => s !== skill));

@@ -12,6 +12,7 @@ interface ReviewSelectionModalProps {
   proficiencies: Record<string, string>;
   onAddMore: () => void;
   onRemoveSkill: (skill: string) => void;
+  onEditTags: (skill: string) => void;
 }
 
 export function ReviewSelectionModal({
@@ -23,7 +24,8 @@ export function ReviewSelectionModal({
   roles,
   proficiencies,
   onAddMore,
-  onRemoveSkill
+  onRemoveSkill,
+  onEditTags
 }: ReviewSelectionModalProps) {
   const formatProficiency = (p: string) => {
     if (!p) return "Basic";
@@ -83,20 +85,21 @@ export function ReviewSelectionModal({
               <div className="flex flex-col gap-[24px] w-full max-h-[400px] overflow-y-auto pr-0 pb-[92px] modal-scrollbar">
                 {skills.map((skill, index) => {
                   const skillTags = tags[skill] || [];
-                  const displayedTags = skillTags.slice(0, 2);
-                  const extraTagsCount = skillTags.length - 2;
 
                   return (
                     <div key={skill} className="px-[16px]">
-                      <div className="bg-[#faf7fe] rounded-[16px] p-[16px] flex flex-col gap-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]">
+                      <div 
+                        onClick={() => onEditTags(skill)}
+                        className="bg-[#faf7fe] rounded-[16px] p-[16px] flex flex-col gap-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] cursor-pointer"
+                      >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-[12px]">
-                            <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px]">
+                            <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
                               {skill}
                             </span>
                             <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px]">
                               <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
-                                {roles[skill] ? `${roles[skill]} • ` : ""}{formatProficiency(proficiencies[skill])}
+                                {formatProficiency(proficiencies[skill])}
                               </span>
                             </div>
                           </div>
@@ -110,20 +113,13 @@ export function ReviewSelectionModal({
 
                         {skillTags.length > 0 && (
                           <div className="flex flex-wrap gap-[12px]">
-                            {displayedTags.map(tag => (
-                              <div key={tag} className="bg-[#f0edf4] px-[12px] py-[6px] rounded-[12px]">
+                            {skillTags.map(tag => (
+                              <div key={tag} className="bg-[#f0edf4] px-[12px] py-[12px] rounded-[12px]">
                                 <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
                                   {tag}
                                 </span>
                               </div>
                             ))}
-                            {extraTagsCount > 0 && (
-                              <div className="bg-[#f0edf4] px-[12px] py-[6px] rounded-[12px]">
-                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
-                                  +{extraTagsCount}
-                                </span>
-                              </div>
-                            )}
                           </div>
                         )}
                       </div>
