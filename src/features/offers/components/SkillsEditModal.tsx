@@ -10,8 +10,9 @@ interface SkillsEditModalProps {
   type: "offered" | "wanted";
   initialSkills: string[];
   initialTags: Record<string, string[]>;
+  initialRoles: Record<string, string>;
   initialProficiencies: Record<string, string>;
-  onApply: (skills: string[], tags: Record<string, string[]>, proficiencies: Record<string, string>) => void;
+  onApply: (skills: string[], tags: Record<string, string[]>, roles: Record<string, string>, proficiencies: Record<string, string>) => void;
 }
 
 const SKILL_CATEGORIES = [
@@ -49,12 +50,14 @@ export function SkillsEditModal({
   type,
   initialSkills,
   initialTags,
+  initialRoles,
   initialProficiencies,
   onApply
 }: SkillsEditModalProps) {
-  const [step, setStep] = useState<"skills" | "levels">("skills");
+  const [step, setStep] = useState<"skills" | "roles" | "levels">("skills");
   const [selectedSkills, setSelectedSkills] = useState<string[]>(initialSkills);
   const [tags, setTags] = useState<Record<string, string[]>>(initialTags);
+  const [roles, setRoles] = useState<Record<string, string>>(initialRoles);
   const [proficiencies, setProficiencies] = useState<Record<string, string>>(initialProficiencies);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -122,16 +125,25 @@ export function SkillsEditModal({
   };
 
   const handleApplySkills = () => {
+    const newRoles = { ...roles };
     const newProfs = { ...proficiencies };
+    const roleOptions = ["Mentor", "Collaborator", "Reviewer", "Mentee / Learner"];
+    
     selectedSkills.forEach(skill => {
+      if (!newRoles[skill]) newRoles[skill] = roleOptions[0];
       if (!newProfs[skill]) newProfs[skill] = levels[0];
     });
+    setRoles(newRoles);
     setProficiencies(newProfs);
+    setStep("roles");
+  };
+
+  const handleApplyRoles = () => {
     setStep("levels");
   };
 
   const handleApplyAll = () => {
-    onApply(selectedSkills, tags, proficiencies);
+    onApply(selectedSkills, tags, roles, proficiencies);
     onClose();
   };
 
@@ -167,7 +179,9 @@ export function SkillsEditModal({
               {/* Header */}
               <div className="w-full flex items-center justify-center relative mb-[16px] h-[24px] shrink-0 px-[16px]">
                 <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
-                  {step === "skills" ? `Edit ${type === "offered" ? "Offered" : "Wanted"} Skills` : "Set Proficiency"}
+                  {step === "skills" ? `Edit ${type === "offered" ? "Offered" : "Wanted"} Skills` : 
+                   step === "roles" ? (type === "offered" ? "How will you share this skill" : "Who are you looking for") : 
+                   "Set Proficiency"}
                 </h3>
                 <button
                   onClick={onClose}
@@ -248,6 +262,33 @@ export function SkillsEditModal({
                       );
                     })}
                   </div>
+                ) : step === "roles" ? (
+                  <div className="flex flex-col gap-[24px] px-[16px]">
+                    {selectedSkills.map(skill => (
+                      <div key={skill} className="flex flex-col gap-[12px]">
+                        <h3 className="font-['Nunito'] font-bold text-[#171519] text-[18px]">
+                          {skill}
+                        </h3>
+                        <div className="flex flex-col gap-[8px]">
+                          {["Mentor", "Collaborator", "Reviewer", "Mentee / Learner"].map(role => {
+                            const isSelected = roles[skill] === role;
+                            return (
+                              <div
+                                key={role}
+                                onClick={() => setRoles(prev => ({ ...prev, [skill]: role }))}
+                                className="w-full bg-[#faf7fe] flex items-center justify-between p-[12px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#f0edf4] transition-colors"
+                              >
+                                <span className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] pl-[8px] text-[#171519]`}>
+                                  {role}
+                                </span>
+                                <CustomAnimatedRadioButton checked={isSelected} />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="flex flex-col gap-[24px] px-[16px]">
                     {selectedSkills.map(skill => (
@@ -303,10 +344,29 @@ export function SkillsEditModal({
                       </span>
                     </button>
                   </>
-                ) : (
+                ) : step === "roles" ? (
                   <>
                     <button
                       onClick={() => setStep("skills")}
+                      className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
+                    >
+                      <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">
+                        Back
+                      </span>
+                    </button>
+                    <button
+                      onClick={handleApplyRoles}
+                      className="px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center transition-colors bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#2f2c32]"
+                    >
+                      <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
+                        Next
+                      </span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setStep("roles")}
                       className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
                     >
                       <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">

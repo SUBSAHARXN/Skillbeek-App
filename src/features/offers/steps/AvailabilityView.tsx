@@ -112,9 +112,6 @@ export function SlotCard({
       >
         <div className="flex items-center gap-[6px]">
           <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
-          <span className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px]">
-            {label}
-          </span>
         </div>
         <div className="flex items-center gap-[8px]">
           <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">
@@ -135,9 +132,6 @@ export function SlotCard({
       >
         <div className="flex items-center gap-[6px]">
           <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
-          <span className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px]">
-            Time
-          </span>
         </div>
         <div className="flex items-center gap-[8px]">
           <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">

@@ -24,8 +24,10 @@ import { OfferPreviewView } from "./features/offers/steps/OfferPreviewView";
 import { SplashView } from "./features/splash/SplashView";
 import { motion, AnimatePresence } from "framer-motion";
 import SkillbeekLoader from "./components/common/SkillbeekLoader";
+import { SkillRoleView } from "./features/offers/steps/SkillRoleView";
+import { PartnerRoleView } from "./features/offers/steps/PartnerRoleView";
 
-type ViewState = "splash" | "login" | "password" | "otp" | "otpInput" | "createPassword" | "offerCreate" | "offerTitle" | "offerDescription" | "offerAddSkill" | "skillSelect" | "skillReview" | "proficiencyLevels" | "exchangeDetails" | "receiveSkillsAdd" | "receiveSkillsSelect" | "receiveSkillsReview" | "partnerProficiency" | "timeCreditRate" | "availability" | "offerSettings" | "offerExpiration" | "sessionLength" | "offerPreview";
+type ViewState = "splash" | "login" | "password" | "otp" | "otpInput" | "createPassword" | "offerCreate" | "offerTitle" | "offerDescription" | "offerAddSkill" | "skillSelect" | "skillReview" | "skillRole" | "proficiencyLevels" | "exchangeDetails" | "receiveSkillsAdd" | "receiveSkillsSelect" | "receiveSkillsReview" | "partnerRole" | "partnerProficiency" | "timeCreditRate" | "availability" | "offerSettings" | "offerExpiration" | "sessionLength" | "offerPreview";
 type AuthMode = "login" | "reset";
 
 function App() {
@@ -48,7 +50,9 @@ function App() {
   // New global state for offer flow
   const [offerTitle, setOfferTitle] = useState("");
   const [offerDescription, setOfferDescription] = useState("");
+  const [reviewRoles, setReviewRoles] = useState<Record<string, string>>({});
   const [reviewProficiencies, setReviewProficiencies] = useState<Record<string, string>>({});
+  const [receiveRoles, setReceiveRoles] = useState<Record<string, string>>({});
   const [receiveProficiencies, setReceiveProficiencies] = useState<Record<string, string>>({});
   const [timeCreditRate, setTimeCreditRate] = useState<number>(0);
   const [availability, setAvailability] = useState<any>(null);
@@ -450,6 +454,28 @@ function App() {
                   onNext={(confirmedSkills, confirmedTagsMap) => {
                     setReviewSkills(confirmedSkills);
                     setReviewTagsMap(confirmedTagsMap);
+                    navigateTo("skillRole", 1);
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "skillRole" && (
+              <motion.div
+                key="skillRole"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <SkillRoleView
+                  selectedSkills={reviewSkills}
+                  onBack={() => navigateTo("skillReview", -1)}
+                  onNext={(roles) => {
+                    setReviewRoles(roles);
                     navigateTo("proficiencyLevels", 1);
                   }}
                 />
@@ -470,7 +496,7 @@ function App() {
                 <ProficiencyLevelsView
                   selectedSkills={reviewSkills}
                   skillTagsMap={reviewTagsMap}
-                  onBack={() => navigateTo("skillReview", -1)}
+                  onBack={() => navigateTo("skillRole", -1)}
                   onNext={(proficiencies) => {
                     setReviewProficiencies(proficiencies);
                     navigateTo("exchangeDetails", 1);
@@ -566,6 +592,28 @@ function App() {
                   onNext={(confirmedSkills, confirmedTagsMap) => {
                     setReceiveSkills(confirmedSkills);
                     setReceiveTagsMap(confirmedTagsMap);
+                    navigateTo("partnerRole", 1);
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "partnerRole" && (
+              <motion.div
+                key="partnerRole"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <PartnerRoleView
+                  selectedSkills={receiveSkills}
+                  onBack={() => navigateTo("receiveSkillsReview", -1)}
+                  onNext={(roles) => {
+                    setReceiveRoles(roles);
                     navigateTo("partnerProficiency", 1);
                   }}
                 />
@@ -585,7 +633,7 @@ function App() {
               >
                 <PartnerProficiencyView
                   selectedSkills={receiveSkills}
-                  onBack={() => navigateTo("receiveSkillsReview", -1)}
+                  onBack={() => navigateTo("partnerRole", -1)}
                   onNext={(proficiencies) => {
                     setReceiveProficiencies(proficiencies);
                     if (exchangeType === "time-credit") {
@@ -734,9 +782,11 @@ function App() {
                   availability={availability}
                   reviewSkills={reviewSkills}
                   reviewTags={reviewTagsMap}
+                  reviewRoles={reviewRoles}
                   reviewProficiencies={reviewProficiencies}
                   receiveSkills={receiveSkills}
                   receiveTags={receiveTagsMap}
+                  receiveRoles={receiveRoles}
                   receiveProficiencies={receiveProficiencies}
                   sessionDuration={sessionLength}
                   onBack={() => navigateTo("sessionLength", -1)}

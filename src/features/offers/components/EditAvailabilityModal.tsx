@@ -95,15 +95,44 @@ export function EditAvailabilityModal({ isOpen, onClose, availability, onApply }
   };
 
   const handleDaysApply = (days: string[]) => {
-    setPendingDays(days);
-    setIsRecurringOpen(false);
-    setIsTimePickerOpen(true);
+    if (editingSlotIndex !== null) {
+      // If editing an existing slot, update it directly and close
+      setLocalData(prev => {
+        const next = { ...prev, recurringSlots: [...prev.recurringSlots] };
+        next.recurringSlots[editingSlotIndex] = { 
+          ...next.recurringSlots[editingSlotIndex], 
+          days 
+        };
+        return next;
+      });
+      setIsRecurringOpen(false);
+      setEditingSlotIndex(null);
+    } else {
+      // If adding a new slot, keep the flow to time picker
+      setPendingDays(days);
+      setIsRecurringOpen(false);
+      setIsTimePickerOpen(true);
+    }
   };
 
   const handleDateRangeApply = (start: Date, end: Date) => {
-    setPendingDateRange({ start, end });
-    setIsSpecificOpen(false);
-    setIsTimePickerOpen(true);
+    const dateRange = { start, end };
+    if (editingSlotIndex !== null) {
+      setLocalData(prev => {
+        const next = { ...prev, specificSlots: [...prev.specificSlots] };
+        next.specificSlots[editingSlotIndex] = { 
+          ...next.specificSlots[editingSlotIndex], 
+          dateRange 
+        };
+        return next;
+      });
+      setIsSpecificOpen(false);
+      setEditingSlotIndex(null);
+    } else {
+      setPendingDateRange(dateRange);
+      setIsSpecificOpen(false);
+      setIsTimePickerOpen(true);
+    }
   };
 
   const handleTimeApply = (start: string, end: string) => {

@@ -8,6 +8,7 @@ interface ReviewSelectionModalProps {
   title: string;
   skills: string[];
   tags: Record<string, string[]>;
+  roles: Record<string, string>;
   proficiencies: Record<string, string>;
   onAddMore: () => void;
   onRemoveSkill: (skill: string) => void;
@@ -19,6 +20,7 @@ export function ReviewSelectionModal({
   title,
   skills,
   tags,
+  roles,
   proficiencies,
   onAddMore,
   onRemoveSkill
@@ -94,7 +96,7 @@ export function ReviewSelectionModal({
                             </span>
                             <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px]">
                               <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
-                                {formatProficiency(proficiencies[skill])}
+                                {roles[skill] ? `${roles[skill]} • ` : ""}{formatProficiency(proficiencies[skill])}
                               </span>
                             </div>
                           </div>

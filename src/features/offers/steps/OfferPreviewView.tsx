@@ -5,9 +5,7 @@ import { PersonaPfpSet } from "../../../components/common/PersonaPfpSet";
 import { SkillbeekSingleStar } from "../../../components/common/SkillbeekSingleStar";
 import { EditFieldModal } from "../components/EditFieldModal";
 import { TimezoneModal } from "../components/TimezoneModal";
-import { RecurringWeeklyModal } from "../components/RecurringWeeklyModal";
-import { SpecificDatesModal } from "../components/SpecificDatesModal";
-import { TimePickerModal } from "../components/TimePickerModal";
+import { EditAvailabilityModal } from "../components/EditAvailabilityModal";
 import { DurationPickerModal } from "../components/DurationPickerModal";
 import { SkillsEditModal } from "../components/SkillsEditModal";
 import { ReviewSelectionModal } from "../components/ReviewSelectionModal";
@@ -19,9 +17,11 @@ interface OfferPreviewViewProps {
   availability?: any;
   reviewSkills?: string[];
   reviewTags?: Record<string, string[]>;
+  reviewRoles?: Record<string, string>;
   reviewProficiencies?: Record<string, string>;
   receiveSkills?: string[];
   receiveTags?: Record<string, string[]>;
+  receiveRoles?: Record<string, string>;
   receiveProficiencies?: Record<string, string>;
   sessionDuration?: { type: "preset" | "custom"; minutes: number };
   onPublish?: () => void;
@@ -100,9 +100,11 @@ export function OfferPreviewView({
   availability,
   reviewSkills = [],
   reviewTags = {},
+  reviewRoles = {},
   reviewProficiencies = {},
   receiveSkills = [],
   receiveTags = {},
+  receiveRoles = {},
   receiveProficiencies = {},
   sessionDuration = { type: "preset", minutes: 30 },
   onPublish,
@@ -111,9 +113,11 @@ export function OfferPreviewView({
   const [localAvailability, setLocalAvailability] = useState<AvailabilityData | null>(availability || null);
   const [localReviewSkills, setLocalReviewSkills] = useState<string[]>(reviewSkills || []);
   const [localReviewTags, setLocalReviewTags] = useState<Record<string, string[]>>(reviewTags || {});
+  const [localReviewRoles, setLocalReviewRoles] = useState<Record<string, string>>(reviewRoles || {});
   const [localReviewProficiencies, setLocalReviewProficiencies] = useState<Record<string, string>>(reviewProficiencies || {});
   const [localReceiveSkills, setLocalReceiveSkills] = useState<string[]>(receiveSkills || []);
   const [localReceiveTags, setLocalReceiveTags] = useState<Record<string, string[]>>(receiveTags || {});
+  const [localReceiveRoles, setLocalReceiveRoles] = useState<Record<string, string>>(receiveRoles || {});
   const [localReceiveProficiencies, setLocalReceiveProficiencies] = useState<Record<string, string>>(receiveProficiencies || {});
 
   const [localSessionDuration, setLocalSessionDuration] = useState<{ type: "preset" | "custom"; minutes: number }>(sessionDuration);
@@ -123,13 +127,7 @@ export function OfferPreviewView({
   const [isTimezoneModalOpen, setIsTimezoneModalOpen] = useState(false);
 
   // Availability editing state
-  const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
-  const [isSpecificModalOpen, setIsSpecificModalOpen] = useState(false);
-  const [isTimePickerModalOpen, setIsTimePickerModalOpen] = useState(false);
-  const [pendingDays, setPendingDays] = useState<string[]>([]);
-  const [pendingDateRange, setPendingDateRange] = useState<{ start: Date; end: Date } | null>(null);
-  const [pendingStartTime, setPendingStartTime] = useState<string | undefined>();
-  const [pendingEndTime, setPendingEndTime] = useState<string | undefined>();
+  const [isEditAvailabilityOpen, setIsEditAvailabilityOpen] = useState(false);
 
   // Skills editing state
   const [skillsEditModal, setSkillsEditModal] = useState<{ open: boolean; type: "offered" | "wanted" }>({
@@ -146,66 +144,22 @@ export function OfferPreviewView({
     setSkillsEditModal({ open: true, type });
   };
 
-  const handleApplySkillsUpdate = (skills: string[], tags: Record<string, string[]>, profs: Record<string, string>) => {
+  const handleApplySkillsUpdate = (skills: string[], tags: Record<string, string[]>, roles: Record<string, string>, profs: Record<string, string>) => {
     if (skillsEditModal.type === "offered") {
       setLocalReviewSkills(skills);
       setLocalReviewTags(tags);
+      setLocalReviewRoles(roles);
       setLocalReviewProficiencies(profs);
     } else {
       setLocalReceiveSkills(skills);
       setLocalReceiveTags(tags);
+      setLocalReceiveRoles(roles);
       setLocalReceiveProficiencies(profs);
     }
   };
 
   const handleEditAvailability = () => {
-    if (localAvailability?.type === "Recurring Weekly") {
-      const slot = localAvailability.recurringSlots[0];
-      setPendingDays(slot?.days || []);
-      setPendingStartTime(slot?.timeRange.start);
-      setPendingEndTime(slot?.timeRange.end);
-      setIsRecurringModalOpen(true);
-    } else if (localAvailability?.type === "Specific Dates") {
-      const slot = localAvailability.specificSlots[0];
-      setPendingDateRange(slot?.dateRange || null);
-      setPendingStartTime(slot?.timeRange.start);
-      setPendingEndTime(slot?.timeRange.end);
-      setIsSpecificModalOpen(true);
-    }
-  };
-
-  const handleDaysApply = (days: string[]) => {
-    const dayRemoved = pendingDays.some(d => !days.includes(d));
-    if (dayRemoved) {
-      setPendingStartTime(undefined);
-      setPendingEndTime(undefined);
-    }
-    setPendingDays(days);
-    setIsRecurringModalOpen(false);
-    setIsTimePickerModalOpen(true);
-  };
-
-  const handleDateRangeApply = (start: Date, end: Date) => {
-    setPendingDateRange({ start, end });
-    setIsSpecificModalOpen(false);
-    setIsTimePickerModalOpen(true);
-  };
-
-  const handleTimeApply = (start: string, end: string) => {
-    if (!localAvailability) return;
-
-    if (localAvailability.type === "Recurring Weekly") {
-      setLocalAvailability({
-        ...localAvailability,
-        recurringSlots: [{ days: pendingDays, timeRange: { start, end } }]
-      });
-    } else {
-      setLocalAvailability({
-        ...localAvailability,
-        specificSlots: [{ dateRange: pendingDateRange!, timeRange: { start, end } }]
-      });
-    }
-    setIsTimePickerModalOpen(false);
+    setIsEditAvailabilityOpen(true);
   };
 
   const formatProficiency = (p: string) => {
@@ -378,7 +332,7 @@ export function OfferPreviewView({
                           </span>
                           <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
                             <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
-                              {formatProficiency(localReviewProficiencies[firstSkill])}
+                              {localReviewRoles[firstSkill] ? `${localReviewRoles[firstSkill]} • ` : ""}{formatProficiency(localReviewProficiencies[firstSkill])}
                             </span>
                           </div>
                         </div>
@@ -451,7 +405,7 @@ export function OfferPreviewView({
                           </span>
                           <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
                             <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
-                              {formatProficiency(localReceiveProficiencies[firstSkill])}
+                              {localReceiveRoles[firstSkill] ? `${localReceiveRoles[firstSkill]} • ` : ""}{formatProficiency(localReceiveProficiencies[firstSkill])}
                             </span>
                           </div>
                         </div>
@@ -609,30 +563,15 @@ export function OfferPreviewView({
             }}
           />
         )}
-        {isRecurringModalOpen && (
-          <RecurringWeeklyModal
-            isOpen={isRecurringModalOpen}
-            onClose={() => setIsRecurringModalOpen(false)}
-            onApply={handleDaysApply}
-            initialDays={pendingDays}
-          />
-        )}
-        {isSpecificModalOpen && (
-          <SpecificDatesModal
-            isOpen={isSpecificModalOpen}
-            onClose={() => setIsSpecificModalOpen(false)}
-            onApply={handleDateRangeApply}
-          />
-        )}
-        {isTimePickerModalOpen && (
-          <TimePickerModal
-            isOpen={isTimePickerModalOpen}
-            onClose={() => setIsTimePickerModalOpen(false)}
-            onApply={handleTimeApply}
-            initialStartTime={pendingStartTime}
-            initialEndTime={pendingEndTime}
-          />
-        )}
+        <EditAvailabilityModal
+          isOpen={isEditAvailabilityOpen}
+          onClose={() => setIsEditAvailabilityOpen(false)}
+          availability={localAvailability}
+          onApply={(data) => {
+            setLocalAvailability(data);
+            setIsEditAvailabilityOpen(false);
+          }}
+        />
         {skillsEditModal.open && (
           <SkillsEditModal
             isOpen={skillsEditModal.open}
@@ -640,6 +579,7 @@ export function OfferPreviewView({
             type={skillsEditModal.type}
             initialSkills={skillsEditModal.type === "offered" ? localReviewSkills : localReceiveSkills}
             initialTags={skillsEditModal.type === "offered" ? localReviewTags : localReceiveTags}
+            initialRoles={skillsEditModal.type === "offered" ? localReviewRoles : localReceiveRoles}
             initialProficiencies={skillsEditModal.type === "offered" ? localReviewProficiencies : localReceiveProficiencies}
             onApply={handleApplySkillsUpdate}
           />
@@ -650,6 +590,7 @@ export function OfferPreviewView({
           title="Review your selection"
           skills={reviewSelectionModal.type === "offered" ? localReviewSkills : localReceiveSkills}
           tags={reviewSelectionModal.type === "offered" ? localReviewTags : localReceiveTags}
+          roles={reviewSelectionModal.type === "offered" ? localReviewRoles : localReceiveRoles}
           proficiencies={reviewSelectionModal.type === "offered" ? localReviewProficiencies : localReceiveProficiencies}
           onAddMore={() => handleEditSkills(reviewSelectionModal.type)}
           onRemoveSkill={(skill) => {

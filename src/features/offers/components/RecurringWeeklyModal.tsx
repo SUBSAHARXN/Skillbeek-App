@@ -22,15 +22,9 @@ export function RecurringWeeklyModal({ isOpen, onClose, onApply, disabledDays = 
   }, [isOpen, initialDays]);
 
   const toggleDay = (day: string) => {
-    const isAlreadySelected = selectedDays.includes(day);
-    if (!isAlreadySelected) {
-      const newSelection = [...selectedDays, day];
-      setSelectedDays(newSelection);
-      // Trigger apply immediately as per user request
-      onApply(newSelection);
-    } else {
-      setSelectedDays(prev => prev.filter(d => d !== day));
-    }
+    setSelectedDays(prev =>
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
+    );
   };
 
   const handleClearAll = () => setSelectedDays([]);
@@ -48,7 +42,7 @@ export function RecurringWeeklyModal({ isOpen, onClose, onApply, disabledDays = 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 z-40 bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
+            className="absolute inset-0 z-[140] bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
           />
 
           {/* Bottom Sheet */}
@@ -58,7 +52,7 @@ export function RecurringWeeklyModal({ isOpen, onClose, onApply, disabledDays = 
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)]"
+            className="absolute bottom-0 left-0 w-full z-[150] bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)]"
           >
             <div className="w-full flex flex-col px-0">
               {/* Drag Handle */}
@@ -115,6 +109,17 @@ export function RecurringWeeklyModal({ isOpen, onClose, onApply, disabledDays = 
                 >
                   <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">
                     Clear all
+                  </span>
+                </button>
+                <button
+                  onClick={() => {
+                    if (hasSelection) onApply(selectedDays);
+                  }}
+                  className={`px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center transition-colors ${hasSelection ? "bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+                    }`}
+                >
+                  <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
+                    Apply
                   </span>
                 </button>
               </div>
