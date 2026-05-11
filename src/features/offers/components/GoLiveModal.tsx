@@ -32,8 +32,14 @@ export function GoLiveModal({ isOpen, onClose, onViewLive }: GoLiveModalProps) {
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="w-full max-w-[352px] bg-[#fbf6ff] rounded-[32px] overflow-hidden flex flex-col items-center p-[24px] pointer-events-auto shadow-[0px_10px_30px_rgba(0,0,0,0.1)]"
             >
-              {/* Lottie Animation Container */}
-              <div className="w-[112px] h-[112px] flex items-center justify-center mb-[24px]">
+              {/* Lottie Animation Container with Bleeding Gradient */}
+              <div 
+                className="w-[112px] h-[112px] flex items-center justify-center mb-[24px] relative"
+                style={{
+                  maskImage: 'radial-gradient(circle, black 30%, transparent 70%)',
+                  WebkitMaskImage: 'radial-gradient(circle, black 30%, transparent 70%)'
+                }}
+              >
                 <Lottie
                   animationData={lighthouseData}
                   loop={true}

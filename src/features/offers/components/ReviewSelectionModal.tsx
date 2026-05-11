@@ -13,6 +13,7 @@ interface ReviewSelectionModalProps {
   onAddMore: () => void;
   onRemoveSkill: (skill: string) => void;
   onEditTags: (skill: string) => void;
+  onApply?: () => void;
 }
 
 export function ReviewSelectionModal({
@@ -25,7 +26,8 @@ export function ReviewSelectionModal({
   proficiencies,
   onAddMore,
   onRemoveSkill,
-  onEditTags
+  onEditTags,
+  onApply
 }: ReviewSelectionModalProps) {
   const formatProficiency = (p: string) => {
     if (!p) return "Basic";
@@ -51,14 +53,14 @@ export function ReviewSelectionModal({
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] max-h-[85%]"
+            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] max-h-[90%]"
           >
             {/* Handle */}
             <div className="w-full flex justify-center">
               <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
             </div>
 
-            <div className="w-full flex flex-col gap-[32px]">
+            <div className="w-full flex flex-col gap-[24px]">
               {/* Header */}
               <div className="flex flex-col gap-[16px] relative px-[16px]">
                 <div className="flex items-center justify-center">
@@ -82,7 +84,7 @@ export function ReviewSelectionModal({
               </div>
 
               {/* Skills List */}
-              <div className="flex flex-col gap-[24px] w-full max-h-[400px] overflow-y-auto pr-0 pb-[92px] modal-scrollbar">
+              <div className="flex flex-col gap-[24px] w-full max-h-[400px] overflow-y-auto pr-0 pb-[24px] modal-scrollbar">
                 {skills.map((skill, index) => {
                   const skillTags = tags[skill] || [];
 
@@ -127,8 +129,24 @@ export function ReviewSelectionModal({
                   );
                 })}
               </div>
-            </div>
-          </motion.div>
+  
+                {/* Footer Actions */}
+                <div className="w-full flex items-center justify-between px-[16px] pt-[8px]">
+                  <button
+                    onClick={onClose}
+                    className="font-['Nunito'] font-bold text-[16px] leading-[24px] text-[#49464c] underline px-[16px] py-[12px]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={onApply || onClose}
+                    className="flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] bg-[#171519] text-[#fbf6ff] hover:bg-[#2f2c32] transition-colors shadow-[0px_4px_12px_rgba(0,0,0,0.15)]"
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+            </motion.div>
 
           {/* Floating Add Button — absolute inside phone frame */}
           <motion.div
@@ -136,7 +154,7 @@ export function ReviewSelectionModal({
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 60, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-[56px] right-[16px] z-[60]"
+            className="absolute bottom-[128px] right-[16px] z-[60]"
           >
             <button
               onClick={() => {

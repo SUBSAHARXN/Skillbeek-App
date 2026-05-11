@@ -12,6 +12,7 @@ import { ReviewSelectionModal } from "../components/ReviewSelectionModal";
 import { EditRateModal } from "../components/EditRateModal";
 import { DeleteOfferModal } from "../components/DeleteOfferModal";
 import { GoLiveModal } from "../components/GoLiveModal";
+import { SuccessToast } from "../../../components/common/SuccessToast";
 import { AvailabilityData, getRecurringDaysText, getSpecificDatesText } from "./AvailabilityView";
 
 function TimeCreditIcon({ className }: { className?: string }) {
@@ -141,6 +142,15 @@ export function OfferPreviewView({
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isGoLiveModalOpen, setIsGoLiveModalOpen] = useState(false);
+  const [toastConfig, setToastConfig] = useState<{
+    visible: boolean;
+    message: string;
+    actionLabel: string;
+  }>({
+    visible: false,
+    message: "",
+    actionLabel: "Undo"
+  });
 
   const [localSessionDuration, setLocalSessionDuration] = useState<{ type: "preset" | "custom"; minutes: number }>(sessionDuration);
   const [isDurationModalOpen, setIsDurationModalOpen] = useState(false);
@@ -235,7 +245,7 @@ export function OfferPreviewView({
   };
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-3xl overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-full bg-[#fbf6ff] rounded-3xl overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       <div className="relative z-[60] w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
         <div className="w-[140px] h-[36px] bg-[#171519] rounded-3xl" />
       </div>
@@ -594,7 +604,14 @@ export function OfferPreviewView({
               className="absolute right-[28px] top-[120px] w-[279px] bg-[#faf7fe] rounded-[16px] p-[8px] flex flex-col gap-[8px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]"
             >
               <button
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setToastConfig({
+                    visible: true,
+                    message: "Offer saved as draft",
+                    actionLabel: "View drafts"
+                  });
+                }}
                 className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
               >
                 <DocumentIcon className="w-[24px] h-[24px] text-[#171519]" />
@@ -620,10 +637,28 @@ export function OfferPreviewView({
             onConfirm={() => {
               // Handle actual deletion logic here if needed
               setIsDeleteModalOpen(false);
-              if (onBack) onBack();
+              setToastConfig({
+                visible: true,
+                message: "Item successfully removed",
+                actionLabel: "Undo"
+              });
+              // Wait for toast to be seen a bit before going back
+              setTimeout(() => {
+                if (onBack) onBack();
+              }, 5000);
             }}
           />
         )}
+        <SuccessToast 
+          isVisible={toastConfig.visible}
+          message={toastConfig.message}
+          actionLabel={toastConfig.actionLabel}
+          onClose={() => setToastConfig(prev => ({ ...prev, visible: false }))}
+          onAction={() => {
+            console.log(`${toastConfig.actionLabel} clicked`);
+            setToastConfig(prev => ({ ...prev, visible: false }));
+          }}
+        />
         {isGoLiveModalOpen && (
           <GoLiveModal
             isOpen={isGoLiveModalOpen}
