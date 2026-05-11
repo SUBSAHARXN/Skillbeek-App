@@ -10,6 +10,7 @@ import { DurationPickerModal } from "../components/DurationPickerModal";
 import { SkillsEditModal } from "../components/SkillsEditModal";
 import { ReviewSelectionModal } from "../components/ReviewSelectionModal";
 import { EditRateModal } from "../components/EditRateModal";
+import { DeleteOfferModal } from "../components/DeleteOfferModal";
 import { AvailabilityData, getRecurringDaysText, getSpecificDatesText } from "./AvailabilityView";
 
 function TimeCreditIcon({ className }: { className?: string }) {
@@ -137,6 +138,7 @@ export function OfferPreviewView({
   const [localReceiveProficiencies, setLocalReceiveProficiencies] = useState<Record<string, string>>(receiveProficiencies || {});
   const [localTimeCreditRate, setLocalTimeCreditRate] = useState<number>(initialRate);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [localSessionDuration, setLocalSessionDuration] = useState<{ type: "preset" | "custom"; minutes: number }>(sessionDuration);
   const [isDurationModalOpen, setIsDurationModalOpen] = useState(false);
@@ -258,7 +260,7 @@ export function OfferPreviewView({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-0 pb-[32px] pt-[8px] preview-scrollbar">
+      <div className="flex-1 overflow-y-auto px-0 pb-[180px] pt-[8px] preview-scrollbar">
         <div className="flex flex-col gap-[16px] min-w-0 w-full px-[16px]">
           <div className="bg-[#FEF0EA] px-[8px] py-[8px] rounded-[8px] self-start">
             <span className="font-['Nunito'] font-black text-[#b85f38] text-[12px] leading-[16px] tracking-[1.1px] uppercase">
@@ -599,6 +601,7 @@ export function OfferPreviewView({
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
+                  setIsDeleteModalOpen(true);
                 }}
                 className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
               >
@@ -607,6 +610,17 @@ export function OfferPreviewView({
               </button>
             </motion.div>
           </motion.div>
+        )}
+        {isDeleteModalOpen && (
+          <DeleteOfferModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={() => {
+              // Handle actual deletion logic here if needed
+              setIsDeleteModalOpen(false);
+              if (onBack) onBack();
+            }}
+          />
         )}
         {editModal.open && (
           <EditFieldModal

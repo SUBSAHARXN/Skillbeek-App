@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import Lottie, { LottieRefCurrentProps } from 'lottie-react';
-import animationData from '../../../assets/animations/Bin-slam-Whole.json';
+import React, { useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Lottie, { LottieRefCurrentProps } from "lottie-react";
+import binSlamData from "../../../assets/animations/Bin-slam-Whole.json";
 
 interface DeleteOfferModalProps {
   isOpen: boolean;
@@ -11,90 +11,113 @@ interface DeleteOfferModalProps {
 
 export function DeleteOfferModal({ isOpen, onClose, onConfirm }: DeleteOfferModalProps) {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
-  // Using a ref for the state prevents stale closures inside Lottie's onComplete callback
-  const animState = useRef<'intro' | 'looping' | 'outro'>('intro');
+  const [phase, setPhase] = useState<'intro' | 'looping'>('intro');
+  const [isLooping, setIsLooping] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      animState.current = 'intro';
-      if (lottieRef.current) {
-        (lottieRef.current as any).loop = false;
-        lottieRef.current.playSegments([0, 26], true);
-      }
+      setPhase('intro');
+      setIsLooping(false);
+      const timer = setTimeout(() => {
+        if (lottieRef.current) {
+          lottieRef.current.setSpeed(1);
+          lottieRef.current.playSegments([0, 26], true);
+        }
+      }, 50);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
-  const handleComplete = () => {
-    if (animState.current === 'intro') {
-      animState.current = 'looping';
-      if (lottieRef.current) {
-        // Direct mutation avoids React state render delays
-        (lottieRef.current as any).loop = true;
-        lottieRef.current.setSpeed(0.00001);
-        lottieRef.current.playSegments([25, 90], true);
-      }
-    } else if (animState.current === 'outro') {
-      // Small delay before actual unmount for smoothness
-      setTimeout(() => onConfirm(), 300);
+  // Handle intro → loop transition only (delete no longer uses onComplete)
+  const handleAnimationComplete = () => {
+    if (phase === 'intro' && lottieRef.current) {
+      setPhase('looping');
+      setIsLooping(true);
+      setTimeout(() => {
+        lottieRef.current?.playSegments([25, 90], true);
+      }, 0);
     }
   };
 
   const handleDeleteClick = () => {
-    animState.current = 'outro';
     if (lottieRef.current) {
-      (lottieRef.current as any).loop = false;
-      lottieRef.current.setSpeed(0.3);
+      setIsLooping(false);
+      lottieRef.current.setSpeed(0.6);
       lottieRef.current.playSegments([93, 95], true);
+      // Frames 93-95 = 2 frames @ 60fps @ 0.6x ≈ ~55ms. Use 150ms buffer.
+      setTimeout(() => {
+        onConfirm();
+      }, 150);
+    } else {
+      onConfirm();
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="absolute inset-0 z-[130] flex items-center justify-center px-[16px]"
-    >
-      <div className="absolute inset-0 bg-[#2f2c3242] backdrop-blur-[4px]" onClick={onClose} />
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        className="relative w-full max-w-[343px] bg-[#faf7fe] rounded-[24px] p-[24px] flex flex-col items-center shadow-xl"
-      >
-        <div className="w-[120px] h-[120px] mb-[16px]">
-          <Lottie
-            lottieRef={lottieRef}
-            animationData={animationData}
-            loop={false}
-            autoplay={false}
-            onComplete={handleComplete}
-          />
-        </div>
-        <h2 className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] text-center mb-[8px]">
-          Delete this offer?
-        </h2>
-        <p className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px] text-center mb-[32px]">
-          This action cannot be undone. You will lose all data associated with this offer.
-        </p>
-        
-        <div className="flex w-full gap-[12px]">
-          <button
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={onClose}
-            className="flex-1 h-[48px] rounded-[16px] bg-[#f0edf4] text-[#171519] font-['Nunito'] font-bold text-[16px] transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleDeleteClick}
-            className="flex-1 h-[48px] rounded-[16px] bg-[#ba1a1a] text-[#ffffff] font-['Nunito'] font-bold text-[16px] transition-colors"
-          >
-            Delete
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
+            className="absolute inset-0 z-[200] bg-[#2f2c32]/[0.26] backdrop-blur-[4px]"
+          />
+
+          {/* Modal Container */}
+          <div className="absolute inset-0 z-[210] flex items-center justify-center p-[16px] pointer-events-none">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="w-full max-w-[352px] bg-[#fbf6ff] rounded-[32px] overflow-hidden flex flex-col items-center p-[24px] pointer-events-auto shadow-[0px_10px_30px_rgba(0,0,0,0.1)]"
+            >
+              {/* Lottie Animation Container with Circle Background */}
+              <div className="w-[88px] h-[88px] bg-[#faf7fe] rounded-full flex items-center justify-center mb-[24px] overflow-hidden">
+                <Lottie
+                  lottieRef={lottieRef}
+                  animationData={binSlamData}
+                  loop={isLooping}
+                  autoplay={false}
+                  onComplete={handleAnimationComplete}
+                  style={{ width: 124, height: 124, flexShrink: 0 }}
+                />
+              </div>
+
+              {/* Text Content */}
+              <div className="w-full flex flex-col gap-[12px] mb-[40px] text-center">
+                <h2 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
+                  Delete this offer?
+                </h2>
+                <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
+                  Are you sure you want to permanently delete this offer? It will be removed from the marketplace and this action cannot be undone.
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="w-full flex items-center gap-[16px]">
+                <button
+                  onClick={onClose}
+                  className="flex-1 h-[48px] flex items-center justify-center font-['Nunito'] font-bold text-[#49464c] text-[16px] hover:bg-[#f0edf4] rounded-[16px] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteClick}
+                  className="flex-1 h-[48px] bg-[#c13733] hover:bg-[#a12d2a] rounded-[16px] flex items-center justify-center transition-colors shadow-skillbeek-xs"
+                >
+                  <span className="font-['Nunito'] font-bold text-[#fbf6ff] text-[16px]">
+                    Delete
+                  </span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
