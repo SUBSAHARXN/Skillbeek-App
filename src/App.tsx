@@ -383,7 +383,32 @@ function App() {
                   onBack={() => navigateTo("offerTitle", -1)}
                   onNext={(desc) => {
                     setOfferDescription(desc);
-                    navigateTo("offerAddSkill", 1);
+                    navigateTo("exchangeDetails", 1);
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "exchangeDetails" && (
+              <motion.div
+                key="exchangeDetails"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <ExchangeDetailsView
+                  onBack={() => navigateTo("offerDescription", -1)}
+                  onNext={(type) => {
+                    setExchangeType(type);
+                    if (type === "time-credit") {
+                      navigateTo("receiveSkillsAdd", 1);
+                    } else {
+                      navigateTo("offerAddSkill", 1);
+                    }
                   }}
                 />
               </motion.div>
@@ -401,7 +426,7 @@ function App() {
                 className="w-full h-full"
               >
                 <AddSkillView 
-                  onBack={() => navigateTo("offerDescription", -1)}
+                  onBack={() => navigateTo("exchangeDetails", -1)}
                   onNext={() => navigateTo("skillSelect", 1)}
                 />
               </motion.div>
@@ -499,27 +524,6 @@ function App() {
                   onBack={() => navigateTo("skillRole", -1)}
                   onNext={(proficiencies) => {
                     setReviewProficiencies(proficiencies);
-                    navigateTo("exchangeDetails", 1);
-                  }}
-                />
-              </motion.div>
-            )}
-
-            {currentView === "exchangeDetails" && (
-              <motion.div
-                key="exchangeDetails"
-                custom={navDirection}
-                variants={slideVariants}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                transition={slideTransition}
-                className="w-full h-full"
-              >
-                <ExchangeDetailsView
-                  onBack={() => navigateTo("proficiencyLevels", -1)}
-                  onNext={(type) => {
-                    setExchangeType(type);
                     navigateTo("receiveSkillsAdd", 1);
                   }}
                 />
@@ -538,7 +542,13 @@ function App() {
                 className="w-full h-full"
               >
                 <ReceiveSkillsAddView
-                  onBack={() => navigateTo("exchangeDetails", -1)}
+                  onBack={() => {
+                    if (exchangeType === "time-credit") {
+                      navigateTo("exchangeDetails", -1);
+                    } else {
+                      navigateTo("proficiencyLevels", -1);
+                    }
+                  }}
                   onNext={() => navigateTo("receiveSkillsSelect", 1)}
                 />
               </motion.div>

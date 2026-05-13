@@ -68,6 +68,19 @@ function PBadge({ size = 16 }: { size?: number }) {
   );
 }
 
+function GripIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 16 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="4" cy="5" r="2" />
+      <circle cx="4" cy="12" r="2" />
+      <circle cx="4" cy="19" r="2" />
+      <circle cx="12" cy="5" r="2" />
+      <circle cx="12" cy="12" r="2" />
+      <circle cx="12" cy="19" r="2" />
+    </svg>
+  );
+}
+
 const MAX_VISIBLE_TAGS = 4;
 
 interface SkillReviewViewProps {
@@ -179,17 +192,17 @@ export function SkillReviewView({
         <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
       </div>
 
-      {/* Header Action Buttons */}
-      <div className="w-full px-[16px] flex justify-between items-center pt-[16px] mb-[40px] shrink-0 relative z-10 bg-[#fbf6ff]">
+      {/* Header Action Buttons (Fixed at Top) */}
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
         <button
           onClick={() => setIsSaveModalOpen(true)}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
+          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
         >
           <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
             Save and Exit
           </span>
         </button>
-        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors">
+        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
           <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
             Questions?
           </span>
@@ -198,7 +211,7 @@ export function SkillReviewView({
 
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-[16px] pb-[248px] flex flex-col pt-[8px]">
+      <div className="flex-1 overflow-y-auto px-[16px] pb-[248px] flex flex-col pt-[8px] availability-scrollbar">
         {/* Page Header */}
         <div className="w-full pb-[16px] flex flex-col">
           <div className="flex items-center gap-[4px]">
@@ -222,53 +235,113 @@ export function SkillReviewView({
             </button>
           </div>
           <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#49464c] tracking-[0.1px] mt-[8px]">
-            Double-check your selected skills and specific tags before moving to the next step.
+            Your top skill is your primary focus. This is what learners will see first when discovering your offer. You can drag to reorder them.
           </p>
         </div>
 
-        <div className="flex flex-col gap-[16px]">
-          {visibleSkills.map((skill) => {
+        <div className="flex flex-col gap-[24px]">
+          {visibleSkills.map((skill, index) => {
             const tags = localTagsMap[skill] || [];
             const isExpanded = expandedSkills[skill] ?? false;
             const shownTags = isExpanded ? tags : tags.slice(0, MAX_VISIBLE_TAGS);
             const isRemoving = removingSkill === skill;
+            
+            // The top card is automatically Primary
+            const isPrimary = index === 0;
 
             return (
               <div
                 key={skill}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData("text/plain", skill);
+                  e.dataTransfer.effectAllowed = "move";
+                  setTimeout(() => {
+                    if (e.target instanceof HTMLElement) {
+                      e.target.classList.add("opacity-50", "scale-[1.02]", "shadow-lg");
+                    }
+                  }, 0);
+                }}
+                onDragEnd={(e) => {
+                  if (e.target instanceof HTMLElement) {
+                    e.target.classList.remove("opacity-50", "scale-[1.02]", "shadow-lg");
+                  }
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const draggedSkill = e.dataTransfer.getData("text/plain");
+                  if (!draggedSkill || draggedSkill === skill) return;
+
+                  const fromIdx = visibleSkills.indexOf(draggedSkill);
+                  const toIdx = visibleSkills.indexOf(skill);
+                  if (fromIdx !== -1 && toIdx !== -1) {
+                    const updated = [...visibleSkills];
+                    updated.splice(fromIdx, 1);
+                    updated.splice(toIdx, 0, draggedSkill);
+                    setVisibleSkills(updated);
+                  }
+                }}
                 onClick={() => handleOpenTagsModal(skill)}
-                className="w-full bg-[#faf7fe] rounded-[16px] flex flex-col items-start px-[16px] py-[16px] gap-[16px] overflow-hidden min-h-[148px] cursor-pointer active:scale-[0.99]"
+                className={`w-full bg-[#faf7fe] rounded-[16px] flex flex-col items-start px-[20px] py-[20px] gap-[16px] overflow-hidden min-h-[148px] cursor-pointer transition-all duration-300 border-2 ${
+                  isPrimary ? "border-[#b7812f] shadow-sm" : "border-transparent"
+                }`}
                 style={{
-                  boxShadow: "0px 4px 12px 0px rgba(18,9,0,0.15)",
+                  boxShadow: isPrimary ? "0px 4px 12px 0px rgba(18,9,0,0.15)" : "0px 4px 12px 0px rgba(18,9,0,0.15)",
                   opacity: isRemoving ? 0 : 1,
                   maxHeight: isRemoving ? "0px" : "600px",
                   paddingTop: isRemoving ? "0px" : undefined,
                   paddingBottom: isRemoving ? "0px" : undefined,
                   marginBottom: isRemoving ? "-16px" : "0px",
-                  transition: "opacity 0.25s ease, max-height 0.3s ease, margin-bottom 0.3s ease, padding 0.3s ease",
                 }}
               >
-                {/* Header row: skill name + badge + checkbox */}
-                <div className="flex items-center justify-between w-full gap-[4px]">
-                  {/* Left: skill name + P badge */}
-                  <div className="flex items-center gap-[4px] flex-1 min-w-0">
-                    <h2 className="font-['Nunito'] font-bold text-[24px] leading-[32px] text-[#171519] tracking-[-0.7px] shrink-0">
+                {/* Header row: aligned to items-start so controls stay top-right if long text wraps */}
+                <div className="flex items-start justify-between w-full gap-[12px]">
+                  {/* Left Side Wrapper: items-start allows title text to wrap downward natively */}
+                  <div className="flex items-start gap-[8px] flex-1 min-w-0">
+                    <h2 className="font-['Nunito'] font-bold text-[24px] leading-[32px] text-[#171519] tracking-[-0.7px] break-words">
                       {skill.toLowerCase()}
                     </h2>
                     {/* PBadge hidden on Receive side — verification status is irrelevant when selecting desired partner skills */}
-                    {!hideBadge && <PBadge size={16} />}
+                    {!hideBadge && (
+                      <div className="shrink-0 mt-[8px]">
+                        <PBadge size={16} />
+                      </div>
+                    )}
                   </div>
 
-                  {/* Checkbox — tap to remove this card, uses same component as skill select */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleUncheck(skill);
-                    }}
-                    className="shrink-0"
-                  >
-                    <CustomAnimatedCheckbox checked={true} />
-                  </button>
+                  {/* Right Side Controls Wrapper: perfectly aligned to the top alongside the text copy */}
+                  <div className="flex items-center gap-[16px] shrink-0 mt-0">
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const fromIdx = visibleSkills.indexOf(skill);
+                        if (fromIdx > 0) {
+                          const updated = [...visibleSkills];
+                          updated.splice(fromIdx, 1);
+                          updated.unshift(skill);
+                          setVisibleSkills(updated);
+                        }
+                      }}
+                      className="cursor-grab active:cursor-grabbing p-[4px] text-[#c0bcc3] hover:opacity-80 transition-opacity"
+                      title="Drag to reorder"
+                    >
+                      <GripIcon className="w-[16px] h-[24px]" />
+                    </div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUncheck(skill);
+                      }}
+                      className="shrink-0 flex items-center justify-center"
+                    >
+                      <CustomAnimatedCheckbox checked={true} />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Tags — always visible on both Give and Receive sides */}
@@ -362,8 +435,8 @@ export function SkillReviewView({
             onClick={handleNext}
             disabled={!isNextEnabled}
             className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
-                ? "bg-[#171519] text-[#fbf6ff]"
-                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              ? "bg-[#171519] text-[#fbf6ff]"
+              : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
               }`}
           >
             Next
@@ -480,8 +553,8 @@ export function SkillReviewView({
       {/* Tooltip card — centred horizontally, positioned below the header */}
       <div
         className={`absolute z-[60] left-[16px] right-[16px] transition-all duration-300 ${isBadgeInfoOpen
-            ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 -translate-y-2 pointer-events-none"
+          ? "opacity-100 translate-y-0 pointer-events-auto"
+          : "opacity-0 -translate-y-2 pointer-events-none"
           }`}
         style={{ top: "200px" }} // Moved up by 44px from 244px
       >

@@ -20,23 +20,24 @@ export function OfferTitleView({ onBack, onNext }: { onBack?: () => void; onNext
         <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
       </div>
 
-      <div className="flex-1 overflow-y-auto w-full flex flex-col relative pt-[16px]">
-        {/* Header Action Buttons */}
-        <div className="w-full px-[16px] flex justify-between items-center mb-[40px]">
-          <button
-            onClick={() => setIsSaveModalOpen(true)}
-            className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
-          >
-            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-              Save and Exit
-            </span>
-          </button>
-          <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors">
-            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-              Questions?
-            </span>
-          </button>
-        </div>
+      {/* Header Action Buttons (Fixed at Top) */}
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
+        <button
+          onClick={() => setIsSaveModalOpen(true)}
+          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
+        >
+          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+            Save and Exit
+          </span>
+        </button>
+        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
+          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+            Questions?
+          </span>
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto w-full flex flex-col relative pt-[0px] availability-scrollbar">
 
         {/* Title Content */}
         <div className="w-full px-[16px] flex flex-col gap-[32px] mb-[24px]">
@@ -140,42 +141,44 @@ export function OfferTitleView({ onBack, onNext }: { onBack?: () => void; onNext
           </div>
         </div>
 
-        {/* Spacer to push footer down */}
-        <div className="flex-1" />
+        {/* Bottom Spacer */}
+        <div className="h-[156px] shrink-0" aria-hidden="true" />
+      </div>
 
-        {/* Footer Group (Progress + CTA) */}
-        <div className="w-full bg-[#faf7fe] flex flex-col gap-[32px] items-center pt-[16px] pb-[40px] z-10 shrink-0">
+      {/* Fixed Footer */}
+      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
+        <div className="w-full flex justify-center">
           <OfferProgressBar currentStep={1} subStepProgress={progressPercent} />
-
-          <div className="w-full flex items-center justify-between px-[16px]">
-            <button
-              onClick={onBack}
-              className="h-[48px] px-[16px] py-[12px] flex items-center justify-center rounded-[16px] transition-colors"
-            >
-              <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px] underline decoration-solid leading-[24px]">
-                Back
-              </span>
-            </button>
-            <button
-              onClick={() => onNext && onNext(title)}
-              disabled={!isTitleValid}
-              className={`h-[48px] px-[16px] py-[12px] flex justify-center items-center rounded-[16px] w-[101px] transition-all
-                ${isTitleValid
-                  ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32] shadow-skillbeek-xs"
-                  : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
-                }`}
-            >
-              <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
-                Next
-              </span>
-            </button>
-          </div>
         </div>
 
-        {/* Bottom Home Indicator */}
-        <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px]">
-          <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
+        <div className="w-full flex items-center justify-between px-[16px]">
+          <button
+            onClick={onBack}
+            className="h-[48px] px-[16px] py-[12px] flex items-center justify-center rounded-[16px] transition-colors"
+          >
+            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px] underline decoration-solid leading-[24px]">
+              Back
+            </span>
+          </button>
+          <button
+            onClick={() => onNext && onNext(title)}
+            disabled={!isTitleValid}
+            className={`h-[48px] px-[16px] py-[12px] flex justify-center items-center rounded-[16px] w-[101px] transition-all
+              ${isTitleValid
+                ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32] shadow-skillbeek-xs"
+                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              }`}
+          >
+            <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
+              Next
+            </span>
+          </button>
         </div>
+      </div>
+
+      {/* Home Indicator */}
+      <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30">
+        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
       </div>
 
       <SaveExitModal

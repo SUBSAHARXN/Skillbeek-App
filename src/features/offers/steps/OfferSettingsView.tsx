@@ -29,19 +29,19 @@ export function OfferSettingsView({
         <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
       </div>
 
-      {/* Header Action Buttons */}
-      <div className="w-full px-[16px] flex justify-between items-center mb-[24px] pt-[16px]">
-        <button 
+      {/* Header Action Buttons (Fixed at Top) */}
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
+        <button
           onClick={onSaveExit}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
+          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
         >
           <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
             Save and Exit
           </span>
         </button>
-        <button 
+        <button
           onClick={onQuestions}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
+          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
         >
           <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
             Questions?
@@ -50,7 +50,7 @@ export function OfferSettingsView({
       </div>
 
       {/* Content */}
-      <div className="flex-1 px-[16px] overflow-y-auto">
+      <div className="flex-1 px-[16px] overflow-y-auto availability-scrollbar">
         <div className="flex flex-col gap-[12px] mb-[32px]">
           <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
             Offer Settings & Visibility
@@ -102,11 +102,15 @@ export function OfferSettingsView({
           </div>
         </div>
 
+        {/* Bottom Spacer */}
+        <div className="h-[156px] shrink-0" aria-hidden="true" />
       </div>
 
-      {/* Footer */}
-      <div className="bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col items-center gap-[32px] pt-[0px] pb-[44px] shrink-0">
-        <OfferProgressBar currentStep={4} subStepProgress={0} />
+      {/* Fixed Footer */}
+      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col items-center gap-[32px] pt-[0px] pb-[44px] z-20">
+        <div className="w-full flex justify-center">
+          <OfferProgressBar currentStep={4} subStepProgress={0} />
+        </div>
         <div className="w-full flex items-center justify-between px-[16px]">
           <button onClick={onBack} className="font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] underline">
             Back

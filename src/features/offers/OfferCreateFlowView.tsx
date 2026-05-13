@@ -88,8 +88,15 @@ const AnimatedStepIcon = ({ step, canPlay, onComplete }: { step: StepData, canPl
     if (canPlay && !hasPlayed && lottieRef.current) {
       setHasPlayed(true);
       lottieRef.current.play();
+      
+      // Trigger the next step after 0.2s regardless of when this one finishes
+      const timer = setTimeout(() => {
+        onComplete();
+      }, 200);
+      
+      return () => clearTimeout(timer);
     }
-  }, [canPlay, hasPlayed]);
+  }, [canPlay, hasPlayed, onComplete]);
 
   return (
     <Lottie
@@ -138,24 +145,26 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
         <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
       </div>
 
+      {/* Header Action Buttons (Fixed at Top) */}
+      <div className="w-full flex justify-between items-center py-[16px] px-[16px] shrink-0 bg-[#fbf6ff] z-20">
+        <button 
+          onClick={() => setIsSaveModalOpen(true)}
+          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
+        >
+          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+            Save and Exit
+          </span>
+        </button>
+        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
+          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+            Questions?
+          </span>
+        </button>
+      </div>
+
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full flex flex-col relative pt-[16px] pb-[40px] px-0 availability-scrollbar">
-        {/* Header Action Buttons */}
-        <div className="w-full flex justify-between items-center mb-[40px] px-[16px] shrink-0">
-          <button 
-            onClick={() => setIsSaveModalOpen(true)}
-            className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
-          >
-            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-              Save and Exit
-            </span>
-          </button>
-          <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors">
-            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-              Questions?
-            </span>
-          </button>
-        </div>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full flex flex-col relative pt-[0px] pb-[180px] px-0 availability-scrollbar">
+
 
         {/* Header Texts */}
         <div className="w-full flex flex-col gap-[12px] mt-[8px] mb-[32px] px-[16px]">
@@ -214,15 +223,20 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
           })}
         </div>
 
-        {/* Bottom CTA Block */}
-        <div ref={bottomRef} className="w-full pt-[40px] pb-[24px] flex justify-center px-[16px]">
+        {/* Bottom CTA Placeholder */}
+        <div ref={bottomRef} className="h-[1px] w-full" />
+      </div>
+
+      {/* Bottom CTA Block (Fixed) */}
+      <div className="absolute bottom-0 left-0 w-full flex flex-col items-center pointer-events-none z-30">
+        <div className="w-[calc(100%-4px)] h-[156px] bg-gradient-to-t from-[#fbf6ff] via-[#fbf6ff]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-none">
           <button 
-            disabled={!isBottomSeen}
+            disabled={!isStep5Visible}
             onClick={onContinue}
-            className={`w-full h-[48px] font-['Nunito'] font-bold text-[16px] rounded-[16px] leading-[24px] tracking-[0.16px] transition-all
-              ${isBottomSeen 
-                ? "bg-[#171519] text-[#fbf6ff] shadow-skillbeek-xs hover:bg-[#2f2c32]" 
-                : "bg-gray-300 text-gray-500 cursor-not-allowed opacity-60"}`}
+            className={`w-full max-w-[352px] h-[48px] font-['Nunito'] font-bold text-[16px] rounded-[16px] leading-[24px] tracking-[0.16px] transition-all duration-500 pointer-events-auto
+              ${isStep5Visible 
+                ? "bg-[#171519] text-[#fbf6ff] shadow-[0px_4px_12px_rgba(0,0,0,0.15)] hover:bg-[#2f2c32] opacity-100 translate-y-0" 
+                : "bg-gray-300 text-gray-500 cursor-not-allowed opacity-0 translate-y-10"}`}
           >
             Create My Offer
           </button>

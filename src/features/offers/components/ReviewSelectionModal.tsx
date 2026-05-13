@@ -1,6 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CustomAnimatedCheckbox } from "../../../components/common/CustomAnimatedCheckbox";
+
+function GripIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 16 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="4" cy="5" r="2" />
+      <circle cx="4" cy="12" r="2" />
+      <circle cx="4" cy="19" r="2" />
+      <circle cx="12" cy="5" r="2" />
+      <circle cx="12" cy="12" r="2" />
+      <circle cx="12" cy="19" r="2" />
+    </svg>
+  );
+}
 
 interface ReviewSelectionModalProps {
   isOpen: boolean;
@@ -14,6 +27,7 @@ interface ReviewSelectionModalProps {
   onRemoveSkill: (skill: string) => void;
   onEditTags: (skill: string) => void;
   onApply?: () => void;
+  onReorderSkills?: (reorderedSkills: string[]) => void;
 }
 
 export function ReviewSelectionModal({
@@ -27,8 +41,15 @@ export function ReviewSelectionModal({
   onAddMore,
   onRemoveSkill,
   onEditTags,
-  onApply
+  onApply,
+  onReorderSkills
 }: ReviewSelectionModalProps) {
+  const [orderedSkills, setOrderedSkills] = useState<string[]>(skills);
+
+  useEffect(() => {
+    setOrderedSkills(skills);
+  }, [skills]);
+
   const formatProficiency = (p: string) => {
     if (!p) return "Basic";
     return p.split(" — ")[0];
@@ -79,38 +100,108 @@ export function ReviewSelectionModal({
                 </div>
                 <div className="w-full h-[1px] bg-[#e0dce3]" />
                 <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] text-center px-[16px]">
-                  Double-check your selected skills and specific tags before moving to the next step.
+                  I need you to modifiy this copy because it is break my design
                 </p>
               </div>
 
               {/* Skills List */}
               <div className="flex flex-col gap-[24px] w-full max-h-[400px] overflow-y-auto pr-0 pb-[24px] modal-scrollbar">
-                {skills.map((skill, index) => {
+                {orderedSkills.map((skill, index) => {
                   const skillTags = tags[skill] || [];
+                  const isPrimary = index === 0;
 
                   return (
-                    <div key={skill} className="px-[16px]">
+                    <div 
+                      key={skill} 
+                      className="px-[16px]"
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("text/plain", skill);
+                        e.dataTransfer.effectAllowed = "move";
+                        setTimeout(() => {
+                          if (e.target instanceof HTMLElement) {
+                            e.target.classList.add("opacity-50", "scale-[1.02]");
+                          }
+                        }, 0);
+                      }}
+                      onDragEnd={(e) => {
+                        if (e.target instanceof HTMLElement) {
+                          e.target.classList.remove("opacity-50", "scale-[1.02]");
+                        }
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const draggedSkill = e.dataTransfer.getData("text/plain");
+                        if (!draggedSkill || draggedSkill === skill) return;
+
+                        const fromIdx = orderedSkills.indexOf(draggedSkill);
+                        const toIdx = orderedSkills.indexOf(skill);
+                        if (fromIdx !== -1 && toIdx !== -1) {
+                          const updated = [...orderedSkills];
+                          updated.splice(fromIdx, 1);
+                          updated.splice(toIdx, 0, draggedSkill);
+                          setOrderedSkills(updated);
+                          onReorderSkills?.(updated);
+                        }
+                      }}
+                    >
                       <div 
                         onClick={() => onEditTags(skill)}
-                        className="bg-[#faf7fe] rounded-[16px] p-[16px] flex flex-col gap-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] cursor-pointer"
+                        className={`bg-[#faf7fe] rounded-[16px] p-[20px] flex flex-col gap-[16px] cursor-pointer transition-all duration-300 border-2 ${
+                          isPrimary ? "border-[#b7812f] shadow-sm" : "border-transparent"
+                        }`}
+                        style={{
+                          boxShadow: "0px 4px 12px 0px rgba(18,9,0,0.15)"
+                        }}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-[12px]">
-                            <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
+                        {/* Header row: aligned to items-start so controls stay top-right if long text wraps */}
+                        <div className="flex items-start justify-between w-full gap-[12px]">
+                          {/* Left side wrapper: flex-col cleanly stacks wrapped title and proficiency badge vertically */}
+                          <div className="flex flex-col items-start gap-[6px] flex-1 min-w-0">
+                            <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] break-words block">
                               {skill}
                             </span>
-                            <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px]">
+                            <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
                               <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
                                 {formatProficiency(proficiencies[skill])}
                               </span>
                             </div>
                           </div>
-                          <button 
-                            onClick={() => onRemoveSkill(skill)}
-                            className="w-[44px] h-[44px] flex items-center justify-center"
-                          >
-                            <CustomAnimatedCheckbox checked={true} />
-                          </button>
+
+                          {/* Right Controls Wrapper: perfectly aligned to the top alongside the text copy */}
+                          <div className="flex items-center gap-[16px] shrink-0 mt-0">
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const fromIdx = orderedSkills.indexOf(skill);
+                                if (fromIdx > 0) {
+                                  const updated = [...orderedSkills];
+                                  updated.splice(fromIdx, 1);
+                                  updated.unshift(skill);
+                                  setOrderedSkills(updated);
+                                  onReorderSkills?.(updated);
+                                }
+                              }}
+                              className="cursor-grab active:cursor-grabbing p-[4px] text-[#c0bcc3] hover:opacity-80 transition-opacity"
+                              title="Drag to reorder"
+                            >
+                              <GripIcon className="w-[16px] h-[24px]" />
+                            </div>
+
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onRemoveSkill(skill);
+                              }}
+                              className="shrink-0 flex items-center justify-center"
+                            >
+                              <CustomAnimatedCheckbox checked={true} />
+                            </button>
+                          </div>
                         </div>
 
                         {skillTags.length > 0 && (

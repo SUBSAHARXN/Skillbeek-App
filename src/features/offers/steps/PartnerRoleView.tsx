@@ -31,23 +31,24 @@ export function PartnerRoleView({ selectedSkills, onBack, onNext }: PartnerRoleV
         <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
       </div>
 
-      <div className="flex-1 overflow-y-auto w-full flex flex-col relative pt-[16px]">
-        {/* Header Action Buttons */}
-        <div className="w-full px-[16px] flex justify-between items-center mb-[40px] shrink-0">
-          <button
-            onClick={() => setIsSaveModalOpen(true)}
-            className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
-          >
-            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-              Save and Exit
-            </span>
-          </button>
-          <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors">
-            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-              Questions?
-            </span>
-          </button>
-        </div>
+      {/* Header Action Buttons (Fixed at Top) */}
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
+        <button
+          onClick={() => setIsSaveModalOpen(true)}
+          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
+        >
+          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+            Save and Exit
+          </span>
+        </button>
+        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
+          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+            Questions?
+          </span>
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto w-full flex flex-col relative pt-[0px] availability-scrollbar">
 
         {/* Page Header */}
         <div className="w-full px-[16px] flex flex-col gap-[12px] mb-[32px]">

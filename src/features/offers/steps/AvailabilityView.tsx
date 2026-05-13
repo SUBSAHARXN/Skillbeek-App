@@ -319,18 +319,18 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
         <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
       </div>
 
-      {/* Header Buttons */}
-      <div className="w-full px-[16px] flex justify-between items-center mb-[16px] pt-[16px]">
-        <button onClick={onSaveExit} className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors">
+      {/* Header Action Buttons (Fixed at Top) */}
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
+        <button onClick={onSaveExit} className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
           <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">Save and Exit</span>
         </button>
-        <button onClick={onQuestions} className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors">
+        <button onClick={onQuestions} className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
           <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">Questions?</span>
         </button>
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 px-[16px] pt-[16px] overflow-y-auto availability-scrollbar">
+      <div className="flex-1 px-[16px] pt-[0px] overflow-y-auto availability-scrollbar">
         <div className="flex flex-col gap-[12px] mb-[24px]">
           <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
             Set your availability
@@ -422,11 +422,15 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
             )}
           </div>
         )}
+        {/* Bottom Spacer */}
+        <div className="h-[156px] shrink-0" aria-hidden="true" />
       </div>
 
-      {/* Footer */}
-      <div className="bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col items-center gap-[32px] pt-[0px] pb-[44px] shrink-0">
-        <OfferProgressBar currentStep={2} subStepProgress={0} />
+      {/* Fixed Footer */}
+      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col items-center gap-[32px] pt-[0px] pb-[44px] z-20">
+        <div className="w-full flex justify-center">
+          <OfferProgressBar currentStep={2} subStepProgress={0} />
+        </div>
         <div className="w-full flex items-center justify-between px-[16px]">
           <button onClick={onBack} className="font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] underline">
             Back
@@ -440,6 +444,11 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
             Next
           </button>
         </div>
+      </div>
+
+      {/* Home Indicator */}
+      <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30 pointer-events-none">
+        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
       </div>
 
       {/* ── Modals ── */}

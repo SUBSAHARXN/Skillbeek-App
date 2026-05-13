@@ -13,6 +13,7 @@ import { EditRateModal } from "../components/EditRateModal";
 import { DeleteOfferModal } from "../components/DeleteOfferModal";
 import { GoLiveModal } from "../components/GoLiveModal";
 import { SuccessToast } from "../../../components/common/SuccessToast";
+import { LiveOfferView } from "./LiveOfferView";
 import { AvailabilityData, getRecurringDaysText, getSpecificDatesText } from "./AvailabilityView";
 
 function TimeCreditIcon({ className }: { className?: string }) {
@@ -142,6 +143,7 @@ export function OfferPreviewView({
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isGoLiveModalOpen, setIsGoLiveModalOpen] = useState(false);
+  const [isLiveViewOpen, setIsLiveViewOpen] = useState(false);
   const [toastConfig, setToastConfig] = useState<{
     visible: boolean;
     message: string;
@@ -375,78 +377,80 @@ export function OfferPreviewView({
                 </div>
               </SectionCard>
 
-              <SectionCard title="Offered skills" onEdit={() => handleEditSkills("offered")}>
-                {localReviewSkills.length > 0 ? (() => {
-                  const firstSkill = localReviewSkills[0];
-                  const firstTags = localReviewTags[firstSkill] || [];
-                  const displayedTags = firstTags.slice(0, 2);
-                  const extraTags = firstTags.length - 2;
+              {!isTimeCredit && (
+                <SectionCard title="Offered skills" onEdit={() => handleEditSkills("offered")}>
+                  {localReviewSkills.length > 0 ? (() => {
+                    const firstSkill = localReviewSkills[0];
+                    const firstTags = localReviewTags[firstSkill] || [];
+                    const displayedTags = firstTags.slice(0, 2);
+                    const extraTags = firstTags.length - 2;
 
-                  return (
-                    <div
-                      onClick={() => setReviewSelectionModal({ open: true, type: "offered" })}
-                      className="flex items-start gap-[16px] cursor-pointer"
-                    >
+                    return (
+                      <div
+                        onClick={() => setReviewSelectionModal({ open: true, type: "offered" })}
+                        className="flex items-start gap-[16px] cursor-pointer"
+                      >
+                        <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
+                        <div className="flex-1 flex flex-col gap-[16px]">
+                          <div className="flex items-center gap-[8px]">
+                            <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
+                              {firstSkill}
+                            </span>
+                            <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                              <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
+                                {formatProficiency(localReviewProficiencies[firstSkill])}
+                              </span>
+                            </div>
+                          </div>
+
+                          {firstTags.length > 0 && (
+                            <div className="flex flex-nowrap items-center gap-[6px] overflow-hidden">
+                              {displayedTags.map(tag => (
+                                <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0 max-w-[100px]">
+                                  <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] truncate block">
+                                    {tag}
+                                  </span>
+                                </div>
+                              ))}
+                              {extraTags > 0 && (
+                                <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0">
+                                  <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
+                                    +{extraTags}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {localReviewSkills.length > 1 && (
+                            <div className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start">
+                              <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
+                                + {localReviewSkills.length - 1} more
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })() : (
+                    <div className="flex items-center gap-[16px]">
                       <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
-                      <div className="flex-1 flex flex-col gap-[16px]">
+                      <div className="flex-1 flex flex-col gap-[6px]">
                         <div className="flex items-center gap-[8px]">
-                          <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
-                            {firstSkill}
+                          <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
+                            3D modelling
                           </span>
                           <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                            <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
-                              {formatProficiency(localReviewProficiencies[firstSkill])}
+                            <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
+                              Intermediate
                             </span>
                           </div>
                         </div>
-
-                        {firstTags.length > 0 && (
-                          <div className="flex flex-nowrap items-center gap-[6px] overflow-hidden">
-                            {displayedTags.map(tag => (
-                              <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0 max-w-[100px]">
-                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] truncate block">
-                                  {tag}
-                                </span>
-                              </div>
-                            ))}
-                            {extraTags > 0 && (
-                              <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0">
-                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
-                                  +{extraTags}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {localReviewSkills.length > 1 && (
-                          <div className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start">
-                            <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
-                              + {localReviewSkills.length - 1} more
-                            </span>
-                          </div>
-                        )}
                       </div>
                     </div>
-                  );
-                })() : (
-                  <div className="flex items-center gap-[16px]">
-                    <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
-                    <div className="flex-1 flex flex-col gap-[6px]">
-                      <div className="flex items-center gap-[8px]">
-                        <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
-                          3D modelling
-                        </span>
-                        <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                          <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
-                            Intermediate
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </SectionCard>
+                  )}
+                </SectionCard>
+              )}
 
               <SectionCard title="Skills you want" onEdit={() => handleEditSkills("wanted")}>
                 {localReceiveSkills.length > 0 ? (() => {
@@ -547,10 +551,10 @@ export function OfferPreviewView({
 
       <div className="absolute bottom-0 left-0 w-full flex flex-col items-center pointer-events-none z-30">
         {/* Gradient Overlay for Floating Effect */}
-        <div className="w-full h-[156px] bg-gradient-to-t from-[#faf7fe] via-[#faf7fe]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-auto">
+        <div className="w-[calc(100%-4px)] h-[156px] bg-gradient-to-t from-[#faf7fe] via-[#faf7fe]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-none">
           <button
             onClick={() => setIsGoLiveModalOpen(true)}
-            className="w-full max-w-[352px] h-[48px] bg-[#171519] rounded-[16px] flex items-center justify-center hover:bg-[#2f2c32] transition-colors shadow-[0px_4px_12px_rgba(0,0,0,0.15)]"
+            className="w-full max-w-[352px] h-[48px] bg-[#171519] rounded-[16px] flex items-center justify-center hover:bg-[#2f2c32] transition-colors shadow-[0px_4px_12px_rgba(0,0,0,0.15)] pointer-events-auto"
           >
             <span className="font-['Nunito'] font-bold text-[#fbf6ff] text-[16px]">
               Go Live
@@ -664,11 +668,29 @@ export function OfferPreviewView({
             isOpen={isGoLiveModalOpen}
             onClose={() => setIsGoLiveModalOpen(false)}
             onViewLive={() => {
-              console.log("View live page clicked");
               setIsGoLiveModalOpen(false);
+              setIsLiveViewOpen(true);
             }}
           />
         )}
+        <AnimatePresence>
+          {isLiveViewOpen && (
+            <LiveOfferView
+              offerTitle={title}
+              offerDescription={description}
+              isTimeCredit={isTimeCredit}
+              timeCreditRate={localTimeCreditRate}
+              sessionMinutes={localSessionDuration.minutes}
+              reviewSkills={localReviewSkills}
+              reviewTags={localReviewTags}
+              reviewProficiencies={localReviewProficiencies}
+              receiveSkills={localReceiveSkills}
+              receiveTags={localReceiveTags}
+              receiveProficiencies={localReceiveProficiencies}
+              onBack={() => setIsLiveViewOpen(false)}
+            />
+          )}
+        </AnimatePresence>
         {editModal.open && (
           <EditFieldModal
             key={editModal.field}
