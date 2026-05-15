@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TimerIcon, UniversalSkillIcon, PencilIcon, CalendarIcon, ClockIcon, DocumentIcon, TrashIcon } from "../../../components/common/Icons";
+import { TimerIcon, UniversalSkillIcon, PencilIcon, CalendarIcon, ClockIcon, DocumentIcon, TrashIcon, EditIcon } from "../../../components/common/Icons";
 import { PersonaPfpSet } from "../../../components/common/PersonaPfpSet";
 import { SkillbeekSingleStar } from "../../../components/common/SkillbeekSingleStar";
 import { EditFieldModal } from "../components/EditFieldModal";
@@ -101,9 +101,10 @@ function SectionCard({
         {onEdit && (
           <button
             onClick={onEdit}
-            className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] py-[12px] hover:text-[#49464c] transition-colors"
+            className="w-[40px] h-[40px] flex items-center justify-center rounded-full hover:bg-[#f0edf4] transition-colors -mr-[8px]"
+            aria-label="Edit"
           >
-            Edit
+            <EditIcon className="w-[20px] h-[20px] text-[#171519]" />
           </button>
         )}
       </div>
