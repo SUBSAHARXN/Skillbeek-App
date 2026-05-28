@@ -26,12 +26,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import SkillbeekLoader from "./components/common/SkillbeekLoader";
 import { SkillRoleView } from "./features/offers/steps/SkillRoleView";
 import { PartnerRoleView } from "./features/offers/steps/PartnerRoleView";
+import { SkillLiveView } from "./features/offers/steps/SkillLiveView";
+import { SkillDetailsView } from "./features/offers/steps/SkillDetailsView";
 
-type ViewState = "splash" | "login" | "password" | "otp" | "otpInput" | "createPassword" | "offerCreate" | "offerTitle" | "offerDescription" | "offerAddSkill" | "skillSelect" | "skillReview" | "skillRole" | "proficiencyLevels" | "exchangeDetails" | "receiveSkillsAdd" | "receiveSkillsSelect" | "receiveSkillsReview" | "partnerRole" | "partnerProficiency" | "timeCreditRate" | "availability" | "offerSettings" | "offerExpiration" | "sessionLength" | "offerPreview";
+type ViewState = "splash" | "login" | "password" | "otp" | "otpInput" | "createPassword" | "offerCreate" | "offerTitle" | "offerDescription" | "offerAddSkill" | "skillSelect" | "skillReview" | "skillLive" | "skillDetails" | "skillRole" | "proficiencyLevels" | "exchangeDetails" | "receiveSkillsAdd" | "receiveSkillsSelect" | "receiveSkillsReview" | "partnerRole" | "partnerProficiency" | "timeCreditRate" | "availability" | "offerSettings" | "offerExpiration" | "sessionLength" | "offerPreview";
 type AuthMode = "login" | "reset";
 
 function App() {
   const [isFirstTimeUser, setIsFirstTimeUser] = useState(true);
+  const [isSkillOnlyFlow, setIsSkillOnlyFlow] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>("splash");
   const [navDirection, setNavDirection] = useState(1);
   const [authMode, setAuthMode] = useState<AuthMode>("login");
@@ -59,6 +62,7 @@ function App() {
   const [offerSettings, setOfferSettings] = useState<any>(null);
   const [offerExpiration, setOfferExpiration] = useState<any>(null);
   const [sessionLength, setSessionLength] = useState<any>({ type: "preset", minutes: 30 });
+  const [selectedSkillForDetails, setSelectedSkillForDetails] = useState<string | null>(null);
 
   // Initialize global OverlayScrollbars
   const [initScrollbars] = useOverlayScrollbars({
@@ -190,10 +194,21 @@ function App() {
           Reset Login
         </button>
         <button 
-          onClick={() => setIsAuthenticating(prev => !prev)}
+          onClick={() => {
+            setIsSkillOnlyFlow(true);
+            setReviewSkills([]);
+            setReviewTagsMap({});
+            setReceiveSkills([]);
+            setReceiveTagsMap({});
+            setReviewRoles({});
+            setReviewProficiencies({});
+            setReceiveRoles({});
+            setReceiveProficiencies({});
+            setCurrentView("offerAddSkill");
+          }}
           className="px-3 py-1 bg-purple-600 hover:bg-purple-500 rounded-[8px] text-[12px] font-bold transition-colors shadow-[0_0_10px_rgba(168,85,247,0.4)]"
         >
-          Toggle Loader Overlay
+          Skill Object
         </button>
         <button 
           onClick={() => setCurrentView("createPassword")}
@@ -203,7 +218,10 @@ function App() {
         </button>
 
         <button 
-          onClick={() => setCurrentView("offerCreate")}
+          onClick={() => {
+            setIsSkillOnlyFlow(false);
+            setCurrentView("offerCreate");
+          }}
           className="px-3 py-1 bg-[#171519] hover:bg-[#2f2c32] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(23,21,25,0.4)]"
         >
           Offer Create Flow
@@ -217,7 +235,7 @@ function App() {
         <div className="w-full h-full relative overflow-hidden bg-[#fbf6ff] rounded-[30px]">
 
           {/* ── Main Screen Routes ──────────────────────────────── */}
-          <AnimatePresence mode="popLayout" custom={navDirection}>
+          <AnimatePresence mode="wait" custom={navDirection}>
             {currentView === "splash" && (
               <motion.div
                 key="splash"
@@ -426,7 +444,13 @@ function App() {
                 className="w-full h-full"
               >
                 <AddSkillView 
-                  onBack={() => navigateTo("exchangeDetails", -1)}
+                  onBack={() => {
+                    if (isSkillOnlyFlow) {
+                      navigateTo("login", -1);
+                    } else {
+                      navigateTo("exchangeDetails", -1);
+                    }
+                  }}
                   onNext={() => navigateTo("skillSelect", 1)}
                 />
               </motion.div>
@@ -450,57 +474,6 @@ function App() {
                   onNext={(skills, tagsMap) => {
                     setReviewSkills(skills);
                     setReviewTagsMap(tagsMap);
-                    navigateTo("skillReview", 1);
-                  }}
-                />
-              </motion.div>
-            )}
-
-            {currentView === "skillReview" && (
-              <motion.div
-                key="skillReview"
-                custom={navDirection}
-                variants={slideVariants}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                transition={slideTransition}
-                className="w-full h-full"
-              >
-                <SkillReviewView
-                  selectedSkills={reviewSkills}
-                  skillTagsMap={reviewTagsMap}
-                  onBack={() => navigateTo("skillSelect", -1)}
-                  onAddMore={(skills, tagsMap) => {
-                    setReviewSkills(skills);
-                    setReviewTagsMap(tagsMap);
-                    navigateTo("skillSelect", -1);
-                  }}
-                  onNext={(confirmedSkills, confirmedTagsMap) => {
-                    setReviewSkills(confirmedSkills);
-                    setReviewTagsMap(confirmedTagsMap);
-                    navigateTo("skillRole", 1);
-                  }}
-                />
-              </motion.div>
-            )}
-
-            {currentView === "skillRole" && (
-              <motion.div
-                key="skillRole"
-                custom={navDirection}
-                variants={slideVariants}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                transition={slideTransition}
-                className="w-full h-full"
-              >
-                <SkillRoleView
-                  selectedSkills={reviewSkills}
-                  onBack={() => navigateTo("skillReview", -1)}
-                  onNext={(roles) => {
-                    setReviewRoles(roles);
                     navigateTo("proficiencyLevels", 1);
                   }}
                 />
@@ -521,9 +494,110 @@ function App() {
                 <ProficiencyLevelsView
                   selectedSkills={reviewSkills}
                   skillTagsMap={reviewTagsMap}
-                  onBack={() => navigateTo("skillRole", -1)}
+                  onBack={() => navigateTo("skillSelect", -1)}
                   onNext={(proficiencies) => {
                     setReviewProficiencies(proficiencies);
+                    navigateTo("skillReview", 1);
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "skillReview" && (
+              <motion.div
+                key="skillReview"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <SkillReviewView
+                  selectedSkills={reviewSkills}
+                  skillTagsMap={reviewTagsMap}
+                  proficiencies={reviewProficiencies}
+                  onBack={() => navigateTo("proficiencyLevels", -1)}
+                  onAddMore={(skills, tagsMap) => {
+                    setReviewSkills(skills);
+                    setReviewTagsMap(tagsMap);
+                    navigateTo("skillSelect", -1);
+                  }}
+                  onNext={(confirmedSkills, confirmedTagsMap) => {
+                    setReviewSkills(confirmedSkills);
+                    setReviewTagsMap(confirmedTagsMap);
+                    if (isSkillOnlyFlow) {
+                      navigateTo("skillLive", 1);
+                    } else {
+                      navigateTo("skillRole", 1);
+                    }
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "skillLive" && (
+              <motion.div
+                key="skillLive"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <SkillLiveView
+                  skills={reviewSkills}
+                  proficiencies={reviewProficiencies}
+                  onBack={() => navigateTo("skillReview", -1)}
+                  onSkillClick={(skill) => {
+                    setSelectedSkillForDetails(skill);
+                    navigateTo("skillDetails", 1);
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "skillDetails" && (
+              <motion.div
+                key="skillDetails"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <SkillDetailsView
+                  skillName={selectedSkillForDetails || ""}
+                  proficiency={reviewProficiencies[selectedSkillForDetails || ""] || "Basic"}
+                  tags={reviewTagsMap[selectedSkillForDetails || ""] || []}
+                  isAdded={true}
+                  onBack={() => navigateTo("skillLive", -1)}
+                  onCreateOffer={() => navigateTo("offerCreate", 1)}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "skillRole" && (
+              <motion.div
+                key="skillRole"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <SkillRoleView
+                  selectedSkills={reviewSkills}
+                  onBack={() => navigateTo("skillReview", -1)}
+                  onNext={(roles) => {
+                    setReviewRoles(roles);
                     navigateTo("receiveSkillsAdd", 1);
                   }}
                 />
@@ -546,7 +620,7 @@ function App() {
                     if (exchangeType === "time-credit") {
                       navigateTo("exchangeDetails", -1);
                     } else {
-                      navigateTo("proficiencyLevels", -1);
+                      navigateTo("skillRole", -1);
                     }
                   }}
                   onNext={() => navigateTo("receiveSkillsSelect", 1)}
@@ -572,6 +646,28 @@ function App() {
                   onNext={(skills, tagsMap) => {
                     setReceiveSkills(skills);
                     setReceiveTagsMap(tagsMap);
+                    navigateTo("partnerProficiency", 1);
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "partnerProficiency" && (
+              <motion.div
+                key="partnerProficiency"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <PartnerProficiencyView
+                  selectedSkills={receiveSkills}
+                  onBack={() => navigateTo("receiveSkillsSelect", -1)}
+                  onNext={(proficiencies) => {
+                    setReceiveProficiencies(proficiencies);
                     navigateTo("receiveSkillsReview", 1);
                   }}
                 />
@@ -592,8 +688,9 @@ function App() {
                 <SkillReviewView
                   selectedSkills={receiveSkills}
                   skillTagsMap={receiveTagsMap}
+                  proficiencies={receiveProficiencies}
                   hideBadge={true}
-                  onBack={() => navigateTo("receiveSkillsSelect", -1)}
+                  onBack={() => navigateTo("partnerProficiency", -1)}
                   onAddMore={(skills, tagsMap) => {
                     setReceiveSkills(skills);
                     setReceiveTagsMap(tagsMap);
@@ -624,28 +721,6 @@ function App() {
                   onBack={() => navigateTo("receiveSkillsReview", -1)}
                   onNext={(roles) => {
                     setReceiveRoles(roles);
-                    navigateTo("partnerProficiency", 1);
-                  }}
-                />
-              </motion.div>
-            )}
-
-            {currentView === "partnerProficiency" && (
-              <motion.div
-                key="partnerProficiency"
-                custom={navDirection}
-                variants={slideVariants}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                transition={slideTransition}
-                className="w-full h-full"
-              >
-                <PartnerProficiencyView
-                  selectedSkills={receiveSkills}
-                  onBack={() => navigateTo("partnerRole", -1)}
-                  onNext={(proficiencies) => {
-                    setReceiveProficiencies(proficiencies);
                     if (exchangeType === "time-credit") {
                       navigateTo("timeCreditRate", 1);
                     } else {
@@ -693,7 +768,7 @@ function App() {
                     if (exchangeType === "time-credit") {
                       navigateTo("timeCreditRate", -1);
                     } else {
-                      navigateTo("partnerProficiency", -1);
+                      navigateTo("partnerRole", -1);
                     }
                   }}
                   onNext={(data) => {
@@ -741,7 +816,13 @@ function App() {
                 className="w-full h-full"
               >
                 <OfferExpirationView
-                  onBack={() => navigateTo("offerSettings", -1)}
+                  onBack={() => {
+                    if (isSkillOnlyFlow) {
+                      navigateTo("skillReview", -1);
+                    } else {
+                      navigateTo("offerSettings", -1);
+                    }
+                  }}
                   onNext={(expiration) => {
                     setOfferExpiration(expiration);
                     navigateTo("sessionLength", 1);
@@ -764,7 +845,13 @@ function App() {
                 className="w-full h-full"
               >
                 <SessionLengthView
-                  onBack={() => navigateTo("offerExpiration", -1)}
+                  onBack={() => {
+                    if (isSkillOnlyFlow) {
+                      navigateTo("skillReview", -1);
+                    } else {
+                      navigateTo("offerExpiration", -1);
+                    }
+                  }}
                   onNext={(duration) => {
                     setSessionLength(duration);
                     navigateTo("offerPreview", 1);
@@ -801,7 +888,13 @@ function App() {
                   sessionDuration={sessionLength}
                   isTimeCredit={exchangeType === "time-credit"}
                   timeCreditRate={timeCreditRate}
-                  onBack={() => navigateTo("sessionLength", -1)}
+                  onBack={() => {
+                    if (isSkillOnlyFlow) {
+                      navigateTo("skillReview", -1);
+                    } else {
+                      navigateTo("sessionLength", -1);
+                    }
+                  }}
                   onPublish={() => console.log("Publish offer")}
                 />
               </motion.div>

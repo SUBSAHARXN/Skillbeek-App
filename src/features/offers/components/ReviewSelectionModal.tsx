@@ -1,19 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CustomAnimatedCheckbox } from "../../../components/common/CustomAnimatedCheckbox";
-
-function GripIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 16 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="4" cy="5" r="2" />
-      <circle cx="4" cy="12" r="2" />
-      <circle cx="4" cy="19" r="2" />
-      <circle cx="12" cy="5" r="2" />
-      <circle cx="12" cy="12" r="2" />
-      <circle cx="12" cy="19" r="2" />
-    </svg>
-  );
-}
+import { CloseIcon, GripIcon, PlusIcon } from "../../../components/common/Icons";
 
 interface ReviewSelectionModalProps {
   isOpen: boolean;
@@ -45,10 +33,32 @@ export function ReviewSelectionModal({
   onReorderSkills
 }: ReviewSelectionModalProps) {
   const [orderedSkills, setOrderedSkills] = useState<string[]>(skills);
+  const [showFAB, setShowFAB] = useState(true);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     setOrderedSkills(skills);
   }, [skills]);
+
+  useEffect(() => {
+    setShowFAB(true);
+    lastScrollY.current = 0;
+  }, [skills, isOpen]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const currentScrollY = e.currentTarget.scrollTop;
+    
+    if (currentScrollY <= 0) {
+      setShowFAB(true);
+    } else if (Math.abs(currentScrollY - lastScrollY.current) > 5) {
+      if (currentScrollY > lastScrollY.current) {
+        setShowFAB(false);
+      } else {
+        setShowFAB(true);
+      }
+    }
+    lastScrollY.current = currentScrollY;
+  };
 
   const formatProficiency = (p: string) => {
     if (!p) return "Basic";
@@ -92,10 +102,7 @@ export function ReviewSelectionModal({
                     onClick={onClose}
                     className="absolute right-[16px] w-[48px] h-[48px] rounded-[32px] flex items-center justify-center bg-[#fbf6ff]"
                   >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
+                    <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
                   </button>
                 </div>
                 <div className="w-full h-[1px] bg-[#e0dce3]" />
@@ -105,7 +112,10 @@ export function ReviewSelectionModal({
               </div>
 
               {/* Skills List */}
-              <div className="flex flex-col gap-[24px] w-full max-h-[400px] overflow-y-auto pr-0 pb-[24px] modal-scrollbar">
+              <div 
+                onScroll={handleScroll}
+                className="flex flex-col gap-[24px] w-full max-h-[400px] overflow-y-auto pr-0 pb-[24px] modal-scrollbar"
+              >
                 {orderedSkills.map((skill, index) => {
                   const skillTags = tags[skill] || [];
                   const isPrimary = index === 0;
@@ -241,11 +251,16 @@ export function ReviewSelectionModal({
 
           {/* Floating Add Button — absolute inside phone frame */}
           <motion.div
-            initial={{ y: 60, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 60, opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            initial={{ y: 60, opacity: 0, scale: 0 }}
+            animate={{ 
+              y: 0, 
+              opacity: showFAB ? 1 : 0, 
+              scale: showFAB ? 1 : 0 
+            }}
+            exit={{ y: 60, opacity: 0, scale: 0 }}
+            transition={{ type: "spring", damping: 15, stiffness: 350 }}
             className="absolute bottom-[128px] right-[16px] z-[60]"
+            style={{ pointerEvents: showFAB ? "auto" : "none" }}
           >
             <button
               onClick={() => {
@@ -254,10 +269,7 @@ export function ReviewSelectionModal({
               }}
               className="w-[56px] h-[56px] rounded-[16px] bg-[#b7812f] shadow-[0px_12px_32px_rgba(18,9,0,0.15),0px_8px_4px_rgba(18,9,0,0.05)] flex items-center justify-center"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fbf6ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
+              <PlusIcon className="w-[24px] h-[24px] text-[#fbf6ff]" />
             </button>
           </motion.div>
         </>

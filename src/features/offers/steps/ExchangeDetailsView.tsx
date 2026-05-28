@@ -110,8 +110,8 @@ export function ExchangeDetailsView({ onBack, onNext }: ExchangeDetailsViewProps
             onClick={() => isNextEnabled && onNext(selectedType)}
             disabled={!isNextEnabled}
             className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
-                ? "bg-[#171519] text-[#fbf6ff]"
-                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              ? "bg-[#171519] text-[#fbf6ff]"
+              : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
               }`}
           >
             Next

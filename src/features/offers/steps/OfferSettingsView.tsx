@@ -68,7 +68,7 @@ export function OfferSettingsView({
 
           <div className="flex flex-col gap-[20px]">
             {/* Public Option */}
-            <div 
+            <div
               className="flex items-center gap-[6px] cursor-pointer py-[10px]"
               onClick={() => setVisibility("public")}
             >
@@ -80,7 +80,7 @@ export function OfferSettingsView({
 
             {/* Invite-Only Option */}
             <div className="flex items-center gap-[6px] py-[10px] relative">
-              <div 
+              <div
                 className="flex items-center gap-[6px] cursor-pointer"
                 onClick={() => setVisibility("invite")}
               >
@@ -89,7 +89,7 @@ export function OfferSettingsView({
                   Invite-Only
                 </span>
               </div>
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowTooltip(true);
@@ -118,15 +118,14 @@ export function OfferSettingsView({
           <button
             onClick={() => isNextEnabled && onNext({ visibility })}
             disabled={!isNextEnabled}
-            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${
-              isNextEnabled ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
-            }`}
+            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${isNextEnabled ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              }`}
           >
             Next
           </button>
         </div>
       </div>
-      
+
       {/* Home Indicator */}
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30 pointer-events-none">
         <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
@@ -152,19 +151,19 @@ export function OfferSettingsView({
               <p className="flex-1 font-['Nunito'] font-medium text-[#2f2c32] text-[14px] leading-[20px] tracking-[0.1px] pr-[12px]">
                 Keep this offer private. Perfect for testing new skills or offering exclusive swaps to specific partners.
               </p>
-              <button 
+              <button
                 onClick={() => setShowTooltip(false)}
                 className="w-[24px] h-[24px] flex items-center justify-center shrink-0 hover:bg-[#e0dce3] rounded-full transition-colors"
               >
                 <CloseIcon className="w-[20px] h-[20px] text-[#2f2c32]" />
               </button>
-              
+
               {/* Tooltip Pointer Triangle */}
-              <div 
+              <div
                 className="absolute top-[-8px] left-[118px] w-[16px] h-[8.8px]"
                 style={{
-                  width: 0, 
-                  height: 0, 
+                  width: 0,
+                  height: 0,
                   borderLeft: '8px solid transparent',
                   borderRight: '8px solid transparent',
                   borderBottom: '8.8px solid #f9f4ee'

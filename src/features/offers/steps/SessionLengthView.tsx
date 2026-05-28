@@ -96,8 +96,8 @@ export function SessionLengthView({
                   key={preset.label}
                   onClick={() => setSelected(preset.label)}
                   className={`h-[44px] px-[16px] rounded-[99px] flex items-center justify-center transition-all font-['Nunito'] font-semibold text-[16px] leading-[24px] ${isSelected
-                      ? "bg-[#171519] text-[#fbf6ff]"
-                      : "bg-[#f0edf4] text-[#2f2c32] shadow-[0px_1px_1.5px_rgba(18,9,0,0.06)]"
+                    ? "bg-[#171519] text-[#fbf6ff]"
+                    : "bg-[#f0edf4] text-[#2f2c32] shadow-[0px_1px_1.5px_rgba(18,9,0,0.06)]"
                     }`}
                 >
                   {preset.label}
@@ -160,8 +160,8 @@ export function SessionLengthView({
             onClick={handleNext}
             disabled={!isNextEnabled}
             className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${isNextEnabled
-                ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]"
-                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]"
+              : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
               }`}
           >
             Preview

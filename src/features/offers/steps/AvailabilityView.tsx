@@ -18,12 +18,12 @@ const DAY_ABBR: Record<string, string> = {
 export const getRecurringDaysText = (days: string[]) => {
   if (!days || days.length === 0) return "Select days";
   const sorted = [...days].sort((a, b) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b));
-  
+
   if (sorted.length === 7) return "Every day";
-  
+
   const isWeekdays = sorted.length === 5 && ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].every(d => sorted.includes(d));
   if (isWeekdays) return "Weekdays";
-  
+
   const isWeekends = sorted.length === 2 && ["Saturday", "Sunday"].every(d => sorted.includes(d));
   if (isWeekends) return "Weekends";
 

@@ -45,10 +45,10 @@ export function OfferExpirationView({
 
   // If the user hasn't explicitly set a date, we default to showing "90 days from now" as a placeholder?
   // Actually, the mockup shows "Tue, Oct 3" and "12:00 PM". Let's format date if set, otherwise "Select Date"
-  const formattedDate = date 
+  const formattedDate = date
     ? date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
     : "Select Date";
-  
+
   const formattedTime = time || "Select Time";
 
   const isNextEnabled = date !== null && time !== null;
@@ -99,7 +99,7 @@ export function OfferExpirationView({
 
           <div className="flex flex-col gap-[12px]">
             {/* Day Row */}
-            <div 
+            <div
               onClick={() => setIsDateModalOpen(true)}
               className="w-full h-[56px] bg-[#faf7fe] rounded-[16px] flex items-center justify-between px-[16px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#f0edf4] transition-colors"
             >
@@ -118,7 +118,7 @@ export function OfferExpirationView({
             </div>
 
             {/* Time Row */}
-            <div 
+            <div
               onClick={() => setIsTimeModalOpen(true)}
               className="w-full h-[56px] bg-[#faf7fe] rounded-[16px] flex items-center justify-between px-[16px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#f0edf4] transition-colors"
             >
@@ -153,15 +153,14 @@ export function OfferExpirationView({
           <button
             onClick={() => isNextEnabled && onNext({ date, time })}
             disabled={!isNextEnabled}
-            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${
-              isNextEnabled ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
-            }`}
+            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${isNextEnabled ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              }`}
           >
             Next
           </button>
         </div>
       </div>
-      
+
       {/* Home Indicator */}
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30 pointer-events-none">
         <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
@@ -177,7 +176,7 @@ export function OfferExpirationView({
           setIsDateModalOpen(false);
         }}
       />
-      
+
       <TimePickerModal
         isOpen={isTimeModalOpen}
         onClose={() => setIsTimeModalOpen(false)}
@@ -188,13 +187,13 @@ export function OfferExpirationView({
         }}
       />
 
-      <SaveExitModal 
-        isOpen={isSaveModalOpen} 
-        onKeepWorking={() => setIsSaveModalOpen(false)} 
+      <SaveExitModal
+        isOpen={isSaveModalOpen}
+        onKeepWorking={() => setIsSaveModalOpen(false)}
         onExit={() => {
           setIsSaveModalOpen(false);
           if (onSaveExit) onSaveExit();
-        }} 
+        }}
       />
     </div>
   );

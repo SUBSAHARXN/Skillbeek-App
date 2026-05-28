@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import Lottie from "lottie-react";
 import { SaveExitModal } from "./components/SaveExitModal";
-// @ts-ignore
-import { DotLottiePlayer } from "@dotlottie/react-player";
+
 
 // @ts-ignore
 import handsJson from "../../assets/animations/offer-create/Hands-ani-final-V4.json";
@@ -70,7 +69,7 @@ const steps: StepData[] = [
 function NeumorphicDivider() {
   return (
     <div className="w-full flex items-center justify-center my-[16px]">
-      <div 
+      <div
         className="w-full h-[2px] rounded-full bg-[#fbf6ff]"
         style={{
           boxShadow: "inset 2px 2px 12px rgba(192, 188, 195, 0.5), inset -2px -2px 12px rgba(255, 255, 255, 0.9)"
@@ -88,12 +87,12 @@ const AnimatedStepIcon = ({ step, canPlay, onComplete }: { step: StepData, canPl
     if (canPlay && !hasPlayed && lottieRef.current) {
       setHasPlayed(true);
       lottieRef.current.play();
-      
+
       // Trigger the next step after 0.2s regardless of when this one finishes
       const timer = setTimeout(() => {
         onComplete();
       }, 200);
-      
+
       return () => clearTimeout(timer);
     }
   }, [canPlay, hasPlayed, onComplete]);
@@ -116,7 +115,7 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
   const [isStep5Visible, setIsStep5Visible] = React.useState(false);
   const [isBottomSeen, setIsBottomSeen] = React.useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
-  
+
   const step5Ref = React.useRef<HTMLDivElement>(null);
   const bottomRef = React.useRef<HTMLDivElement>(null);
 
@@ -147,7 +146,7 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
 
       {/* Header Action Buttons (Fixed at Top) */}
       <div className="w-full flex justify-between items-center py-[16px] px-[16px] shrink-0 bg-[#fbf6ff] z-20">
-        <button 
+        <button
           onClick={() => setIsSaveModalOpen(true)}
           className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
         >
@@ -183,11 +182,11 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
           {steps.map((step, index) => {
             const isLast = index === steps.length - 1;
             const canPlay = isLast ? (finishedSteps >= steps.length - 1 && isStep5Visible) : finishedSteps >= index;
-            
+
             return (
               <React.Fragment key={step.id}>
                 {/* Step Item */}
-                <div 
+                <div
                   ref={isLast ? step5Ref : null}
                   className="w-full flex items-center justify-between min-h-[64px] gap-[16px]"
                 >
@@ -208,10 +207,10 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
 
                   {/* 64x64px Animation Icon Container */}
                   <div className="shrink-0 w-[64px] h-[64px] flex items-center justify-center relative bg-[#E0E5EC]/10 rounded-full overflow-visible">
-                    <AnimatedStepIcon 
-                      step={step} 
-                      canPlay={canPlay} 
-                      onComplete={() => { if (finishedSteps === index) setFinishedSteps(prev => prev + 1); }} 
+                    <AnimatedStepIcon
+                      step={step}
+                      canPlay={canPlay}
+                      onComplete={() => { if (finishedSteps === index) setFinishedSteps(prev => prev + 1); }}
                     />
                   </div>
                 </div>
@@ -230,12 +229,12 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
       {/* Bottom CTA Block (Fixed) */}
       <div className="absolute bottom-0 left-0 w-full flex flex-col items-center pointer-events-none z-30">
         <div className="w-[calc(100%-4px)] h-[156px] bg-gradient-to-t from-[#fbf6ff] via-[#fbf6ff]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-none">
-          <button 
+          <button
             disabled={!isStep5Visible}
             onClick={onContinue}
             className={`w-full max-w-[352px] h-[48px] font-['Nunito'] font-bold text-[16px] rounded-[16px] leading-[24px] tracking-[0.16px] transition-all duration-500 pointer-events-auto
-              ${isStep5Visible 
-                ? "bg-[#171519] text-[#fbf6ff] shadow-[0px_4px_12px_rgba(0,0,0,0.15)] hover:bg-[#2f2c32] opacity-100 translate-y-0" 
+              ${isStep5Visible
+                ? "bg-[#171519] text-[#fbf6ff] shadow-[0px_4px_12px_rgba(0,0,0,0.15)] hover:bg-[#2f2c32] opacity-100 translate-y-0"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed opacity-0 translate-y-10"}`}
           >
             Create My Offer
@@ -248,13 +247,13 @@ export function OfferCreateFlowView({ onBack, onContinue }: { onBack?: () => voi
         <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]">        </div>
       </div>
 
-      <SaveExitModal 
-        isOpen={isSaveModalOpen} 
-        onKeepWorking={() => setIsSaveModalOpen(false)} 
+      <SaveExitModal
+        isOpen={isSaveModalOpen}
+        onKeepWorking={() => setIsSaveModalOpen(false)}
         onExit={() => {
           setIsSaveModalOpen(false);
-          if (onBack) onBack(); 
-        }} 
+          if (onBack) onBack();
+        }}
       />
     </div>
   );

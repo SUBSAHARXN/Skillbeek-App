@@ -9,6 +9,8 @@ interface SkillSelectViewProps {
   onBack?: () => void;
   onNext?: (selectedSkills: string[], skillTagsMap: Record<string, string[]>) => void;
   hideTags?: boolean;
+  isViewOnly?: boolean;
+  onSkillClick?: (skill: string) => void;
 }
 
 const SKILL_CATEGORIES = [
@@ -57,7 +59,9 @@ export function SkillSelectView({
   initialTagsMap = {},
   onBack,
   onNext,
-  hideTags = false
+  hideTags = false,
+  isViewOnly = false,
+  onSkillClick
 }: SkillSelectViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>(initialSkills);
@@ -201,21 +205,36 @@ export function SkillSelectView({
       </div>
 
       {/* Header Action Buttons */}
-      <div className="w-full px-[16px] flex justify-between items-center pt-[16px] mb-[40px] shrink-0 relative z-10 bg-[#fbf6ff]">
-        <button
-          onClick={() => setIsSaveModalOpen(true)}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
-        >
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-            Save and Exit
-          </span>
-        </button>
-        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors">
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-            Questions?
-          </span>
-        </button>
-      </div>
+      {!isViewOnly && (
+        <div className="w-full px-[16px] flex justify-between items-center pt-[16px] mb-[40px] shrink-0 relative z-10 bg-[#fbf6ff]">
+          <button
+            onClick={() => setIsSaveModalOpen(true)}
+            className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors"
+          >
+            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+              Save and Exit
+            </span>
+          </button>
+          <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors">
+            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+              Questions?
+            </span>
+          </button>
+        </div>
+      )}
+
+      {isViewOnly && (
+        <div className="w-full px-[16px] flex items-center pt-[16px] mb-[40px] shrink-0 relative z-10 bg-[#fbf6ff]">
+          <button
+            onClick={onBack}
+            className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[#fbf6ff] hover:bg-[#f0edf4] transition-colors shrink-0"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-[20px] h-[20px]">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Search Bar Area */}
       <div className="w-full px-[16px] pb-[32px] shrink-0 z-10 relative bg-[#fbf6ff]">
@@ -303,20 +322,30 @@ export function SkillSelectView({
                 return (
                   <div
                     key={skill}
-                    onClick={() => !isDisabled && handleToggle(skill)}
-                    className={`w-full bg-[#faf7fe] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] p-[8px] flex items-center justify-between select-none transition-all ${isDisabled
-                        ? "opacity-40 cursor-not-allowed"
-                        : "cursor-pointer active:scale-[0.99] hover:bg-[#f0edf4]"
+                    onClick={() => {
+                      if (isViewOnly && onSkillClick) {
+                        onSkillClick(skill);
+                      } else if (!isDisabled) {
+                        handleToggle(skill);
+                      }
+                    }}
+                    className={`w-full bg-[#faf7fe] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] p-[8px] flex items-center justify-between select-none transition-all ${
+                      isViewOnly ? "h-[60px]" : ""
+                    } ${isDisabled
+                      ? "opacity-40 cursor-not-allowed"
+                      : "cursor-pointer active:scale-[0.99] hover:bg-[#f0edf4]"
                       }`}
                   >
                     <span className="font-['Nunito'] font-semibold text-[#2f2c32] text-[16px] leading-[24px] tracking-[0.1px]">
                       {skill}
                     </span>
 
-                    <CustomAnimatedCheckbox
-                      checked={isSelected}
-                      disabled={isDisabled}
-                    />
+                    {!isViewOnly && (
+                      <CustomAnimatedCheckbox
+                        checked={isSelected}
+                        disabled={isDisabled}
+                      />
+                    )}
                   </div>
                 );
               })}
@@ -334,38 +363,40 @@ export function SkillSelectView({
       </div>
 
       {/* Fixed Bottom Footer */}
-      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
-        {/* Progress Bar */}
-        <div className="w-full flex justify-center">
-          <OfferProgressBar currentStep={1} subStepProgress={0} />
-        </div>
+      {!isViewOnly && (
+        <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
+          {/* Progress Bar */}
+          <div className="w-full flex justify-center">
+            <OfferProgressBar currentStep={1} subStepProgress={50} totalSteps={3} />
+          </div>
 
-        {/* Buttons */}
-        <div className="w-full flex items-center justify-between px-[16px]">
-          <button
-            onClick={onBack}
-            className="flex h-[48px] items-center justify-center px-[16px] py-[12px] font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] tracking-[0.16px] underline"
-          >
-            Back
-          </button>
+          {/* Buttons */}
+          <div className="w-full flex items-center justify-between px-[16px]">
+            <button
+              onClick={onBack}
+              className="flex h-[48px] items-center justify-center px-[16px] py-[12px] font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] tracking-[0.16px] underline"
+            >
+              Back
+            </button>
 
-          <button
-            onClick={() => isNextEnabled && onNext?.(selectedSkills, skillTagsMap)}
-            disabled={!isNextEnabled}
-            className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
+            <button
+              onClick={() => isNextEnabled && onNext?.(selectedSkills, skillTagsMap)}
+              disabled={!isNextEnabled}
+              className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
                 ? "bg-[#171519] text-[#fbf6ff]"
                 : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
-              }`}
-          >
-            Next
-          </button>
-        </div>
+                }`}
+            >
+              Next
+            </button>
+          </div>
 
-        {/* Bottom Home Indicator */}
-        <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px]">
-          <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
+          {/* Bottom Home Indicator */}
+          <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px]">
+            <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Add Tags Modal */}
       <AddTagsModal
@@ -475,8 +506,8 @@ export function SkillSelectView({
             onClick={handleApplyFilter}
             disabled={tempFilters.length === 0}
             className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${tempFilters.length > 0
-                ? "bg-[#171519] text-[#fbf6ff]"
-                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              ? "bg-[#171519] text-[#fbf6ff]"
+              : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
               }`}
           >
             Apply

@@ -3,7 +3,6 @@ import Lottie from "lottie-react";
 
 // @ts-ignore
 import buoyJson from "../../../assets/animations/offer-create/Buoy-ani-5.json";
-import { OfferProgressBar } from "../components/OfferProgressBar";
 
 interface AddSkillViewProps {
   onBack?: () => void;
@@ -54,24 +53,24 @@ export function AddSkillView({ onBack, onNext }: AddSkillViewProps) {
               />
             </div>
           </div>
-        </div>
 
-        {/* Bottom CTA Block */}
-        <div className="w-full flex justify-center px-[16px] mb-[64px]">
-          <button
-            onClick={onNext}
-            className="w-full h-[48px] flex items-center justify-center gap-[6px] bg-[#2f2c32] rounded-[16px] text-[#e0dce3] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] hover:bg-[#171519] transition-colors"
-          >
-            <span>Add Skill</span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 5V19M5 12H19" stroke="#E0DCE3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+          {/* Bottom CTA Block inside the scrollable area */}
+          <div className="w-full flex justify-center px-[0px] mb-[64px]">
+            <button
+              onClick={onNext}
+              className="w-full h-[48px] flex items-center justify-center gap-[6px] bg-[#2f2c32] rounded-[16px] text-[#e0dce3] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] hover:bg-[#171519] transition-colors"
+            >
+              <span>Add skill</span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5V19M5 12H19" stroke="#E0DCE3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Bottom Home Indicator */}
-      <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px]">
+      <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30">
         <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
       </div>
     </div>

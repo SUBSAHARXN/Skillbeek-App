@@ -118,7 +118,7 @@ export function ProficiencyLevelsView({
       <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
         {/* Progress Bar */}
         <div className="w-full flex justify-center">
-          <OfferProgressBar currentStep={2} subStepProgress={0} />
+          <OfferProgressBar currentStep={2} subStepProgress={50} totalSteps={3} />
         </div>
 
         {/* Buttons */}
@@ -133,8 +133,8 @@ export function ProficiencyLevelsView({
             onClick={() => isNextEnabled && onNext(proficiencies)}
             disabled={!isNextEnabled}
             className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
-                ? "bg-[#171519] text-[#fbf6ff]"
-                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              ? "bg-[#171519] text-[#fbf6ff]"
+              : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
               }`}
           >
             Next

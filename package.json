@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dotlottie/react-player": "^1.6.19",
-    "@lottiefiles/dotlottie-react": "^0.19.0",
     "ajv-keywords": "^5.1.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",

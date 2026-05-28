@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TimerIcon, UniversalSkillIcon, PencilIcon, CalendarIcon, ClockIcon, DocumentIcon, TrashIcon, EditIcon } from "../../../components/common/Icons";
+import { TimerIcon, UniversalSkillIcon, PencilIcon, CalendarIcon, ClockIcon, DocumentIcon, TrashIcon, EditIcon, TimeCreditIcon, BackArrowIcon, MoreIcon } from "../../../components/common/Icons";
+import { SectionCard } from "../../../components/common/SectionCard";
 import { PersonaPfpSet } from "../../../components/common/PersonaPfpSet";
 import { SkillbeekSingleStar } from "../../../components/common/SkillbeekSingleStar";
 import { EditFieldModal } from "../components/EditFieldModal";
@@ -15,17 +16,6 @@ import { GoLiveModal } from "../components/GoLiveModal";
 import { SuccessToast } from "../../../components/common/SuccessToast";
 import { LiveOfferView } from "./LiveOfferView";
 import { AvailabilityData, getRecurringDaysText, getSpecificDatesText } from "./AvailabilityView";
-
-function TimeCreditIcon({ className }: { className?: string }) {
-  return (
-    <div className={`relative shrink-0 flex items-center justify-center ${className || "w-[24px] h-[24px]"}`}>
-      <svg className="w-[18px] h-[14.19px]" viewBox="0 0 18 14.1942" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path fillRule="evenodd" clipRule="evenodd" d="M3.90166 7.37403C3.84628 7.38554 3.85484 7.46211 3.9114 7.46211H10.0626C10.1044 7.46211 10.1447 7.44666 10.1752 7.41811C10.8649 6.743 11.2097 5.82588 11.2097 4.6666C11.2097 3.7274 10.9603 2.90559 10.4614 2.20117C9.96241 1.49684 9.27268 0.953893 8.39218 0.572336C7.49707 0.190779 6.45517 0 5.2665 0C4.16583 0 3.15333 0.161389 2.22882 0.484252C1.43631 0.748423 0.751534 1.12582 0.174705 1.61645C0.00126823 1.76397 -0.0451224 2.009 0.0448947 2.21814L0.346566 2.91902C0.49378 3.26104 0.931373 3.36043 1.23607 3.14639C1.72106 2.8057 2.22803 2.54198 2.75699 2.35526C3.50549 2.07648 4.35661 1.93709 5.3105 1.93709C6.44039 1.93709 7.32829 2.17187 7.97401 2.64143C8.60496 3.11107 8.92051 3.7494 8.92051 4.55652C8.92051 5.20216 8.72235 5.70849 8.32618 6.07536C7.91523 6.44222 7.24012 6.721 6.301 6.91177L3.90166 7.37403Z" fill="#B7812F" />
-        <path d="M14.4785 8.49306C14.7824 8.49306 15.0288 8.24668 15.0288 7.94276V7.44107C15.0288 7.24124 14.9205 7.05711 14.7458 6.96004L14.7242 6.94805C14.6424 6.90262 14.5504 6.87877 14.4569 6.87877H1.82154C1.51762 6.87877 1.27124 7.12515 1.27124 7.42908L1.27124 7.94276C1.27124 8.24669 1.51762 8.49306 1.82154 8.49306L5.91691 8.49306C6.14685 8.49306 6.3123 8.71569 6.27392 8.94241C6.23332 9.18223 6.213 9.436 6.213 9.70373C6.213 10.5988 6.45517 11.384 6.93934 12.059C7.40906 12.734 8.08401 13.2624 8.96451 13.6439C9.84502 14.0108 10.8869 14.1942 12.0902 14.1942C13.3376 14.1942 14.4675 14.0401 15.48 13.7319C16.3434 13.4566 17.1108 13.0854 17.782 12.6181C17.9864 12.4758 18.0535 12.2079 17.9558 11.9788L17.629 11.2133C17.4881 10.8832 17.074 10.7751 16.7728 10.9705C16.4576 11.1752 16.1367 11.3546 15.8102 11.5087C15.2673 11.7582 14.6949 11.9489 14.0934 12.081C13.477 12.1984 12.8093 12.2571 12.0902 12.2571C10.8575 12.2571 9.95502 12.037 9.38268 11.5967C8.79573 11.1565 8.50218 10.5768 8.50218 9.85782C8.50218 9.36606 8.63297 8.96311 8.89456 8.64885C8.98306 8.54252 9.11959 8.49306 9.25794 8.49306H14.4785Z" fill="#B7812F" />
-      </svg>
-    </div>
-  );
-}
 
 interface OfferPreviewViewProps {
   offerTitle?: string;
@@ -46,24 +36,6 @@ interface OfferPreviewViewProps {
   onBack?: () => void;
 }
 
-function BackArrowIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function MoreIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="5" r="1.5" fill="currentColor" />
-      <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-      <circle cx="12" cy="19" r="1.5" fill="currentColor" />
-    </svg>
-  );
-}
-
 function formatDuration(minutes: number): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
@@ -79,36 +51,6 @@ function NeumorphicDivider() {
         className="w-full h-[2px] rounded-full bg-[#fbf6ff]"
         style={{ boxShadow: "inset 2px 2px 12px rgba(192, 188, 195, 0.5), inset -2px -2px 12px rgba(255, 255, 255, 0.9)" }}
       />
-    </div>
-  );
-}
-
-function SectionCard({
-  title,
-  onEdit,
-  children,
-}: {
-  title: string;
-  onEdit?: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="w-full min-w-0 bg-[#faf7fe] rounded-[12px] px-[16px] py-[16px] flex flex-col gap-[12px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]">
-      <div className="flex items-center justify-between">
-        <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px]">
-          {title}
-        </span>
-        {onEdit && (
-          <button
-            onClick={onEdit}
-            className="w-[40px] h-[40px] flex items-center justify-center rounded-full hover:bg-[#f0edf4] transition-colors -mr-[8px]"
-            aria-label="Edit"
-          >
-            <EditIcon className="w-[20px] h-[20px] text-[#171519]" />
-          </button>
-        )}
-      </div>
-      {children}
     </div>
   );
 }
@@ -284,7 +226,7 @@ export function OfferPreviewView({
           </div>
 
           <div className="flex flex-col gap-[24px] min-w-0 w-full">
-            <div className="w-full min-w-0 bg-[#faf7fe] rounded-[12px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]">
+            <div className="w-full min-w-0 bg-[#faf7fe] rounded-[12px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-skillbeek-sm">
               <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">
                 Profile
               </span>
@@ -627,7 +569,7 @@ export function OfferPreviewView({
                   setIsMenuOpen(false);
                   setIsDeleteModalOpen(true);
                 }}
-                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
+                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#fef6f5] transition-colors"
               >
                 <TrashIcon className="w-[24px] h-[24px] text-[#870113]" />
                 <span className="font-['Nunito'] font-bold text-[#870113] text-[16px] leading-[24px]">Delete Offer</span>
@@ -654,7 +596,7 @@ export function OfferPreviewView({
             }}
           />
         )}
-        <SuccessToast 
+        <SuccessToast
           isVisible={toastConfig.visible}
           message={toastConfig.message}
           actionLabel={toastConfig.actionLabel}
@@ -677,16 +619,20 @@ export function OfferPreviewView({
         <AnimatePresence>
           {isLiveViewOpen && (
             <LiveOfferView
+              isOwner={true}
               offerTitle={title}
               offerDescription={description}
+              availability={localAvailability}
               isTimeCredit={isTimeCredit}
               timeCreditRate={localTimeCreditRate}
               sessionMinutes={localSessionDuration.minutes}
               reviewSkills={localReviewSkills}
               reviewTags={localReviewTags}
+              reviewRoles={localReviewRoles}
               reviewProficiencies={localReviewProficiencies}
               receiveSkills={localReceiveSkills}
               receiveTags={localReceiveTags}
+              receiveRoles={localReceiveRoles}
               receiveProficiencies={localReceiveProficiencies}
               onBack={() => setIsLiveViewOpen(false)}
             />

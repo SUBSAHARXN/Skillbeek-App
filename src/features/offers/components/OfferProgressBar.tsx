@@ -2,13 +2,20 @@ import React from "react";
 import { motion } from "framer-motion";
 
 interface OfferProgressBarProps {
-  currentStep: number; // 1 to 5
+  currentStep: number; // 1 to totalSteps
   subStepProgress: number; // 0 to 100 (progress of the *current* step)
+  totalSteps?: number; // defaults to 5
 }
 
-export function OfferProgressBar({ currentStep, subStepProgress }: OfferProgressBarProps) {
+export function OfferProgressBar({ currentStep, subStepProgress, totalSteps = 5 }: OfferProgressBarProps) {
   const BEZIER: [number, number, number, number] = [0.24, 0.08, 0.67, 0.99];
-  const steps = [1, 2, 3, 4, 5];
+  const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);
+
+  // Dynamic bar width: available width (352px) minus gaps, divided by totalSteps
+  const AVAILABLE_WIDTH = 352;
+  const GAP_PX = 2;
+  const totalGapSpace = (totalSteps - 1) * GAP_PX;
+  const barWidth = (AVAILABLE_WIDTH - totalGapSpace) / totalSteps;
 
   return (
     <div className="w-full flex gap-[2px] items-center justify-center">
@@ -23,23 +30,17 @@ export function OfferProgressBar({ currentStep, subStepProgress }: OfferProgress
           progress = 0; // Future steps are empty
         }
 
-        // The user requested a transition to 0 roundness when completed (likely to connect seamlessly)
-        // We apply it to the right-side corners. If it's 100%, right corners are flat.
-        // Wait, what if it's the very last step (5)? It should probably remain rounded on the far right.
         const isComplete = progress === 100;
-        const isLastStep = step === 5;
+        const isLastStep = step === totalSteps;
         const targetRadius = isComplete && !isLastStep ? "0px" : "9999px";
 
         return (
           <div 
             key={step} 
-            className="h-[4px] relative bg-[#e0dce3] w-[68.8px]"
+            className="h-[4px] relative bg-[#e0dce3]"
             style={{ 
+              width: `${barWidth}px`,
               borderRadius: step === 1 ? "9999px 0 0 9999px" : isLastStep ? "0 9999px 9999px 0" : "0",
-              // Wait, if the empty bar is also supposed to be round piecemeal... 
-              // Let's just make each segment completely rounded initially to be safe,
-              // then flatten right edges if complete.
-              // Actually, standard pill segments are typically fully rounded.
             }}
           >
             <motion.div

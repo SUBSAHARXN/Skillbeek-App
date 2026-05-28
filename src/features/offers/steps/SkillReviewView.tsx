@@ -1,18 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { OfferProgressBar } from "../components/OfferProgressBar";
 import { CustomAnimatedCheckbox } from "../../../components/common/CustomAnimatedCheckbox";
 import { SaveExitModal } from "../components/SaveExitModal";
-
-// Tag chip
-function TagChip({ label }: { label: string }) {
-  return (
-    <div className="flex items-center px-[12px] py-[6px] bg-[#f0edf4] rounded-[12px]">
-      <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[0.5px] whitespace-nowrap">
-        {label}
-      </span>
-    </div>
-  );
-}
+import { CloseIcon, GripIcon, InfoIcon, PlusIcon } from "../../../components/common/Icons";
+import { ProficiencyTag } from "../../../components/common/ProficiencyTag";
 
 // Badge components
 function BBadge({ size = 20 }: { size?: number }) {
@@ -68,24 +60,12 @@ function PBadge({ size = 16 }: { size?: number }) {
   );
 }
 
-function GripIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 16 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="4" cy="5" r="2" />
-      <circle cx="4" cy="12" r="2" />
-      <circle cx="4" cy="19" r="2" />
-      <circle cx="12" cy="5" r="2" />
-      <circle cx="12" cy="12" r="2" />
-      <circle cx="12" cy="19" r="2" />
-    </svg>
-  );
-}
-
 const MAX_VISIBLE_TAGS = 4;
 
 interface SkillReviewViewProps {
   selectedSkills: string[];
   skillTagsMap: Record<string, string[]>;
+  proficiencies?: Record<string, string>;
   onBack: () => void;
   onAddMore: (skills: string[], tagsMap: Record<string, string[]>) => void;
   onNext: (confirmedSkills: string[], confirmedTagsMap: Record<string, string[]>) => void;
@@ -95,6 +75,7 @@ interface SkillReviewViewProps {
 export function SkillReviewView({
   selectedSkills: initialSkills,
   skillTagsMap,
+  proficiencies = {},
   onBack,
   onNext,
   onAddMore,
@@ -108,6 +89,53 @@ export function SkillReviewView({
   // Badge info tooltip
   const [isBadgeInfoOpen, setIsBadgeInfoOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+
+  const [showFAB, setShowFAB] = useState(true);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
+  const lastScrollY = useRef(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Reset FAB visibility and scroll state when the list of visibleSkills changes
+  useEffect(() => {
+    setShowFAB(true);
+    lastScrollY.current = 0;
+    
+    // Check if the scroll container has no scrollbar (already fits screen)
+    const checkScroll = () => {
+      if (scrollContainerRef.current) {
+        const { scrollHeight, clientHeight } = scrollContainerRef.current;
+        if (scrollHeight <= clientHeight + 10) {
+          setHasScrolledToBottom(true);
+        } else {
+          setHasScrolledToBottom(false);
+        }
+      }
+    };
+    
+    const timer = setTimeout(checkScroll, 100);
+    return () => clearTimeout(timer);
+  }, [visibleSkills]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const currentScrollY = e.currentTarget.scrollTop;
+    const { scrollHeight, clientHeight } = e.currentTarget;
+    
+    // Check if scrolled to bottom
+    if (scrollHeight - currentScrollY <= clientHeight + 10) {
+      setHasScrolledToBottom(true);
+    }
+    
+    if (currentScrollY <= 0) {
+      setShowFAB(true);
+    } else if (Math.abs(currentScrollY - lastScrollY.current) > 5) {
+      if (currentScrollY > lastScrollY.current) {
+        setShowFAB(false);
+      } else {
+        setShowFAB(true);
+      }
+    }
+    lastScrollY.current = currentScrollY;
+  };
 
   // Tag editing state
   const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
@@ -173,7 +201,7 @@ export function SkillReviewView({
     setExpandedSkills((prev) => ({ ...prev, [skill]: !prev[skill] }));
   };
 
-  const isNextEnabled = visibleSkills.length >= 1;
+  const isNextEnabled = visibleSkills.length >= 1 && hasScrolledToBottom;
 
   const handleNext = () => {
     if (isNextEnabled) {
@@ -211,7 +239,11 @@ export function SkillReviewView({
 
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-[16px] pb-[248px] flex flex-col pt-[8px] availability-scrollbar">
+      <div 
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto px-[16px] pb-[248px] flex flex-col pt-[8px] availability-scrollbar"
+      >
         {/* Page Header */}
         <div className="w-full pb-[16px] flex flex-col">
           <div className="flex items-center gap-[4px]">
@@ -227,15 +259,11 @@ export function SkillReviewView({
               className="shrink-0 flex items-center justify-center w-[44px] h-[44px] -mr-[14px]"
               aria-label="What do these badges mean"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
+              <InfoIcon className="w-[16px] h-[16px] text-[#171519]" />
             </button>
           </div>
           <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#49464c] tracking-[0.1px] mt-[8px]">
-            Your top skill is your primary focus. This is what learners will see first when discovering your offer. You can drag to reorder them.
+            Your top skill is what the community sees first. Drag to reorder.
           </p>
         </div>
 
@@ -245,6 +273,7 @@ export function SkillReviewView({
             const isExpanded = expandedSkills[skill] ?? false;
             const shownTags = isExpanded ? tags : tags.slice(0, MAX_VISIBLE_TAGS);
             const isRemoving = removingSkill === skill;
+            const profLevel = proficiencies[skill];
             
             // The top card is automatically Primary
             const isPrimary = index === 0;
@@ -344,6 +373,11 @@ export function SkillReviewView({
                   </div>
                 </div>
 
+                {/* Proficiency tag: 8px from title (using mt-[-8px] since parent has gap-16) and 12px from tags below */}
+                {profLevel && (
+                  <ProficiencyTag level={profLevel} className="-mt-[8px] mb-[-4px]" />
+                )}
+
                 {/* Tags — always visible on both Give and Receive sides */}
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-[12px] items-start">
@@ -389,7 +423,7 @@ export function SkillReviewView({
 
 
       {/* Floating "+" Add More button — absolute, anchored bottom-right, 40px above footer */}
-      <button
+      <motion.button
         onClick={() => {
           const currentTagsMap: Record<string, string[]> = {};
           visibleSkills.forEach((s) => {
@@ -397,7 +431,14 @@ export function SkillReviewView({
           });
           onAddMore?.(visibleSkills, currentTagsMap);
         }}
-        className="absolute right-[24px] z-30 active:scale-95 transition-transform"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ 
+          scale: showFAB ? 1 : 0, 
+          opacity: showFAB ? 1 : 0 
+        }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: "spring", damping: 15, stiffness: 350 }}
+        className="absolute right-[24px] z-30"
         style={{
           bottom: "172px", /* footer height ~132px + 40px design spec gap */
           width: "56px",
@@ -408,19 +449,17 @@ export function SkillReviewView({
           alignItems: "center",
           justifyContent: "center",
           boxShadow: "0px 12px 32px 0px rgba(18,9,0,0.15), 0px 8px 4px 0px rgba(18,9,0,0.05)",
+          pointerEvents: showFAB ? "auto" : "none",
         }}
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fbf6ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
-      </button>
+        <PlusIcon className="w-[24px] h-[24px] text-[#fbf6ff]" />
+      </motion.button>
 
       {/* Fixed Footer */}
       <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
         {/* Progress Bar */}
         <div className="w-full flex justify-center">
-          <OfferProgressBar currentStep={1} subStepProgress={100} />
+          <OfferProgressBar currentStep={3} subStepProgress={100} totalSteps={3} />
         </div>
 
         {/* Buttons */}
@@ -434,12 +473,12 @@ export function SkillReviewView({
           <button
             onClick={handleNext}
             disabled={!isNextEnabled}
-            className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
+            className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
               ? "bg-[#171519] text-[#fbf6ff]"
               : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
               }`}
           >
-            Next
+            {visibleSkills.length <= 1 ? "Add skill" : "Add skills"}
           </button>
         </div>
       </div>
@@ -475,10 +514,7 @@ export function SkillReviewView({
                 onClick={() => setIsTagsModalOpen(false)}
                 className="absolute right-0 w-[24px] h-[24px] flex items-center justify-center"
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+              <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
               </button>
             </div>
             <div className="w-full h-px bg-[#e0dce3]" />
@@ -500,10 +536,7 @@ export function SkillReviewView({
                     <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[1px]">
                       {tag}
                     </span>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b7812f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
+                    <CloseIcon className="w-[24px] h-[24px] text-[#b7812f]" />
                   </div>
                 ))}
               </div>
@@ -605,10 +638,7 @@ export function SkillReviewView({
             className="shrink-0 w-[44px] h-[44px] flex items-center justify-center"
             aria-label="Close"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <CloseIcon className="w-[20px] h-[20px] text-[#171519]" />
           </button>
         </div>
       </div>
