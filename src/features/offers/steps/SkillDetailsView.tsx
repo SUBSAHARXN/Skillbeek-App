@@ -11,6 +11,7 @@ import { LiveOfferView } from "./LiveOfferView";
 import { SkillSelectView } from "./SkillSelectView";
 import { DeleteOfferModal } from "../components/DeleteOfferModal";
 import SkillbeekLoader from "../../../components/common/SkillbeekLoader";
+import { AllOffersView } from "./AllOffersView";
 
 // Rosette seal/badge component
 export function BBadge({ size = 20, children = "B" }: { size?: number; children?: React.ReactNode }) {
@@ -41,7 +42,17 @@ export function BBadge({ size = 20, children = "B" }: { size?: number; children?
   );
 }
 
-export function CodeTimerIcon() {
+export function StaticCodeTimerIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 21C16.5563 21 20.25 17.3063 20.25 12.75C20.25 8.19365 16.5563 4.5 12 4.5C7.44365 4.5 3.75 8.19365 3.75 12.75C3.75 17.3063 7.44365 21 12 21Z" stroke="#B85F38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12 12.75L15.75 9" stroke="#B85F38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M9.75 1.5H14.25" stroke="#B85F38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function CodeTimerIcon({ className }: { className?: string }) {
   const handRef = React.useRef<SVGPathElement>(null);
   const pulseRef = React.useRef<SVGGElement>(null);
 
@@ -74,7 +85,7 @@ export function CodeTimerIcon() {
   }, []);
 
   return (
-    <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }} className="w-full h-full">
+    <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }} className={className || "w-full h-full"}>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ overflow: "visible" }} xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
         {/* Outer stopwatch body (Pulses) */}
         <g ref={pulseRef} style={{ transformOrigin: "12px 12.75px" }}>
@@ -111,7 +122,17 @@ export function CodeTimerIcon() {
   );
 }
 
-export function CodeSparkleIcon() {
+export function StaticCodeSparkleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M11.9996 3.59961C11.9996 10.7996 13.1996 11.9996 20.3996 11.9996C13.1996 11.9996 11.9996 13.1996 11.9996 20.3996C11.9996 13.1996 10.7996 11.9996 3.59961 11.9996C10.7996 11.9996 11.9996 10.7996 11.9996 3.59961Z" fill="#D2A363"/>
+      <path d="M18.0004 2.40039C18.0004 5.28039 18.4804 6.00039 21.6004 6.00039C18.4804 6.00039 18.0004 6.72039 18.0004 9.60039C18.0004 6.72039 17.5204 6.00039 14.4004 6.00039C17.5204 6.00039 18.0004 5.28039 18.0004 2.40039Z" fill="#E7C292"/>
+      <path d="M7.1998 14.4004C7.1998 16.3204 7.5598 16.8004 9.5998 16.8004C7.5598 16.8004 7.1998 17.2804 7.1998 19.2004C7.1998 17.2804 6.8398 16.8004 4.7998 16.8004C6.8398 16.8004 7.1998 16.3204 7.1998 14.4004Z" fill="#835501"/>
+    </svg>
+  );
+}
+
+export function CodeSparkleIcon({ className }: { className?: string }) {
   const mainRef = React.useRef<SVGPathElement>(null);
   const topRef = React.useRef<SVGPathElement>(null);
   const bottomRef = React.useRef<SVGPathElement>(null);
@@ -156,7 +177,7 @@ export function CodeSparkleIcon() {
   }, []);
 
   return (
-    <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }} className="w-full h-full">
+    <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }} className={className || "w-full h-full"}>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ overflow: "visible" }} xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
         {/* Main Center Sparkle */}
         <path
@@ -228,6 +249,23 @@ export function CardBookmarkButton({ offerTitle }: { offerTitle: string }) {
         <BookmarkIcon className="!aspect-[1] !relative !w-6 !h-6 text-[#b7812f]" />
       )}
     </motion.button>
+  );
+}
+
+export function StaticFlameIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_3856_17955)">
+        <path d="M11.9998 0C7.1998 6.4 4.7998 12 4.7998 16.8C4.7998 18.7096 5.55837 20.5409 6.90864 21.8912C8.2589 23.2414 10.0902 24 11.9998 24C13.9094 24 15.7407 23.2414 17.091 21.8912C18.4412 20.5409 19.1998 18.7096 19.1998 16.8C19.1998 12 16.7998 6.4 11.9998 0Z" fill="#BA3430"/>
+        <path d="M12.0002 7.19922C8.8002 11.9992 7.2002 15.9992 7.2002 19.1992C7.2002 20.4723 7.70591 21.6932 8.60608 22.5933C9.50626 23.4935 10.7272 23.9992 12.0002 23.9992C13.2732 23.9992 14.4941 23.4935 15.3943 22.5933C16.2945 21.6932 16.8002 20.4723 16.8002 19.1992C16.8002 15.9992 15.2002 11.9992 12.0002 7.19922Z" fill="#D98A68"/>
+        <path d="M11.9996 13.1992C10.3996 16.3992 9.59961 18.7992 9.59961 20.3992C9.59961 21.0357 9.85247 21.6462 10.3026 22.0963C10.7526 22.5464 11.3631 22.7992 11.9996 22.7992C12.6361 22.7992 13.2466 22.5464 13.6967 22.0963C14.1468 21.6462 14.3996 21.0357 14.3996 20.3992C14.3996 18.7992 13.5996 16.3992 11.9996 13.1992Z" fill="#FED5C5"/>
+      </g>
+      <defs>
+        <clipPath id="clip0_3856_17955">
+          <rect width="24" height="24" fill="white"/>
+        </clipPath>
+      </defs>
+    </svg>
   );
 }
 
@@ -344,6 +382,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [toastAction, setToastAction] = useState<"view" | "undo" | "okay">("view");
   const [isScreenLoading, setIsScreenLoading] = useState(false);
+  const [showAllOffers, setShowAllOffers] = useState(false);
 
   const [isCarouselAtEnd, setIsCarouselAtEnd] = useState(false);
   const [showViewAll, setShowViewAll] = useState(false);
@@ -966,27 +1005,37 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
               <div className="absolute right-0 top-[16px] h-[520px] w-[48px] bg-gradient-to-l from-[#fbf6ff] via-[#fbf6ff]/80 to-transparent pointer-events-none z-[2]" />
             )}
             
-            {/* Floating View all Button */}
-            <AnimatePresence>
-              {!isScreenLoading && !selectedOfferId && showViewAll && (
-                <div className="absolute inset-y-0 left-[16px] right-[16px] pointer-events-none z-[10]">
-                  <motion.button
-                    initial={{ scale: 0, opacity: 0, y: "-50%" }}
-                    animate={{ scale: 1, opacity: 1, y: "-50%" }}
-                    exit={{ scale: 0, opacity: 0, y: "-50%" }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="pointer-events-auto absolute top-1/2 right-0 inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[#2F2C32] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)] active:!scale-95"
-                  >
-                    <span className="font-['Nunito'] font-bold text-[#FAF8FC] text-[16px] leading-[24px]">
-                      View all
-                    </span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FAF8FC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                  </motion.button>
-                </div>
-              )}
-            </AnimatePresence>
+            {/* Floating View all Button — uses tween transition to avoid spring re-trigger "dancing", but keeps whileTap bounce */}
+            <div className="absolute inset-y-0 left-[16px] right-[16px] pointer-events-none z-[10]">
+              <motion.button
+                initial={false}
+                animate={{
+                  scale: (!isScreenLoading && !selectedOfferId && showViewAll) ? 1 : 0.85,
+                  opacity: (!isScreenLoading && !selectedOfferId && showViewAll) ? 1 : 0,
+                  y: "-50%"
+                }}
+                transition={{ type: "tween", duration: 0.2 }}
+                whileTap={{ scale: 0.9 }}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  // Small delay to allow the whileTap scale bounce to be seen
+                  setTimeout(() => setShowAllOffers(true), 150);
+                }}
+                style={{
+                  pointerEvents: (!isScreenLoading && !selectedOfferId && showViewAll) ? "auto" : "none"
+                }}
+                className="absolute top-1/2 right-0 inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[#2F2C32] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)]"
+              >
+                <span className="font-['Nunito'] font-bold text-[#FAF8FC] text-[16px] leading-[24px]">
+                  View all
+                </span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FAF8FC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </motion.button>
+            </div>
 
             <div 
               ref={carouselRef}
@@ -1209,6 +1258,25 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
 
       {/* Expanded View Overlay */}
       <AnimatePresence>
+        {showAllOffers && (
+          <div className="absolute inset-0 z-[1000]">
+            <motion.div
+              initial={{ opacity: 0, x: "100%" }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ type: "tween", ease: "easeInOut", duration: 0.3 }}
+              className="absolute inset-0 z-[1000] bg-[#fbf6ff] flex"
+            >
+              <AllOffersView 
+                onBack={() => setShowAllOffers(false)} 
+                onOfferClick={(id) => {
+                  // handle click if needed
+                }}
+              />
+            </motion.div>
+          </div>
+        )}
+
         {selectedOfferId && (
           <div className="absolute inset-0 z-[1000]">
             {/* Backdrop */}

@@ -3,9 +3,16 @@ import { OfferProgressBar } from "../components/OfferProgressBar";
 import { SaveExitModal } from "../components/SaveExitModal";
 import { CustomAnimatedRadioButton } from "../../../components/common/CustomAnimatedRadioButton";
 
+import { TimeCreditIcon, TimerIcon } from "../../../components/common/Icons";
+
 interface ExchangeDetailsViewProps {
   onBack: () => void;
   onNext: (exchangeType: string) => void;
+  context?: "marketplace" | "chat";
+  chatPartnerName?: string;
+  isTimeCredit?: boolean;
+  timeCreditRate?: number;
+  sessionMinutes?: number;
 }
 
 const EXCHANGE_TYPES = [
@@ -21,7 +28,15 @@ const EXCHANGE_TYPES = [
   }
 ];
 
-export function ExchangeDetailsView({ onBack, onNext }: ExchangeDetailsViewProps) {
+export function ExchangeDetailsView({ 
+  onBack, 
+  onNext,
+  context = "marketplace",
+  chatPartnerName,
+  isTimeCredit = false,
+  timeCreditRate = 0,
+  sessionMinutes = 0
+}: ExchangeDetailsViewProps) {
   const [selectedType, setSelectedType] = useState<string>("");
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
@@ -56,12 +71,44 @@ export function ExchangeDetailsView({ onBack, onNext }: ExchangeDetailsViewProps
         {/* Page Header */}
         <div className="w-full px-[16px] flex flex-col gap-[12px] mb-[32px]">
           <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
-            Rate or Exchange Details
+            {context === "chat" ? "Propose an Exchange" : "Rate or Exchange Details"}
           </h1>
           <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
-            Tell others how you’d like to exchange your skills for this offer. You can set a specific rate or describe the trade you’re looking for.
+            {context === "chat" 
+              ? <>How would you like to structure this session with <span className="font-bold text-[#8d2aeb]">{chatPartnerName || "your partner"}</span>?</>
+              : "Tell others how you’d like to exchange your skills for this offer. You can set a specific rate or describe the trade you’re looking for."}
           </p>
         </div>
+
+        {/* Rate and Duration Cards - Only in Chat Context (P3 View) */}
+        {context === "chat" && (
+          <div className="w-full px-[16px] flex flex-col gap-[16px] mb-[32px]">
+            {isTimeCredit && (
+              <div className="w-full bg-[#faf7fe] rounded-[16px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.06)] border border-[#f0edf4]">
+                <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px]">
+                  Rate (per session)
+                </span>
+                <div className="flex items-center gap-[12px]">
+                  <TimeCreditIcon className="w-[24px] h-[24px]" />
+                  <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px]">
+                    {timeCreditRate}
+                  </span>
+                </div>
+              </div>
+            )}
+            <div className="w-full bg-[#faf7fe] rounded-[16px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-[0px_1px_2px_rgba(0,0,0,0.06)] border border-[#f0edf4]">
+              <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px]">
+                Session length
+              </span>
+              <div className="flex items-center gap-[6px]">
+                <TimerIcon className="w-[24px] h-[24px] text-[#171519]" />
+                <span className="font-['Nunito'] font-bold text-[#656268] text-[16px] leading-[24px] tracking-[0.1px]">
+                  {sessionMinutes} minutes
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Exchange Type Section */}
         <div className="w-full px-[16px] flex flex-col gap-[12px]">

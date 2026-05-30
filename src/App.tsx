@@ -63,6 +63,7 @@ function App() {
   const [offerExpiration, setOfferExpiration] = useState<any>(null);
   const [sessionLength, setSessionLength] = useState<any>({ type: "preset", minutes: 30 });
   const [selectedSkillForDetails, setSelectedSkillForDetails] = useState<string | null>(null);
+  const [sessionFlowContext, setSessionFlowContext] = useState<"marketplace" | "chat" | "offer_create">("offer_create");
 
   // Initialize global OverlayScrollbars
   const [initScrollbars] = useOverlayScrollbars({
@@ -163,9 +164,9 @@ function App() {
     <div className="min-h-screen bg-neutral-900 flex flex-col items-center justify-center p-4 selection:bg-purple-200">
       
       {/* Dev Controls */}
-      <div className="mb-4 bg-neutral-800 p-4 rounded-[16px] flex gap-4 items-center text-white font-['Nunito'] shadow-xl">
+      <div className="mb-4 bg-neutral-800 p-4 rounded-[16px] flex flex-wrap gap-4 items-center text-white font-['Nunito'] shadow-xl max-w-4xl w-full">
         <span className="font-bold text-[14px]">Dev Toggles:</span>
-        <label className="flex items-center gap-2 cursor-pointer text-[14px]">
+        <label className="flex items-center gap-2 cursor-pointer text-[14px] whitespace-nowrap">
           <input 
             type="checkbox" 
             checked={isKnownDevice} 
@@ -180,7 +181,7 @@ function App() {
             setIsFirstTimeUser(true);
             setIsAuthenticating(false);
           }}
-          className="ml-4 px-3 py-1 bg-yellow-700 hover:bg-yellow-600 rounded-[8px] text-[12px] font-bold transition-colors"
+          className="ml-4 px-3 py-1 bg-yellow-700 hover:bg-yellow-600 rounded-[8px] text-[12px] font-bold transition-colors whitespace-nowrap"
         >
           Reset to Splash
         </button>
@@ -189,13 +190,14 @@ function App() {
             setCurrentView("login");
             setIsAuthenticating(false);
           }}
-          className="ml-2 px-3 py-1 bg-neutral-700 hover:bg-neutral-600 rounded-[8px] text-[12px] font-bold transition-colors"
+          className="ml-2 px-3 py-1 bg-neutral-700 hover:bg-neutral-600 rounded-[8px] text-[12px] font-bold transition-colors whitespace-nowrap"
         >
           Reset Login
         </button>
         <button 
           onClick={() => {
             setIsSkillOnlyFlow(true);
+            setSessionFlowContext("offer_create");
             setReviewSkills([]);
             setReviewTagsMap({});
             setReceiveSkills([]);
@@ -206,13 +208,16 @@ function App() {
             setReceiveProficiencies({});
             setCurrentView("offerAddSkill");
           }}
-          className="px-3 py-1 bg-purple-600 hover:bg-purple-500 rounded-[8px] text-[12px] font-bold transition-colors shadow-[0_0_10px_rgba(168,85,247,0.4)]"
+          className="px-3 py-1 bg-purple-600 hover:bg-purple-500 rounded-[8px] text-[12px] font-bold transition-colors shadow-[0_0_10px_rgba(168,85,247,0.4)] whitespace-nowrap"
         >
           Skill Object
         </button>
         <button 
-          onClick={() => setCurrentView("createPassword")}
-          className="px-3 py-1 bg-green-600 hover:bg-green-500 rounded-[8px] text-[12px] font-bold transition-colors shadow-[0_0_10px_rgba(52,144,36,0.4)]"
+          onClick={() => {
+            setSessionFlowContext("offer_create");
+            setCurrentView("createPassword");
+          }}
+          className="px-3 py-1 bg-green-600 hover:bg-green-500 rounded-[8px] text-[12px] font-bold transition-colors shadow-[0_0_10px_rgba(52,144,36,0.4)] whitespace-nowrap"
         >
           Create Pwd Flow
         </button>
@@ -220,11 +225,31 @@ function App() {
         <button 
           onClick={() => {
             setIsSkillOnlyFlow(false);
+            setSessionFlowContext("offer_create");
             setCurrentView("offerCreate");
           }}
-          className="px-3 py-1 bg-[#171519] hover:bg-[#2f2c32] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(23,21,25,0.4)]"
+          className="px-3 py-1 bg-[#171519] hover:bg-[#2f2c32] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(23,21,25,0.4)] whitespace-nowrap"
         >
           Offer Create Flow
+        </button>
+        <button 
+          onClick={() => {
+            setIsSkillOnlyFlow(false);
+            setSessionFlowContext("chat");
+            setCurrentView("exchangeDetails");
+          }}
+          className="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(37,99,235,0.4)] whitespace-nowrap"
+        >
+          Chat Session Flow
+        </button>
+        <button 
+          onClick={() => {
+            setSessionFlowContext("marketplace");
+            setCurrentView("offerPreview"); 
+          }}
+          className="px-3 py-1 bg-orange-600 hover:bg-orange-500 rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(234,88,12,0.4)] whitespace-nowrap"
+        >
+          Market Booking Flow
         </button>
       </div>
 
@@ -419,7 +444,18 @@ function App() {
                 className="w-full h-full"
               >
                 <ExchangeDetailsView
-                  onBack={() => navigateTo("offerDescription", -1)}
+                  context={sessionFlowContext === "chat" ? "chat" : "marketplace"}
+                  chatPartnerName="Mei Lin"
+                  isTimeCredit={true}
+                  timeCreditRate={250}
+                  sessionMinutes={90}
+                  onBack={() => {
+                    if (sessionFlowContext === "chat") {
+                      navigateTo("login", -1);
+                    } else {
+                      navigateTo("offerDescription", -1);
+                    }
+                  }}
                   onNext={(type) => {
                     setExchangeType(type);
                     if (type === "time-credit") {
@@ -889,7 +925,11 @@ function App() {
                   isTimeCredit={exchangeType === "time-credit"}
                   timeCreditRate={timeCreditRate}
                   onBack={() => {
-                    if (isSkillOnlyFlow) {
+                    if (sessionFlowContext === "marketplace") {
+                      navigateTo("login", -1);
+                    } else if (sessionFlowContext === "chat") {
+                      navigateTo("sessionLength", -1);
+                    } else if (isSkillOnlyFlow) {
                       navigateTo("skillReview", -1);
                     } else {
                       navigateTo("sessionLength", -1);

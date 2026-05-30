@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import { ChevronUpIcon } from "../../../components/common/Icons";
 import { OfferProgressBar } from "../components/OfferProgressBar";
 import { CustomAnimatedCheckbox } from "../../../components/common/CustomAnimatedCheckbox";
 import { SaveExitModal } from "../components/SaveExitModal";
@@ -64,6 +66,28 @@ export function SkillSelectView({
   onSkillClick
 }: SkillSelectViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const SCROLL_THRESHOLD = 80;
+    const BOTTOM_THRESHOLD = 52;
+    const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+
+    if (target.scrollTop > SCROLL_THRESHOLD && distanceToBottom > BOTTOM_THRESHOLD) {
+      setShowBackToTop(true);
+    } else {
+      setShowBackToTop(false);
+    }
+  };
+
+  const scrollToTop = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const [selectedSkills, setSelectedSkills] = useState<string[]>(initialSkills);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
@@ -306,7 +330,11 @@ export function SkillSelectView({
 
 
       {/* Scrollable List */}
-      <div className="flex-1 overflow-y-auto px-[16px] flex flex-col gap-[24px] relative z-0">
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto px-[16px] flex flex-col gap-[24px] relative z-0"
+      >
         {filteredCategories.map((category) => (
           <div key={category.name} className="flex flex-col gap-[6px]">
             <div className="py-[8px]">
@@ -360,6 +388,34 @@ export function SkillSelectView({
 
         {/* Spacer Div (The Universal Hack) */}
         <div style={{ height: '156px', width: '100%' }} aria-hidden="true" className="shrink-0" />
+      </div>
+
+      {/* Floating Back to top Button — styled identical to View all button */}
+      <div className="absolute bottom-[200px] right-[16px] pointer-events-none z-[30] w-full flex justify-end px-[16px]">
+        <motion.button
+          initial={false}
+          animate={{
+            scale: showBackToTop ? 1 : 0.85,
+            opacity: showBackToTop ? 1 : 0,
+          }}
+          transition={{ type: "tween", duration: 0.2 }}
+          whileTap={{ scale: 0.9 }}
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            scrollToTop();
+          }}
+          style={{
+            pointerEvents: showBackToTop ? "auto" : "none"
+          }}
+          className="inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[#2F2C32] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)] cursor-pointer"
+        >
+          <span className="font-['Nunito'] font-bold text-[#FAF8FC] text-[16px] leading-[24px]">
+            Back to top
+          </span>
+          <ChevronUpIcon className="w-[18px] h-[18px] text-[#FAF8FC]" />
+        </motion.button>
       </div>
 
       {/* Fixed Bottom Footer */}

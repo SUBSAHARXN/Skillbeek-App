@@ -32,6 +32,8 @@
 
 :root {
   --animate-spin: spin 1s linear infinite;
+  --SM: 0px 4px 12px 0px rgba(18, 9, 0, 0.15), 12px 12px 24px -8px rgba(18, 9, 0, 0);
+  --XS: 0px 1px 3px 0px rgba(18, 9, 0, 0.1);
 }
 
 .animate-fade-in {

@@ -33,11 +33,7 @@ export function SessionLengthView({
   const customTotalMinutes = customHours * 60 + customMinutes;
 
   const formatCustom = () => {
-    const h = customHours;
-    const m = customMinutes;
-    if (h === 0) return `${m} min`;
-    if (m === 0) return `${h} hr`;
-    return `${h} hr ${m} min`;
+    return `${customTotalMinutes} minutes`;
   };
 
   const isNextEnabled = selected !== null;

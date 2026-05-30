@@ -12,6 +12,7 @@ import { SuccessToast } from "../../../components/common/SuccessToast";
 import { AvailabilityData, getRecurringDaysText, getSpecificDatesText } from "./AvailabilityView";
 import { FlameIcon, CodeTimerIcon, CodeSparkleIcon } from "./SkillDetailsView";
 import { RelatedOffersCarousel } from "./RelatedOffersCarousel";
+import { AllOffersView } from "./AllOffersView";
 
 interface LiveOfferViewProps {
   offerTitle?: string;
@@ -46,11 +47,7 @@ const spring = {
 // ─── Helper ──────────────────────────────────────────────────────
 
 function formatDuration(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (h === 0) return `${m} min`;
-  if (m === 0) return `${h} hrs`;
-  return `${h} hrs, ${m} min`;
+  return `${minutes} minutes`;
 }
 
 // ─── Skill Card ──────────────────────────────────────────────────
@@ -180,6 +177,7 @@ export function LiveOfferView({
   const [toastVisible, setToastVisible] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [showAllOffers, setShowAllOffers] = useState(false);
 
   return (
     <motion.div
@@ -550,7 +548,11 @@ export function LiveOfferView({
               )}
           </div>
 
-          <RelatedOffersCarousel currentSkillName={reviewSkills[0] || "Web Development"} layoutIdPrefix={layoutIdPrefix ? `${layoutIdPrefix}-inner` : "inner-related-offer"} />
+          <RelatedOffersCarousel 
+            currentSkillName={reviewSkills[0] || "Web Development"} 
+            layoutIdPrefix={layoutIdPrefix ? `${layoutIdPrefix}-inner` : "inner-related-offer"} 
+            onViewAll={() => setShowAllOffers(true)}
+          />
 
         </div>
       </div>
@@ -742,6 +744,25 @@ export function LiveOfferView({
                 </button>
               )}
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showAllOffers && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", damping: 28, stiffness: 280 }}
+            className="absolute inset-0 z-[1000] bg-[#fbf6ff] flex"
+          >
+            <AllOffersView 
+              onBack={() => setShowAllOffers(false)} 
+              onOfferClick={(id) => {
+                // optional: handle click
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>

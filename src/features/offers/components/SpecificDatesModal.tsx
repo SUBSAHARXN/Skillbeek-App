@@ -18,6 +18,13 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
+  React.useEffect(() => {
+    if (isOpen) {
+      setStartDate(initialRange ? initialRange.start : null);
+      setEndDate(initialRange ? initialRange.end : null);
+    }
+  }, [initialRange, isOpen]);
+
   // Memoize limits so they don't recalculate on every render
   const { today, maxDate } = useMemo(() => {
     const t = new Date();

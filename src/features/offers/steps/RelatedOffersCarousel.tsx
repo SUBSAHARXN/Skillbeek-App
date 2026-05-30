@@ -11,7 +11,7 @@ import ReactDOM from "react-dom";
 
 const spring = { type: "spring" as const, stiffness: 220, damping: 28 };
 
-export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPrefix = "related-offer" }: { currentSkillName: string; hash?: number; layoutIdPrefix?: string }) {
+export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPrefix = "related-offer", onViewAll }: { currentSkillName: string; hash?: number; layoutIdPrefix?: string; onViewAll?: () => void }) {
   const [isCarouselAtEnd, setIsCarouselAtEnd] = React.useState(false);
   const [showViewAll, setShowViewAll] = React.useState(false);
   const carouselRef = React.useRef<HTMLDivElement>(null);
@@ -207,7 +207,13 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
       setIsCarouselAtEnd(scrollLeft + clientWidth >= scrollWidth - 1);
       const cardWidth = 296;
       const currentIndex = Math.round(scrollLeft / cardWidth);
-      setShowViewAll(currentIndex >= latestOffers.length - 2);
+      // Hysteresis: show at index >= length-2, but only hide at index < length-3
+      // This prevents rapid toggling at the boundary which causes the button to "dance"
+      setShowViewAll(prev => {
+        if (!prev && currentIndex >= latestOffers.length - 2) return true;
+        if (prev && currentIndex < latestOffers.length - 3) return false;
+        return prev;
+      });
     }
   };
 
@@ -286,27 +292,39 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
             <div className="absolute right-0 top-[16px] h-[520px] w-[48px] bg-gradient-to-l from-[#fbf6ff] via-[#fbf6ff]/80 to-transparent pointer-events-none z-[2]" />
           )}
 
-          {/* Floating View all Button */}
-          <AnimatePresence>
-            {!isScreenLoading && !selectedOfferId && showViewAll && (
-              <div className="absolute inset-y-0 left-[16px] right-[16px] pointer-events-none z-[10]">
-                <motion.button
-                  initial={{ scale: 0, opacity: 0, y: "-50%" }}
-                  animate={{ scale: 1, opacity: 1, y: "-50%" }}
-                  exit={{ scale: 0, opacity: 0, y: "-50%" }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="pointer-events-auto absolute top-1/2 right-0 inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[#2F2C32] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)] active:!scale-95"
-                >
-                  <span className="font-['Nunito'] font-bold text-[#FAF8FC] text-[16px] leading-[24px]">
-                    View all
-                  </span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FAF8FC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </motion.button>
-              </div>
-            )}
-          </AnimatePresence>
+          {/* Floating View all Button — uses tween transition to avoid spring re-trigger "dancing", but keeps whileTap bounce */}
+          <div className="absolute inset-y-0 left-[16px] right-[16px] pointer-events-none z-[10]">
+            <motion.button
+              initial={false}
+              animate={{
+                scale: (!isScreenLoading && !selectedOfferId && showViewAll) ? 1 : 0.85,
+                opacity: (!isScreenLoading && !selectedOfferId && showViewAll) ? 1 : 0,
+                y: "-50%"
+              }}
+              transition={{ type: "tween", duration: 0.2 }}
+              whileTap={{ scale: 0.9 }}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (onViewAll) {
+                  // Small delay to allow the whileTap scale bounce to be seen
+                  setTimeout(() => onViewAll(), 150);
+                }
+              }}
+              style={{
+                pointerEvents: (!isScreenLoading && !selectedOfferId && showViewAll) ? "auto" : "none"
+              }}
+              className="absolute top-1/2 right-0 inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[#2F2C32] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)]"
+            >
+              <span className="font-['Nunito'] font-bold text-[#FAF8FC] text-[16px] leading-[24px]">
+                View all
+              </span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FAF8FC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </motion.button>
+          </div>
 
           <div
             ref={carouselRef}
