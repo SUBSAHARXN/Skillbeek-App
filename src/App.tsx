@@ -28,8 +28,11 @@ import { SkillRoleView } from "./features/offers/steps/SkillRoleView";
 import { PartnerRoleView } from "./features/offers/steps/PartnerRoleView";
 import { SkillLiveView } from "./features/offers/steps/SkillLiveView";
 import { SkillDetailsView } from "./features/offers/steps/SkillDetailsView";
+import { SessionCreateFlowView } from "./features/sessions/SessionCreateFlowView";
+import { SessionSetupView } from "./features/sessions/SessionSetupView";
+import { SessionGoalView } from "./features/sessions/SessionGoalView";
 
-type ViewState = "splash" | "login" | "password" | "otp" | "otpInput" | "createPassword" | "offerCreate" | "offerTitle" | "offerDescription" | "offerAddSkill" | "skillSelect" | "skillReview" | "skillLive" | "skillDetails" | "skillRole" | "proficiencyLevels" | "exchangeDetails" | "receiveSkillsAdd" | "receiveSkillsSelect" | "receiveSkillsReview" | "partnerRole" | "partnerProficiency" | "timeCreditRate" | "availability" | "offerSettings" | "offerExpiration" | "sessionLength" | "offerPreview";
+type ViewState = "splash" | "login" | "password" | "otp" | "otpInput" | "createPassword" | "offerCreate" | "offerTitle" | "offerDescription" | "offerAddSkill" | "skillSelect" | "skillReview" | "skillLive" | "skillDetails" | "skillRole" | "proficiencyLevels" | "exchangeDetails" | "receiveSkillsAdd" | "receiveSkillsSelect" | "receiveSkillsReview" | "partnerRole" | "partnerProficiency" | "timeCreditRate" | "availability" | "offerSettings" | "offerExpiration" | "sessionLength" | "offerPreview" | "sessionCreate" | "sessionSetup" | "sessionGoal" | "sessionDuration" | "sessionExchangeDetails";
 type AuthMode = "login" | "reset";
 
 function App() {
@@ -63,7 +66,8 @@ function App() {
   const [offerExpiration, setOfferExpiration] = useState<any>(null);
   const [sessionLength, setSessionLength] = useState<any>({ type: "preset", minutes: 30 });
   const [selectedSkillForDetails, setSelectedSkillForDetails] = useState<string | null>(null);
-  const [sessionFlowContext, setSessionFlowContext] = useState<"marketplace" | "chat" | "offer_create">("offer_create");
+  const [isSessionFromChat, setIsSessionFromChat] = useState(false);
+  const [isP1, setIsP1] = useState(true);
 
   // Initialize global OverlayScrollbars
   const [initScrollbars] = useOverlayScrollbars({
@@ -164,16 +168,25 @@ function App() {
     <div className="min-h-screen bg-neutral-900 flex flex-col items-center justify-center p-4 selection:bg-purple-200">
       
       {/* Dev Controls */}
-      <div className="mb-4 bg-neutral-800 p-4 rounded-[16px] flex flex-wrap gap-4 items-center text-white font-['Nunito'] shadow-xl max-w-4xl w-full">
-        <span className="font-bold text-[14px]">Dev Toggles:</span>
-        <label className="flex items-center gap-2 cursor-pointer text-[14px] whitespace-nowrap">
+      <div className="mb-4 bg-neutral-800 p-4 rounded-[16px] flex flex-wrap gap-x-4 gap-y-2 items-center justify-center text-white font-['Nunito'] shadow-xl w-[396px] shrink-0">
+        <span className="font-bold text-[14px] shrink-0">Dev Toggles:</span>
+        <label className="flex items-center gap-2 cursor-pointer text-[14px] shrink-0">
           <input 
             type="checkbox" 
             checked={isKnownDevice} 
             onChange={(e) => setIsKnownDevice(e.target.checked)}
-            className="w-4 h-4 accent-purple-500"
+            className="w-4 h-4 accent-purple-500 shrink-0"
           />
           Known Device (Bypass OTP)
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer text-[14px] shrink-0">
+          <input 
+            type="checkbox" 
+            checked={isP1} 
+            onChange={(e) => setIsP1(e.target.checked)}
+            className="w-4 h-4 accent-purple-500 shrink-0"
+          />
+          P1 View (Editable Rate)
         </label>
         <button 
           onClick={() => {
@@ -181,7 +194,7 @@ function App() {
             setIsFirstTimeUser(true);
             setIsAuthenticating(false);
           }}
-          className="ml-4 px-3 py-1 bg-yellow-700 hover:bg-yellow-600 rounded-[8px] text-[12px] font-bold transition-colors whitespace-nowrap"
+          className="px-3 py-1 bg-yellow-700 hover:bg-yellow-600 rounded-[8px] text-[12px] font-bold transition-colors shrink-0"
         >
           Reset to Splash
         </button>
@@ -190,14 +203,13 @@ function App() {
             setCurrentView("login");
             setIsAuthenticating(false);
           }}
-          className="ml-2 px-3 py-1 bg-neutral-700 hover:bg-neutral-600 rounded-[8px] text-[12px] font-bold transition-colors whitespace-nowrap"
+          className="px-3 py-1 bg-neutral-700 hover:bg-neutral-600 rounded-[8px] text-[12px] font-bold transition-colors shrink-0"
         >
           Reset Login
         </button>
         <button 
           onClick={() => {
             setIsSkillOnlyFlow(true);
-            setSessionFlowContext("offer_create");
             setReviewSkills([]);
             setReviewTagsMap({});
             setReceiveSkills([]);
@@ -208,16 +220,13 @@ function App() {
             setReceiveProficiencies({});
             setCurrentView("offerAddSkill");
           }}
-          className="px-3 py-1 bg-purple-600 hover:bg-purple-500 rounded-[8px] text-[12px] font-bold transition-colors shadow-[0_0_10px_rgba(168,85,247,0.4)] whitespace-nowrap"
+          className="px-3 py-1 bg-purple-600 hover:bg-purple-500 rounded-[8px] text-[12px] font-bold transition-colors shadow-[0_0_10px_rgba(168,85,247,0.4)] shrink-0"
         >
           Skill Object
         </button>
         <button 
-          onClick={() => {
-            setSessionFlowContext("offer_create");
-            setCurrentView("createPassword");
-          }}
-          className="px-3 py-1 bg-green-600 hover:bg-green-500 rounded-[8px] text-[12px] font-bold transition-colors shadow-[0_0_10px_rgba(52,144,36,0.4)] whitespace-nowrap"
+          onClick={() => setCurrentView("createPassword")}
+          className="px-3 py-1 bg-green-600 hover:bg-green-500 rounded-[8px] text-[12px] font-bold transition-colors shadow-[0_0_10px_rgba(52,144,36,0.4)] shrink-0"
         >
           Create Pwd Flow
         </button>
@@ -225,31 +234,31 @@ function App() {
         <button 
           onClick={() => {
             setIsSkillOnlyFlow(false);
-            setSessionFlowContext("offer_create");
             setCurrentView("offerCreate");
           }}
-          className="px-3 py-1 bg-[#171519] hover:bg-[#2f2c32] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(23,21,25,0.4)] whitespace-nowrap"
+          className="px-3 py-1 bg-[#171519] hover:bg-[#2f2c32] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(23,21,25,0.4)] shrink-0"
         >
           Offer Create Flow
         </button>
+
         <button 
           onClick={() => {
-            setIsSkillOnlyFlow(false);
-            setSessionFlowContext("chat");
-            setCurrentView("exchangeDetails");
+            setIsSessionFromChat(false);
+            setCurrentView("sessionCreate");
           }}
-          className="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(37,99,235,0.4)] whitespace-nowrap"
+          className="px-3 py-1 bg-[#2563EB] hover:bg-[#3b82f6] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(37,99,235,0.4)] shrink-0"
         >
-          Chat Session Flow
+          Session (Offer Flow)
         </button>
+
         <button 
           onClick={() => {
-            setSessionFlowContext("marketplace");
-            setCurrentView("offerPreview"); 
+            setIsSessionFromChat(true);
+            setCurrentView("sessionCreate");
           }}
-          className="px-3 py-1 bg-orange-600 hover:bg-orange-500 rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(234,88,12,0.4)] whitespace-nowrap"
+          className="px-3 py-1 bg-[#8B5CF6] hover:bg-[#a78bfa] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(139,92,246,0.4)] shrink-0"
         >
-          Market Booking Flow
+          Session (Chat Flow)
         </button>
       </div>
 
@@ -444,18 +453,7 @@ function App() {
                 className="w-full h-full"
               >
                 <ExchangeDetailsView
-                  context={sessionFlowContext === "chat" ? "chat" : "marketplace"}
-                  chatPartnerName="Mei Lin"
-                  isTimeCredit={true}
-                  timeCreditRate={250}
-                  sessionMinutes={90}
-                  onBack={() => {
-                    if (sessionFlowContext === "chat") {
-                      navigateTo("login", -1);
-                    } else {
-                      navigateTo("offerDescription", -1);
-                    }
-                  }}
+                  onBack={() => navigateTo("offerDescription", -1)}
                   onNext={(type) => {
                     setExchangeType(type);
                     if (type === "time-credit") {
@@ -925,17 +923,127 @@ function App() {
                   isTimeCredit={exchangeType === "time-credit"}
                   timeCreditRate={timeCreditRate}
                   onBack={() => {
-                    if (sessionFlowContext === "marketplace") {
-                      navigateTo("login", -1);
-                    } else if (sessionFlowContext === "chat") {
-                      navigateTo("sessionLength", -1);
-                    } else if (isSkillOnlyFlow) {
+                    if (isSkillOnlyFlow) {
                       navigateTo("skillReview", -1);
                     } else {
                       navigateTo("sessionLength", -1);
                     }
                   }}
                   onPublish={() => console.log("Publish offer")}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "sessionCreate" && (
+              <motion.div
+                key="sessionCreate"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <SessionCreateFlowView
+                  onBack={() => navigateTo("login", -1)}
+                  onContinue={() => navigateTo("sessionSetup", 1)}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "sessionSetup" && (
+              <motion.div
+                key="sessionSetup"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <SessionSetupView
+                  onBack={() => navigateTo("sessionCreate", -1)}
+                  onNext={() => navigateTo("sessionGoal", 1)}
+                  isP1={isP1}
+                  isTimeCredit={true}
+                  timeCreditRate={120}
+                  sessionMinutes={60}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "sessionGoal" && (
+              <motion.div
+                key="sessionGoal"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <SessionGoalView
+                  onBack={() => navigateTo("sessionSetup", -1)}
+                  onNext={() => {
+                    if (isSessionFromChat) {
+                      navigateTo("sessionDuration", 1);
+                    } else {
+                      navigateTo("login", 1);
+                    }
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "sessionDuration" && (
+              <motion.div
+                key="sessionDuration"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <SessionLengthView
+                  isSessionBooking={true}
+                  onBack={() => navigateTo("sessionGoal", -1)}
+                  onNext={() => {
+                    if (isSessionFromChat) {
+                      navigateTo("sessionExchangeDetails", 1);
+                    } else {
+                      navigateTo("login", 1);
+                    }
+                  }}
+                  onSaveExit={() => console.log("Save and exit")}
+                  onQuestions={() => console.log("Questions?")}
+                />
+              </motion.div>
+            )}
+
+            {currentView === "sessionExchangeDetails" && (
+              <motion.div
+                key="sessionExchangeDetails"
+                custom={navDirection}
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="w-full h-full"
+              >
+                <ExchangeDetailsView
+                  isSessionBooking={true}
+                  chatPartnerName="Mei Lin"
+                  onBack={() => navigateTo("sessionDuration", -1)}
+                  onNext={(type) => {
+                    setExchangeType(type);
+                    navigateTo("login", 1);
+                  }}
                 />
               </motion.div>
             )}

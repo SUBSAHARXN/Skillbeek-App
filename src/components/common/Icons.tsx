@@ -210,15 +210,11 @@ export function ChevronDownIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
-      viewBox="0 0 17 9.5"
+      viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M1 1L8.5 8.5L16 1" />
+      <path d="M19.5 9L12 16.5L4.5 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -338,14 +334,10 @@ export function PencilIcon({ className }: { className?: string }) {
       className={className}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+      <path d="M13.334 6.66602L18.1153 11.4473C19.1567 12.4887 19.1567 14.1767 18.1153 15.218L16.0007 17.3327" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.66602 20.3343C3.66602 20.3343 8.46468 19.577 9.72735 18.3143C10.99 17.0516 19.4967 8.54497 19.4967 8.54497C20.6127 7.42897 20.6127 5.61964 19.4967 4.50497C18.3807 3.38897 16.5713 3.38897 15.4567 4.50497C15.4567 4.50497 6.95002 13.0116 5.68735 14.2743C4.42468 15.537 3.66735 20.3356 3.66735 20.3356L3.66602 20.3343Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -356,13 +348,10 @@ export function EditIcon({ className }: { className?: string }) {
       className={className}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+      <path d="M13.334 6.66602L18.1153 11.4473C19.1567 12.4887 19.1567 14.1767 18.1153 15.218L16.0007 17.3327" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.66602 20.3343C3.66602 20.3343 8.46468 19.577 9.72735 18.3143C10.99 17.0516 19.4967 8.54497 19.4967 8.54497C20.6127 7.42897 20.6127 5.61964 19.4967 4.50497C18.3807 3.38897 16.5713 3.38897 15.4567 4.50497C15.4567 4.50497 6.95002 13.0116 5.68735 14.2743C4.42468 15.537 3.66735 20.3356 3.66735 20.3356L3.66602 20.3343Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -427,13 +416,9 @@ export function ChevronUpIcon({ className }: { className?: string }) {
       className={className}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <polyline points="18 15 12 9 6 15" />
+      <path d="M4.5 15L12 7.5L19.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
