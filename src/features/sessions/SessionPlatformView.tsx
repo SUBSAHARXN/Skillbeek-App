@@ -1,10 +1,10 @@
-import React, { useId, useState, useRef, useMemo } from "react";
+import React, { useId, useState, useRef, useMemo, useEffect } from "react";
 import { AsYouType, isValidPhoneNumber } from "libphonenumber-js/max";
 import { getCountryCallingCode, getCountries } from "react-phone-number-input/max";
 import "react-phone-number-input/style.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { OfferProgressBar } from "../offers/components/OfferProgressBar";
-import { ChevronDownIcon, ChevronUpIcon, CloseIcon, PencilIcon, PhoneIcon, SearchIcon, ErrorIcon, CopyIcon } from "../../components/common/Icons";
+import { ChevronDownIcon, ChevronUpIcon, CloseIcon, PencilIcon, PhoneIcon, SearchIcon, ErrorIcon, CopyIcon, EyeOpenIcon, PlusIcon } from "../../components/common/Icons";
 import { InfoIconButton } from "../../components/common/InfoIconButton";
 import { CustomAnimatedRadioButton } from "../../components/common/CustomAnimatedRadioButton";
 import { JitsiIcon, PhoneCallIcon, InPersonIcon, CustomLinkIcon } from "./SessionIcons";
@@ -158,8 +158,8 @@ const ZoomIcon = () => (
 
 const NoneIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#F0EDF4"/>
-    <path d="M16 11H8C7.44772 11 7 11.4477 7 12C7 12.5523 7.44772 13 8 13H16C16.5523 13 17 12.5523 17 12C17 11.4477 16.5523 11 16 11Z" fill="#A09DA3"/>
+    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#f0edf4"/>
+    <path d="M16 11H8C7.44772 11 7 11.4477 7 12C7 12.5523 7.44772 13 8 13H16C16.5523 13 17 12.5523 17 12C17 11.4477 16.5523 11 16 11Z" fill="#a09da3"/>
   </svg>
 );
 
@@ -179,11 +179,17 @@ const platformGroups = [
   {
     id: "preferred-platform",
     title: "Preferred platform",
-    optional: false,
+    optional: true,
     options: [
       {
+        id: "preferred-jitsi",
+        label: "Jitsi (Recommended)",
+        value: "jitsi",
+        icon: "jitsi",
+      },
+      {
         id: "preferred-google-meet",
-        label: "Google Meet (Default)",
+        label: "Google Meet",
         value: "google-meet",
         icon: "google-meet",
       },
@@ -192,12 +198,6 @@ const platformGroups = [
         label: "Zoom (Manual)",
         value: "zoom",
         icon: "zoom",
-      },
-      {
-        id: "preferred-jitsi",
-        label: "Jitsi",
-        value: "jitsi",
-        icon: "jitsi",
       },
       {
         id: "preferred-phone-call",
@@ -218,13 +218,19 @@ const platformGroups = [
         icon: "custom-link",
       },
     ] satisfies PlatformOption[],
-    defaultValue: "google-meet",
+    defaultValue: "",
   },
   {
     id: "fallback-platform",
     title: "Fallback Platform (optional)",
     optional: true,
     options: [
+      {
+        id: "fallback-jitsi",
+        label: "Jitsi (Recommended)",
+        value: "jitsi",
+        icon: "jitsi",
+      },
       {
         id: "fallback-zoom",
         label: "Zoom (Manual)",
@@ -236,12 +242,6 @@ const platformGroups = [
         label: "Google Meet",
         value: "google-meet",
         icon: "google-meet",
-      },
-      {
-        id: "fallback-jitsi",
-        label: "Jitsi",
-        value: "jitsi",
-        icon: "jitsi",
       },
       {
         id: "fallback-phone-call",
@@ -271,6 +271,12 @@ interface SessionPlatformViewProps {
   onNext: () => void;
   onSaveExit?: () => void;
   onQuestions?: () => void;
+  onLaunchSession?: (link: string) => void;
+  sessionTitle?: string;
+  sessionDuration?: number;
+  sessionAvailability?: any;
+  sessionDescription?: string;
+  sessionParticipant?: { name: string; email: string };
 }
 
 const CustomCountrySelect = ({ value, options, iconComponent: Icon, onChange }: any) => {
@@ -287,7 +293,7 @@ const CustomCountrySelect = ({ value, options, iconComponent: Icon, onChange }: 
           </option>
         ))}
       </select>
-      <div className="inline-flex items-center justify-center gap-2 px-3 h-full bg-[#f0edf4] hover:bg-[#e0dce3] transition-colors relative self-stretch">
+      <div className="inline-flex items-center justify-center gap-2 px-3 h-full bg-[var(--Surface-UI-surface-surface-elevated)] hover:bg-[var(--Surface-UI-surface-Surface-Universal-Hover)] transition-colors relative self-stretch">
         {Icon ? <Icon country={value} label={value} className="!w-6 !h-6" /> : <Flags countryCode={(value || "ng").toLowerCase()} className="!w-6 !h-6" />}
         <ChevronDownIcon className="w-6 h-6 shrink-0 !aspect-[1]" />
       </div>
@@ -295,7 +301,8 @@ const CustomCountrySelect = ({ value, options, iconComponent: Icon, onChange }: 
   );
 };
 
-export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }: SessionPlatformViewProps) {
+export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions, onLaunchSession, sessionTitle, sessionDuration, sessionAvailability, sessionDescription, sessionParticipant }: SessionPlatformViewProps) {
+  const [isPublic, setIsPublic] = useState(true);
   const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, string>>(
     Object.fromEntries(platformGroups.map((group) => [group.id, group.defaultValue]))
   );
@@ -313,7 +320,11 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
 
   // Zoom Modal State
   const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
+  const [modalPlatform, setModalPlatform] = useState<"zoom" | "custom-link">("zoom");
   const [zoomLink, setZoomLink] = useState("");
+  const [jitsiLink, setJitsiLink] = useState("");
+  const [googleMeetLink, setGoogleMeetLink] = useState("");
+  const [isGeneratingMeet, setIsGeneratingMeet] = useState(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
   const [isZoomInputActive, setIsZoomInputActive] = useState(false);
   const zoomInputId = useId();
@@ -452,26 +463,92 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
   const phoneDuplicateError = isPhoneNumberFormatValid && isDuplicateNumber;
   const canApplyNewNumber = isPhoneNumberFormatValid && !isDuplicateNumber;
 
+  const handleNext = async () => {
+    const isGoogleMeetSelected = 
+      selectedPlatforms["preferred-platform"] === "google-meet" || 
+      selectedPlatforms["fallback-platform"] === "google-meet";
+
+    if (isGoogleMeetSelected && !googleMeetLink) {
+      setIsGeneratingMeet(true);
+      try {
+        let startTime = new Date();
+        let endTime = new Date(Date.now() + (sessionDuration || 60) * 60000);
+
+        if (sessionAvailability?.type === "Specific Dates" && sessionAvailability.specificSlots?.length > 0) {
+          const slot = sessionAvailability.specificSlots[0];
+          const baseDate = new Date(slot.dateRange.start);
+          
+          const parseTime = (timeStr: string, base: Date) => {
+            const [time, ampm] = timeStr.split(' ');
+            let [hours, minutes] = time.split(':').map(Number);
+            if (ampm === 'PM' && hours < 12) hours += 12;
+            if (ampm === 'AM' && hours === 12) hours = 0;
+            const d = new Date(base);
+            d.setHours(hours, minutes, 0, 0);
+            return d;
+          };
+
+          if (slot.timeRange?.start) {
+            startTime = parseTime(slot.timeRange.start, baseDate);
+          }
+          if (slot.timeRange?.end) {
+            endTime = parseTime(slot.timeRange.end, baseDate);
+          }
+        }
+
+        const response = await fetch('/api/create-meet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            session: {
+              id: sessionTitle ? sessionTitle.replace(/\s+/g, '-') + '-' + Date.now() : 'session-' + Date.now(),
+              title: sessionTitle || 'Skillbeek Session',
+              description: sessionDescription || 'Skillbeek Exchange Session',
+              startTime: startTime.toISOString(),
+              endTime: endTime.toISOString(),
+              participants: sessionParticipant ? [{ email: sessionParticipant.email }] : []
+            }
+          })
+        });
+        const data = await response.json();
+        if (data.success && data.meetLink) {
+          setGoogleMeetLink(data.meetLink);
+        } else {
+          console.error("Failed to generate Meet link:", data.error);
+          // Fallback just to continue the flow
+          setGoogleMeetLink("https://meet.google.com/error-fallback");
+        }
+      } catch (err) {
+        console.error("API error:", err);
+        setGoogleMeetLink("https://meet.google.com/error-fallback");
+      } finally {
+        setIsGeneratingMeet(false);
+      }
+    } else {
+      onNext();
+    }
+  };
+
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Top Status Bar Placeholder */}
       <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]"></div>
       </div>
 
       {/* Header Actions */}
-      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[var(--Surface-Primary-Background)] z-20">
         <button
           onClick={onSaveExit}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
+          className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]"
         >
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">Save and Exit</span>
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">Save and Exit</span>
         </button>
         <button
           onClick={onQuestions}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
+          className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]"
         >
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">Questions?</span>
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">Questions?</span>
         </button>
       </div>
 
@@ -482,7 +559,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
           {/* Header Texts */}
           <div className="flex flex-col gap-[12px]">
             <div className="flex items-center gap-[8px]">
-              <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
+              <h1 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[36px] tracking-[-1.2px]">
                 Plan Your Session
               </h1>
               <InfoIconButton
@@ -490,7 +567,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                 label="Platform Info"
               />
             </div>
-            <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px]">
+            <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px]">
               Still working it out? You can edit anytime.
             </p>
           </div>
@@ -506,7 +583,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
 
               return (
                 <fieldset key={group.id} className="flex flex-col gap-[8px] relative w-full">
-                  <legend className="font-['Nunito'] font-bold text-[#656268] text-[14px] leading-[20px] tracking-[1px] mb-[8px]">
+                  <legend className="font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-[14px] leading-[20px] tracking-[1px] mb-[8px]">
                     {group.title}
                   </legend>
                   {selectedOption.value === "phone-call" && !isGroupActive ? (
@@ -515,16 +592,16 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                         setIsEnteringNewNumber(false);
                         setIsPhoneModalOpen(true);
                       }}
-                      className="flex flex-col items-center justify-center gap-4 p-4 relative w-full bg-[#faf7fe] rounded-[24px] shadow-SM border border-transparent hover:border-[#e0dce3] transition-colors cursor-pointer"
+                      className="flex flex-col items-center justify-center gap-4 p-4 relative w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[24px] shadow-SM border border-transparent hover:border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)] transition-colors cursor-pointer"
                     >
-                      <section className="flex items-center gap-[138px] p-3 w-full bg-[#f8efff] rounded-xl relative">
+                      <section className="flex items-center gap-[138px] p-3 w-full bg-[var(--Surface-UI-surface-surface-variant)] rounded-xl relative">
                         <div className="flex items-start gap-3">
                           <PlatformIcon icon={selectedOption.icon} />
                           <div className="flex flex-col items-start justify-center gap-2">
-                            <h1 className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] mt-[-1px]">
+                            <h1 className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] mt-[-1px]">
                               {selectedOption.label}
                             </h1>
-                            <p className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[32px] tracking-[-0.70px] m-0">
+                            <p className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[32px] tracking-[-0.70px] m-0">
                               {selectedPhoneId ? phones.find(p => p.id === selectedPhoneId)?.number : phones[0]?.number}
                             </p>
                           </div>
@@ -538,10 +615,10 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                             e.stopPropagation();
                             setActiveGroup(group.id);
                           }}
-                          className="w-full flex items-center justify-center gap-1.5 p-3 rounded-2xl cursor-pointer hover:bg-[#f0edf4] transition-colors"
+                          className="w-full flex items-center justify-center gap-1.5 p-3 rounded-2xl cursor-pointer hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
                         >
-                          <PencilIcon className="w-6 h-6 text-[#2f2c32]" />
-                          <span className="font-['Nunito'] font-bold text-[#2f2c32] text-[16px] leading-[24px] underline mt-[-1px]">
+                          <PencilIcon className="w-6 h-6 text-[var(--Text-Primary-heading-3)]" />
+                          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-3)] text-[16px] leading-[24px] underline mt-[-1px]">
                             Change Platform
                           </span>
                         </button>
@@ -552,53 +629,80 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                             setIsEnteringNewNumber(true);
                             setIsPhoneModalOpen(true);
                           }}
-                          className="w-full flex items-center justify-center gap-1.5 px-4 py-3 bg-[#b7812f] hover:bg-[#9a6a23] transition-colors rounded-2xl cursor-pointer"
+                          className="w-full flex items-center justify-center gap-1.5 px-4 py-3 bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] transition-colors rounded-2xl cursor-pointer"
                         >
-                          <PhoneIcon className="w-6 h-6 text-[#f9f4ee]" />
-                          <span className="font-['Nunito'] font-bold text-[#f9f4ee] text-[16px] leading-[24px] tracking-[0.16px] mt-[-1px]">
+                          <PhoneIcon className="w-6 h-6 text-[var(--Button-Primary-Surface-default-sec)]" />
+                          <span className="font-['Nunito'] font-bold text-[var(--Button-Primary-Surface-default-sec)] text-[16px] leading-[24px] tracking-[0.16px] mt-[-1px]">
                             Change Number
                           </span>
                         </button>
                       </section>
                     </div>
-                  ) : selectedOption.value === "zoom" && !isGroupActive && zoomLink ? (
+                  ) : (selectedOption.value === "zoom" || selectedOption.value === "custom-link" || selectedOption.value === "jitsi" || selectedOption.value === "google-meet") && !isGroupActive && (
+                    ((selectedOption.value === "zoom" || selectedOption.value === "custom-link") && zoomLink) ||
+                    (selectedOption.value === "jitsi" && jitsiLink) ||
+                    (selectedOption.value === "google-meet" && googleMeetLink)
+                  ) ? (
                     <div 
-                      onClick={() => setIsZoomModalOpen(true)}
-                      className="flex flex-col items-center justify-center gap-4 p-4 relative w-full bg-[#faf7fe] rounded-[24px] shadow-SM border border-transparent hover:border-[#e0dce3] transition-colors cursor-pointer"
+                      onClick={() => {
+                        if (selectedOption.value !== "jitsi") setIsZoomModalOpen(true);
+                      }}
+                      className="flex flex-col items-center justify-center gap-4 p-4 relative w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[24px] shadow-SM border border-transparent hover:border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)] transition-colors cursor-pointer"
                     >
                       <article
-                        className="flex items-stretch relative w-full bg-[#f6f8ff] rounded-[12px] overflow-hidden min-h-[72px]"
+                        className={`flex items-stretch relative w-full rounded-[12px] overflow-hidden min-h-[72px] ${
+                          selectedOption.value === "custom-link" ? "bg-[var(--Surface-Primary-Background)]" : "bg-[var(--Surface-Information-bg-surface-lighter)]"
+                        }`}
                         aria-label="Meeting link card"
                       >
-                        <div className="flex items-center justify-center w-[56px] bg-[#edf2ff] shrink-0">
+                        <div className={`flex items-center justify-center w-[56px] shrink-0 ${
+                          selectedOption.value === "custom-link" ? "bg-[var(--Surface-UI-surface-surface-variant)]" : "bg-[var(--Surface-Information-bg-surface)]"
+                        }`}>
                           <PlatformIcon icon={selectedOption.icon} />
                         </div>
                         <div className="flex items-center justify-between px-4 py-3 flex-1 min-w-0">
                           <div className="flex flex-col items-start justify-center gap-1 min-w-0 flex-1">
-                            <h1 className="font-['Nunito'] font-bold text-[#000010] text-[16px] tracking-[1.0px] leading-[24px] truncate w-full">
-                              Zoom meeting
+                            <h1 className="font-['Nunito'] font-bold text-[var(--Text-Information-primary-darker)] text-[16px] tracking-[1.0px] leading-[24px] truncate w-full">
+                              {selectedOption.value === "custom-link" ? "Meeting Link" : selectedOption.value === "jitsi" ? "Jitsi meeting" : selectedOption.value === "google-meet" ? "Google Meet" : "Zoom meeting"}
                             </h1>
                             <a
-                              href={zoomLink}
+                              href={selectedOption.value === "jitsi" ? jitsiLink : selectedOption.value === "google-meet" ? googleMeetLink : zoomLink}
                               target="_blank"
                               rel="noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="font-['Nunito'] font-medium text-[#737076] text-[14px] tracking-[1.0px] leading-[20px] truncate max-w-[152px] hover:underline block"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                let url = selectedOption.value === "jitsi" ? jitsiLink : selectedOption.value === "google-meet" ? googleMeetLink : zoomLink;
+                                if (selectedOption.value === "jitsi" || selectedOption.value === "google-meet") {
+                                    if (selectedOption.value === "jitsi") {
+                                        // Remove any existing hash or query to avoid collisions
+                                        const baseUrl = url.split('#')[0].split('?')[0];
+                                        url = baseUrl + "?lang=en";
+                                    }
+                                    
+                                    if (onLaunchSession) {
+                                      onLaunchSession(url);
+                                      return;
+                                    }
+                                }
+                                window.open(url, '_blank', 'noopener,noreferrer');
+                              }}
+                              className="font-['Nunito'] font-medium text-[var(--Text-Primary-Caption)] text-[14px] tracking-[1.0px] leading-[20px] truncate max-w-[152px] hover:underline block"
                             >
-                              {zoomLink}
+                              {selectedOption.value === "jitsi" ? jitsiLink : selectedOption.value === "google-meet" ? googleMeetLink : zoomLink}
                             </a>
                           </div>
                           <button
                             type="button"
-                            className="flex items-center justify-center p-2 rounded-lg hover:bg-[#e2e8f0] transition-colors shrink-0 ml-2 bg-white"
+                            className="flex items-center justify-center p-2 rounded-lg hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors shrink-0 ml-2 bg-[var(--Surface-Primary-Background)]"
                             aria-label="Copy meeting link"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigator.clipboard.writeText(zoomLink);
+                              navigator.clipboard.writeText(selectedOption.value === "jitsi" ? jitsiLink : selectedOption.value === "google-meet" ? googleMeetLink : zoomLink);
                               setShowCopyToast(true);
                             }}
                           >
-                            <CopyIcon className="w-5 h-5 text-[#000010]" />
+                            <CopyIcon className="w-5 h-5 text-[var(--Text-Information-primary-darker)]" />
                           </button>
                         </div>
                       </article>
@@ -610,44 +714,50 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                             e.stopPropagation();
                             setActiveGroup(group.id);
                           }}
-                          className="w-full flex items-center justify-center gap-1.5 p-3 rounded-2xl cursor-pointer hover:bg-[#f0edf4] transition-colors"
+                          className="w-full flex items-center justify-center gap-1.5 p-3 rounded-2xl cursor-pointer hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
                         >
-                          <PencilIcon className="w-6 h-6 text-[#2f2c32]" />
-                          <span className="font-['Nunito'] font-bold text-[#2f2c32] text-[16px] leading-[24px] underline mt-[-1px]">
+                          <PencilIcon className="w-6 h-6 text-[var(--Text-Primary-heading-3)]" />
+                          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-3)] text-[16px] leading-[24px] underline mt-[-1px]">
                             Change Platform
                           </span>
                         </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsZoomModalOpen(true);
-                          }}
-                          className="w-full flex items-center justify-center gap-1.5 px-4 py-3 bg-[#b7812f] hover:bg-[#9a6a23] transition-colors rounded-2xl cursor-pointer"
-                        >
-                          <CustomLinkIcon stroke="var(--stroke-alternate)" />
-                          <span className="font-['Nunito'] font-bold text-[#f9f4ee] text-[16px] leading-[24px] tracking-[0.16px] mt-[-1px]">
-                            Change Link
-                          </span>
-                        </button>
+                        {selectedOption.value !== "jitsi" && selectedOption.value !== "google-meet" && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setModalPlatform(selectedOption.value as "zoom" | "custom-link");
+                              setIsZoomModalOpen(true);
+                            }}
+                            className="w-full flex items-center justify-center gap-1.5 px-4 py-3 bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] transition-colors rounded-2xl cursor-pointer"
+                          >
+                            <CustomLinkIcon stroke="var(--stroke-alternate)" />
+                            <span className="font-['Nunito'] font-bold text-[var(--Button-Primary-Surface-default-sec)] text-[16px] leading-[24px] tracking-[0.16px] mt-[-1px]">
+                              Change Link
+                            </span>
+                          </button>
+                        )}
                       </section>
                     </div>
                   ) : (
                     <div
                       onClick={() => setActiveGroup(isGroupActive ? null : group.id)}
-                      className={`flex items-center justify-between px-[16px] py-[24px] bg-[#faf7fe] rounded-[12px] shadow-SM cursor-pointer border transition-colors relative ${isGroupActive ? "border-[#e0dce3]" : "border-transparent hover:border-[#e0dce3]"
+                      className={`flex items-center justify-between px-[16px] py-[24px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[12px] shadow-SM cursor-pointer border transition-colors relative ${isGroupActive ? "border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)]" : "border-transparent hover:border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)]"
                         }`}
                     >
                       <div className="flex items-center gap-[12px]">
                         <PlatformIcon icon={selectedOption.icon} />
-                        <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px]">
-                          {selectedOption.label}
+                        <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
+                          {selectedOption.label.replace(" (Recommended)", "")}
+                          {selectedOption.label.includes("(Recommended)") && (
+                            <span className="font-black"> (Recommended)</span>
+                          )}
                         </span>
                       </div>
                       {isGroupActive ? (
-                        <ChevronUpIcon className="w-[24px] h-[24px] text-[#49464c]" />
+                        <ChevronUpIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-Body)]" />
                       ) : (
-                        <ChevronDownIcon className="w-[24px] h-[24px] text-[#49464c]" />
+                        <ChevronDownIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-Body)]" />
                       )}
                     </div>
                   )}
@@ -657,37 +767,114 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
               );
             })}
           </div>
+
+          <div className="flex flex-col gap-[24px] mt-[16px]">
+            {/* Link to a Project */}
+            <div className="flex flex-col gap-[12px]">
+              <div className="flex items-center gap-[8px]">
+                <h2 className="font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-[14px] leading-[20px] tracking-[1px]">
+                  Project (optional)
+                </h2>
+              </div>
+              
+              <button
+                type="button"
+                className="w-full flex items-center gap-[12px] p-[16px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[12px] shadow-SM border border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)] transition-colors cursor-pointer"
+              >
+                <PlusIcon className="w-[20px] h-[20px] text-[var(--Text-Primary-heading-1)]" />
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
+                  Add to a project
+                </span>
+              </button>
+            </div>
+
+            <NeumorphicDivider className="!my-[0px]" />
+
+            {/* Who can see this */}
+            <div className="flex flex-col gap-[12px]">
+              <div className="flex items-center gap-[8px]">
+                <h2 className="font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-[14px] leading-[20px] tracking-[1px]">
+                  Visibility
+                </h2>
+              </div>
+              
+              <div className="flex flex-row items-stretch gap-[12px] w-full">
+                <div 
+                  onClick={() => setIsPublic(true)}
+                  className={`flex-1 flex items-center gap-[12px] p-[16px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[12px] shadow-SM border cursor-pointer transition-colors relative ${
+                    isPublic 
+                      ? "border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)]" 
+                      : "border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)]"
+                  }`}
+                >
+                  <div className="shrink-0 flex items-center justify-center">
+                    <CustomAnimatedRadioButton checked={isPublic === true} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
+                      Public
+                    </span>
+                    <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-Subtitle)] text-[14px] leading-[20px]">
+                      Anyone can see
+                    </span>
+                  </div>
+                </div>
+
+                <div 
+                  onClick={() => setIsPublic(false)}
+                  className={`flex-1 flex items-center gap-[12px] p-[16px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[12px] shadow-SM border cursor-pointer transition-colors relative ${
+                    !isPublic 
+                      ? "border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)]" 
+                      : "border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)]"
+                  }`}
+                >
+                  <div className="shrink-0 flex items-center justify-center">
+                    <CustomAnimatedRadioButton checked={isPublic === false} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
+                      Private
+                    </span>
+                    <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-Subtitle)] text-[14px] leading-[20px]">
+                      Only you
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
       {/* Fixed Bottom Footer */}
-      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col items-center gap-[32px] pt-[0px] pb-[44px] z-20">
+      <div className="absolute bottom-0 left-0 w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col items-center gap-[32px] pt-[0px] pb-[44px] z-20">
         <div className="w-full flex justify-center">
           <OfferProgressBar currentStep={1} subStepProgress={75} />
         </div>
         <div className="w-full flex items-center justify-between px-[16px]">
           <button
             onClick={onBack}
-            className="font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] underline cursor-pointer"
+            className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] underline cursor-pointer"
           >
             Back
           </button>
           <button
-            onClick={onNext}
-            disabled={!isNextEnabled}
-            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${isNextEnabled
-                ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]"
-                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+            onClick={handleNext}
+            disabled={!isNextEnabled || isGeneratingMeet}
+            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${isNextEnabled && !isGeneratingMeet
+                ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] cursor-pointer hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)]"
+                : "bg-[var(--Button-Primary-Surface-disabled)] text-[var(--Text-Primary-Disabled)] cursor-not-allowed"
               }`}
           >
-            Next
+            Preview
           </button>
         </div>
       </div>
 
       {/* Bottom Home Indicator */}
       <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30 pointer-events-none">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]"></div>
       </div>
 
       {/* Platform Selection Modal */}
@@ -701,7 +888,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setActiveGroup(null)}
-              className="absolute inset-0 z-40 bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
+              className="absolute inset-0 z-40 bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px] rounded-[32px]"
             />
 
             {/* Modal Content */}
@@ -711,10 +898,10 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col items-center shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] select-none"
+              className="absolute bottom-0 left-0 w-full z-50 bg-[var(--Surface-UI-surface-surface-elevated)] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col items-center shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] select-none"
             >
               {/* Drag Handle */}
-              <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
+              <div className="w-[64px] h-[8px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[4px] mb-[16px]" />
 
               {(() => {
                 const group = platformGroups.find((g) => g.id === activeGroup);
@@ -725,14 +912,14 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                     {/* Header */}
                     <div className="w-full flex items-center justify-between px-[16px] mb-[16px]">
                       <div className="w-[48px]" />
-                      <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px] text-center">
+                      <h3 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] tracking-[-0.2px] text-center">
                         {group.title.replace(" (optional)", "")}
                       </h3>
                       <button
                         onClick={() => setActiveGroup(null)}
-                        className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors"
+                        className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
                       >
-                        <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
+                        <CloseIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
                       </button>
                     </div>
 
@@ -747,11 +934,11 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                             handlePlatformChange(group.id, "");
                             setActiveGroup(null);
                           }}
-                          className="w-full bg-[#faf7fe] flex items-center justify-between px-[16px] py-[12px] min-h-[56px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer"
+                          className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] flex items-center justify-between px-[16px] py-[12px] min-h-[56px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer"
                         >
                           <div className="flex items-center gap-[12px]">
                             <PlatformIcon icon="none" />
-                            <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">
+                            <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
                               None
                             </span>
                           </div>
@@ -774,22 +961,44 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                           <div
                             key={option.id}
                             onClick={() => {
+                              const isSameOption = selectedPlatforms[group.id] === option.value;
                               handlePlatformChange(group.id, option.value);
                               setActiveGroup(null);
                               if (option.value === "phone-call") {
                                 setIsEnteringNewNumber(false);
                                 setIsPhoneModalOpen(true);
                               }
-                              if (option.value === "zoom") {
+                              if (option.value === "zoom" || option.value === "custom-link") {
+                                if (!isSameOption) {
+                                  setZoomLink("");
+                                }
+                                setModalPlatform(option.value as "zoom" | "custom-link");
                                 setIsZoomModalOpen(true);
                               }
+                              if (option.value === "jitsi") {
+                                if (!isSameOption || !jitsiLink) {
+                                  const rawTitle = (sessionTitle || "").replace(/[^a-zA-Z0-9]/g, '');
+                                  const cleanTitle = rawTitle.length > 0 ? rawTitle : "SkillbeekSession";
+                                  const uniqueId = window.crypto.randomUUID().split('-')[0];
+                                  setJitsiLink(`https://jitsi.riot.im/Skillbeek-${cleanTitle}-${uniqueId}?lang=en#config.defaultLanguage=%22en%22`);
+                                }
+                              }
+                              if (option.value === "google-meet") {
+                                if (!isSameOption || !googleMeetLink) {
+                                  // Clear the link to ensure wait screen logic runs on Next
+                                  setGoogleMeetLink("");
+                                }
+                              }
                             }}
-                            className="w-full bg-[#faf7fe] flex items-center justify-between px-[16px] py-[12px] min-h-[56px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer"
+                            className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] flex items-center justify-between px-[16px] py-[12px] min-h-[56px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] cursor-pointer"
                           >
                             <div className="flex items-center gap-[12px]">
                               <PlatformIcon icon={option.icon} />
-                              <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">
-                                {option.label}
+                              <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
+                                {option.label.replace(" (Recommended)", "")}
+                                {option.label.includes("(Recommended)") && (
+                                  <span className="font-extrabold"> (Recommended)</span>
+                                )}
                               </span>
                             </div>
                             <div className="p-[10px] shrink-0">
@@ -819,7 +1028,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
               setIsPhoneModalOpen(false);
               setIsEnteringNewNumber(false);
             }}
-            className="absolute inset-0 z-40 bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
+            className="absolute inset-0 z-40 bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px] rounded-[32px]"
           />
         )}
       </AnimatePresence>
@@ -831,15 +1040,15 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col items-center shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] select-none"
+              className="absolute bottom-0 left-0 w-full z-50 bg-[var(--Surface-UI-surface-surface-elevated)] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col items-center shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] select-none"
             >
               {/* Drag Handle */}
-              <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
+              <div className="w-[64px] h-[8px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[4px] mb-[16px]" />
 
               {/* Header */}
               <div className="w-full flex items-center justify-between px-[16px] mb-[16px]">
                 <div className="w-[48px]" />
-                <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px] text-center">
+                <h3 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] tracking-[-0.2px] text-center">
                   {isEnteringNewNumber 
                     ? "Enter your phone number" 
                     : selectedPhoneId ? "Your Contact Number" : "Select Your Number"}
@@ -849,9 +1058,9 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                     setIsPhoneModalOpen(false);
                     setIsEnteringNewNumber(false);
                   }}
-                  className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors"
+                  className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
                 >
-                  <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
+                  <CloseIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
                 </button>
               </div>
 
@@ -860,14 +1069,14 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
 
               {/* Content */}
               <div className="w-full flex flex-col gap-[16px] px-[16px]">
-                <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] text-center">
+                <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] text-center">
                   Your partner will use this number to call you at the scheduled time.
                 </p>
 
                 {isEnteringNewNumber ? (
                   <>
-                    <div className={`flex items-stretch relative self-stretch w-full flex-[0_0_auto] bg-[#faf7fe] rounded-xl border-2 border-solid mt-[8px] overflow-hidden transition-colors ${
-                      phoneDuplicateError ? "border-[#870113]" : "border-[#b7812f]"
+                    <div className={`flex items-stretch relative self-stretch w-full flex-[0_0_auto] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-xl border-2 border-solid mt-[8px] overflow-hidden transition-colors ${
+                      phoneDuplicateError ? "border-[var(--Button-Error-Stroke-error)]" : "border-[var(--Text-Primary-Text-brand)]"
                     }`}>
                       <div
                         onClick={(e) => {
@@ -875,7 +1084,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                           setCountrySearch("");
                           setIsCountryModalOpen(true);
                         }}
-                        className="inline-flex items-center justify-center gap-2 px-3 relative self-stretch flex-[0_0_auto] bg-[#f0edf4] hover:bg-[#e0dce3] transition-colors cursor-pointer"
+                        className="inline-flex items-center justify-center gap-2 px-3 relative self-stretch flex-[0_0_auto] bg-[var(--Surface-UI-surface-surface-elevated)] hover:bg-[var(--Surface-UI-surface-Surface-Universal-Hover)] transition-colors cursor-pointer"
                       >
                         <Flags countryCode={selectedCountryCode.toLowerCase()} className="!relative !w-6 !h-6 shrink-0" />
                         <ChevronDownIcon className="w-6 h-6 shrink-0 !aspect-[1]" />
@@ -883,12 +1092,12 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                       <div className="flex flex-col items-start gap-1 px-3 py-2 relative flex-1 grow justify-center">
                         <label
                           htmlFor={inputId}
-                          className="relative flex items-center self-stretch mt-[-1.00px] font-['Nunito'] font-semibold text-[#737076] text-xs tracking-[1.10px] leading-4"
+                          className="relative flex items-center self-stretch mt-[-1.00px] font-['Nunito'] font-semibold text-[var(--Text-Primary-Caption)] text-xs tracking-[1.10px] leading-4"
                         >
                           Phone number
                         </label>
                         <div className="flex items-center gap-1.5 relative self-stretch w-full flex-[0_0_auto]">
-                          <div className="font-['Nunito'] font-semibold text-[#a09da3] relative flex items-center w-fit mt-[-1.00px] text-base tracking-[0] leading-6 whitespace-nowrap">
+                          <div className="font-['Nunito'] font-semibold text-[var(--Text-Primary-Text-placeholder)] relative flex items-center w-fit mt-[-1.00px] text-base tracking-[0] leading-6 whitespace-nowrap">
                             +{getCountryCallingCode(selectedCountryCode as any)}
                           </div>
                           <div className="flex flex-1 h-6 items-center px-0 py-0.5 relative min-w-0">
@@ -916,7 +1125,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
 
                                 setNewPhoneNumber(formatted);
                               }}
-                              className="flex-1 min-w-0 h-6 font-['Nunito'] font-medium text-[#49464c] text-base tracking-[0] leading-6 bg-transparent outline-none caret-[#171519] placeholder:text-transparent p-0 w-full"
+                              className="flex-1 min-w-0 h-6 font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-base tracking-[0] leading-6 bg-transparent outline-none caret-[#171519] placeholder:text-transparent p-0 w-full"
                             />
                           </div>
                         </div>
@@ -933,7 +1142,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                         >
                           <div className="w-full flex items-start gap-[6px]">
                             <ErrorIcon className="w-[14px] h-[14px] shrink-0 mt-[3px]" />
-                            <span className="font-['Nunito'] font-medium leading-[20px] text-[12px] tracking-[0.5px] text-[#870113]">
+                            <span className="font-['Nunito'] font-medium leading-[20px] text-[12px] tracking-[0.5px] text-[var(--Text-Error-primary)]">
                               Already saved. Please select it from your list.
                             </span>
                           </div>
@@ -946,7 +1155,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                         onClick={() => setNewPhoneNumber("")}
                         className="h-[48px] px-[0px] flex items-center justify-center"
                       >
-                        <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] underline">
+                        <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] underline">
                           Clear all
                         </span>
                       </button>
@@ -964,8 +1173,8 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                         disabled={!canApplyNewNumber}
                         className={`h-[48px] px-[16px] min-w-[101px] rounded-[16px] flex items-center justify-center transition-colors ${
                           canApplyNewNumber
-                            ? "bg-[#171519] text-[#fbf6ff] hover:bg-[#2f2c32] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer"
-                            : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+                            ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer"
+                            : "bg-[var(--Button-Primary-Surface-disabled)] text-[var(--Text-Primary-Disabled)] cursor-not-allowed"
                         }`}
                       >
                         <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">Apply</span>
@@ -984,15 +1193,15 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                           }}
                           className={`flex items-center justify-between px-[16px] py-[12px] rounded-[16px] border-[2px] transition-all cursor-pointer ${
                             (selectedPhoneId === phone.id) || (!selectedPhoneId && phone.lastUsed)
-                              ? "border-[#b7812f] bg-[#fdfaf5]"
-                              : "border-[#e0dce3] bg-[#faf7fe] hover:border-[#b7812f]"
+                              ? "border-[var(--Text-Primary-Text-brand)] bg-[var(--Surface-Warning-bg-surface)]"
+                              : "border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)] bg-[var(--Surface-UI-surface-surface-elevated)] hover:border-[var(--Text-Primary-Text-brand)]"
                           }`}
                         >
                           <div className="flex items-center gap-[12px]">
-                            <div className="w-[40px] h-[40px] rounded-[12px] bg-[#f0edf4] flex items-center justify-center">
-                              <PhoneIcon className="w-[20px] h-[20px] text-[#2f2c32]" />
+                            <div className="w-[40px] h-[40px] rounded-[12px] bg-[var(--Surface-UI-surface-surface-elevated)] flex items-center justify-center">
+                              <PhoneIcon className="w-[20px] h-[20px] text-[var(--Text-Primary-heading-3)]" />
                             </div>
-                            <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px]">
+                            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
                               {phone.number}
                             </span>
                           </div>
@@ -1008,7 +1217,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                       onClick={() => setIsEnteringNewNumber(true)}
                       className="self-start inline-flex items-center justify-center py-[12px] pr-[16px] rounded-[16px] hover:opacity-80 transition-opacity cursor-pointer"
                     >
-                      <span className="font-['Nunito'] font-bold text-[#153094] text-[16px] leading-[24px]">
+                      <span className="font-['Nunito'] font-bold text-[var(--Text-Information-primary)] text-[16px] leading-[24px]">
                         Change Number
                       </span>
                     </button>
@@ -1031,24 +1240,24 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                 setIsCountryModalOpen(false);
                 setCountrySearch("");
               }}
-              className="absolute inset-0 z-[80] bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
+              className="absolute inset-0 z-[80] bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px] rounded-[32px]"
             />
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute bottom-0 left-0 w-full z-[90] bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] h-[90%]"
+              className="absolute bottom-0 left-0 w-full z-[90] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] h-[90%]"
             >
               {/* Drag Handle */}
               <div className="flex justify-center mb-[16px] shrink-0">
-                <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px]" />
+                <div className="w-[64px] h-[8px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[4px]" />
               </div>
 
               {/* Header */}
               <div className="w-full flex items-center justify-between px-[16px] mb-[16px] shrink-0">
                 <div className="w-[48px]" />
-                <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
+                <h3 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] tracking-[-0.2px]">
                   Search Country
                 </h3>
                 <button
@@ -1056,32 +1265,32 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                     setIsCountryModalOpen(false);
                     setCountrySearch("");
                   }}
-                  className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors"
+                  className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
                 >
-                  <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
+                  <CloseIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
                 </button>
               </div>
 
               {/* Divider */}
-              <div className="w-full h-[1px] bg-[#e0dce3] mb-[16px] shrink-0" />
+              <div className="w-full h-[1px] bg-[var(--Surface-UI-surface-Surface-Universal-Hover)] mb-[16px] shrink-0" />
 
               {/* Description */}
               <div className="px-[16px] w-full text-center mb-[16px] shrink-0">
-                <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
+                <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
                   Search for your city or timezone to ensure your availability schedule is perfectly accurate.
                 </p>
               </div>
 
               {/* Search Field */}
               <div className="px-[16px] w-full mb-[24px] shrink-0">
-                <div className="w-full bg-[#faf7fe] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] rounded-[12px] px-[12px] py-[16px] flex items-center">
-                  <SearchIcon className="w-[20px] h-[20px] text-[#a09da3] mr-[8px] shrink-0" />
+                <div className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] rounded-[12px] px-[12px] py-[16px] flex items-center">
+                  <SearchIcon className="w-[20px] h-[20px] text-[var(--Text-Primary-Text-placeholder)] mr-[8px] shrink-0" />
                   <input
                     type="text"
                     value={countrySearch}
                     onChange={(e) => setCountrySearch(e.target.value)}
                     placeholder="Search cities or countries..."
-                    className="w-full bg-transparent outline-none font-['Nunito'] font-medium text-[#171519] text-[16px] placeholder:text-[#a09da3]"
+                    className="w-full bg-transparent outline-none font-['Nunito'] font-medium text-[var(--Text-Primary-heading-1)] text-[16px] placeholder:text-[var(--Text-Primary-Text-placeholder)]"
                   />
                 </div>
               </div>
@@ -1100,11 +1309,11 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                           setIsCountryModalOpen(false);
                           setCountrySearch("");
                         }}
-                        className="w-full bg-[#faf7fe] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] flex items-center justify-between p-[12px] rounded-[12px] cursor-pointer hover:bg-[#f0edf4] transition-colors min-h-[44px]"
+                        className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] flex items-center justify-between p-[12px] rounded-[12px] cursor-pointer hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors min-h-[44px]"
                       >
                         <div className="flex items-center gap-[12px]">
                           <Flags countryCode={country.iso.toLowerCase()} className="!w-6 !h-6 shrink-0" />
-                          <span className="font-['Nunito'] font-semibold text-[#2f2c32] text-[16px] leading-[24px]">
+                          <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-3)] text-[16px] leading-[24px]">
                             {country.name} ({country.callingCode})
                           </span>
                         </div>
@@ -1115,7 +1324,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                 </div>
 
                 {filteredCountries.length === 0 && (
-                  <p className="font-['Nunito'] font-medium text-[#a09da3] text-[16px] text-center mt-[32px]">
+                  <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Text-placeholder)] text-[16px] text-center mt-[32px]">
                     No results for "{countrySearch}"
                   </p>
                 )}
@@ -1157,10 +1366,10 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
         />
 
         {/* Card */}
-        <div className="w-full bg-[#f9f4ee] rounded-[12px] p-[16px] flex gap-[12px] items-start shadow-xl">
+        <div className="w-full bg-[var(--Button-Primary-Surface-default-sec)] rounded-[12px] p-[16px] flex gap-[12px] items-start shadow-xl">
           {/* Content column */}
           <div className="flex-1 flex flex-col pt-[4px]">
-            <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#171519] tracking-[0.2px]">
+            <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[var(--Text-Primary-heading-1)] tracking-[0.2px]">
               We can't auto-generate Zoom links yet. Please schedule the meeting and paste your link.
             </p>
           </div>
@@ -1168,10 +1377,10 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
           {/* X close button */}
           <button
             onClick={() => setIsInfoOpen(false)}
-            className="shrink-0 w-[32px] h-[32px] flex items-center justify-center -mr-[4px] hover:bg-[#eae1d5] rounded-full transition-colors"
+            className="shrink-0 w-[32px] h-[32px] flex items-center justify-center -mr-[4px] hover:bg-[var(--Surface-UI-surface-Surface-Universal-highlighter)] rounded-full transition-colors"
             aria-label="Close"
           >
-            <CloseIcon className="w-[16px] h-[16px] text-[#171519]" />
+            <CloseIcon className="w-[16px] h-[16px] text-[var(--Text-Primary-heading-1)]" />
           </button>
         </div>
       </div>
@@ -1187,7 +1396,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOtpModalOpen(false)}
-            className="absolute inset-0 z-[100] bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
+            className="absolute inset-0 z-[100] bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px] rounded-[32px]"
           />
         )}
       </AnimatePresence>
@@ -1199,16 +1408,16 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute bottom-0 left-0 w-full z-[110] bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)]"
+              className="absolute bottom-0 left-0 w-full z-[110] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)]"
             >
               {/* Drag Handle */}
               <div className="flex justify-center mb-[16px] shrink-0">
-                <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px]" />
+                <div className="w-[64px] h-[8px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[4px]" />
               </div>
 
               {/* Header */}
               <div className="w-full flex items-center justify-center px-[16px] mb-[16px] shrink-0 relative h-[28px]">
-                <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
+                <h3 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] tracking-[-0.2px]">
                   Enter your security code
                 </h3>
               </div>
@@ -1216,10 +1425,10 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
               {/* Content */}
               <div className="w-full flex flex-col px-[16px]">
                 {/* Divider */}
-                <div className="w-full h-[1px] bg-[#e0dce3] mb-[16px] shrink-0" />
-                <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px] text-center mb-[24px]">
+                <div className="w-full h-[1px] bg-[var(--Surface-UI-surface-Surface-Universal-Hover)] mb-[16px] shrink-0" />
+                <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px] text-center mb-[24px]">
                   We just sent a 6-digit code to <br />
-                  <span className="font-bold text-[#171519]">+{getCountryCallingCode(selectedCountryCode as any)}{" "}{newPhoneNumber}</span> Enter it below.
+                  <span className="font-bold text-[var(--Text-Primary-heading-1)]">+{getCountryCallingCode(selectedCountryCode as any)}{" "}{newPhoneNumber}</span> Enter it below.
                 </p>
 
                 {/* OTP Inputs */}
@@ -1236,12 +1445,12 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                         value={digit}
                         onChange={(e) => handleOtpChange(index, e.target.value.replace(/[^0-9]/g, ''))}
                         onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                        className={`w-[44px] h-[48px] bg-[#faf7fe] rounded-[8px] flex items-center justify-center text-center font-['Nunito'] font-semibold text-[28px] focus:outline-none transition-all duration-200 ${
+                        className={`w-[44px] h-[48px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[8px] flex items-center justify-center text-center font-['Nunito'] font-semibold text-[28px] focus:outline-none transition-all duration-200 ${
                           otpErrorMsg
-                            ? "border-[1.5px] border-[#870113] text-[#870113] focus:ring-2 focus:ring-[#870113] shadow-[0px_1px_2px_rgba(18,9,0,0.1)]"
+                            ? "border-[1.5px] border-[var(--Button-Error-Stroke-error)] text-[var(--Text-Error-primary)] focus:ring-2 focus:ring-[var(--Text-Error-primary)] shadow-[0px_1px_2px_rgba(18,9,0,0.1)]"
                             : successIndex !== null && index <= successIndex
-                            ? "border-[1.5px] border-[#349024] bg-[#ebf8e9] text-[#171519] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-xs ring-2 ring-[#349024]"
-                            : "border-none text-[#171519] shadow-[0px_1px_2px_rgba(18,9,0,0.1)] focus:ring-2 focus:ring-[#b7812f]"
+                            ? "border-[1.5px] border-[var(--Surface-Success-icon-bg-surface)] bg-[var(--Surface-Success-bg-surface-padding)] text-[var(--Text-Primary-heading-1)] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-xs ring-2 ring-[var(--Surface-Success-icon-bg-surface)]"
+                            : "border-none text-[var(--Text-Primary-heading-1)] shadow-[0px_1px_2px_rgba(18,9,0,0.1)] focus:ring-2 focus:ring-[var(--Text-Primary-Text-brand)]"
                         }`}
                       />
                     ))}
@@ -1262,8 +1471,8 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                           )}
                           <span className={`font-['Nunito'] font-medium leading-[20px] ${
                             otpErrorMsg 
-                              ? 'text-[12px] tracking-[0.5px] text-[#870113]' 
-                              : 'text-[14px] tracking-[1px] text-[#349024]'
+                              ? 'text-[12px] tracking-[0.5px] text-[var(--Text-Error-primary)]' 
+                              : 'text-[14px] tracking-[1px] text-[var(--Surface-Success-icon-bg-surface)]'
                           }`}>
                             {otpErrorMsg || otpSuccessMsg}
                           </span>
@@ -1284,13 +1493,13 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                     >
                       <div className="flex flex-col gap-[12px] items-start w-full mb-[24px]">
                         {otpCountdown > 0 ? (
-                          <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] tracking-[0.1px]">
+                          <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] tracking-[0.1px]">
                             Resend Code in <span className="font-bold">00:{otpCountdown.toString().padStart(2, '0')}</span>
                           </p>
                         ) : (
                           <button
                             onClick={() => setOtpCountdown(15)}
-                            className="font-['Nunito'] font-bold text-[#171519] text-[16px] underline hover:text-[#b7812f] transition-colors"
+                            className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] underline hover:text-[var(--Text-Primary-Text-brand)] transition-colors"
                           >
                             Resend Code
                           </button>
@@ -1315,7 +1524,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsZoomModalOpen(false)}
-            className="absolute inset-0 z-[100] bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
+            className="absolute inset-0 z-[100] bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px] rounded-[32px]"
           />
         )}
       </AnimatePresence>
@@ -1327,41 +1536,43 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-[110] bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)]"
+            className="absolute bottom-0 left-0 w-full z-[110] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)]"
           >
             {/* Drag Handle */}
             <div className="flex justify-center mb-[16px] shrink-0">
-              <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px]" />
+              <div className="w-[64px] h-[8px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[4px]" />
             </div>
 
             {/* Header */}
             <div className="w-full flex items-center justify-between px-[16px] mb-[16px] shrink-0">
               <div className="w-[48px]" />
-              <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
-                Paste your Zoom link
+              <h3 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] tracking-[-0.2px]">
+                {modalPlatform === "custom-link" ? "Paste your link" : "Paste your Zoom link"}
               </h3>
               <button
                 onClick={() => setIsZoomModalOpen(false)}
-                className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors"
+                className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
               >
-                <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
+                <CloseIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
               </button>
             </div>
 
             {/* Divider */}
-            <div className="w-full h-[1px] bg-[#e0dce3] mb-[16px] shrink-0" />
+            <div className="w-full h-[1px] bg-[var(--Surface-UI-surface-Surface-Universal-Hover)] mb-[16px] shrink-0" />
 
             {/* Content */}
             <div className="w-full flex flex-col px-[16px]">
-              <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px] mb-[24px]">
-                Create a new meeting in your Zoom app and paste the invite link below.
+              <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px] mb-[24px]">
+                {modalPlatform === "custom-link" 
+                  ? "Paste the link to your preferred meeting platform below." 
+                  : "Create a new meeting in your Zoom app and paste the invite link below."}
               </p>
 
               <div
-                className={`w-full h-[56px] bg-[#fbf6ff] flex flex-col justify-center px-[16px] cursor-text transition-all duration-300 shrink-0 ${
+                className={`w-full h-[56px] bg-[var(--Surface-Primary-Background)] flex flex-col justify-center px-[16px] cursor-text transition-all duration-300 shrink-0 ${
                   isZoomInputActive || zoomLink.length > 0
-                    ? "border-2 border-[#b7812f] rounded-[16px] shadow-skillbeek-sm"
-                    : "border-[1.5px] border-[#c0bcc3] rounded-[16px] shadow-skillbeek-xs hover:border-[#b7812f]"
+                    ? "border-2 border-[var(--Text-Primary-Text-brand)] rounded-[16px] shadow-skillbeek-sm"
+                    : "border-[1.5px] border-[var(--Button-Primary-Stroke-Stroke-default)] rounded-[16px] shadow-skillbeek-xs hover:border-[var(--Text-Primary-Text-brand)]"
                 }`}
                 onClick={() => {
                   setIsZoomInputActive(true);
@@ -1371,8 +1582,8 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                 {isZoomInputActive || zoomLink.length > 0 ? (
                   // Active State Input layout
                   <div className="flex flex-col h-full justify-center w-full relative">
-                    <span className="font-['Nunito'] font-normal text-[13px] leading-[18px] tracking-[0.0769em] text-[#656268]">
-                      Zoom invite link
+                    <span className="font-['Nunito'] font-normal text-[13px] leading-[18px] tracking-[0.0769em] text-[var(--Text-Primary-Subtitle)]">
+                      {modalPlatform === "custom-link" ? "Meeting link" : "Zoom invite link"}
                     </span>
                     <div className="flex items-center justify-between w-full relative">
                       <input
@@ -1384,15 +1595,15 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                         value={zoomLink}
                         onChange={(e) => setZoomLink(e.target.value)}
                         onBlur={() => setIsZoomInputActive(false)}
-                        className="w-full outline-none font-['Nunito'] font-medium text-[16px] leading-[24px] bg-transparent text-[#171519] pr-[16px] rounded-[4px]"
+                        className="w-full outline-none font-['Nunito'] font-medium text-[16px] leading-[24px] bg-transparent text-[var(--Text-Primary-heading-1)] pr-[16px] rounded-[4px]"
                       />
                     </div>
                   </div>
                 ) : (
                   // Inactive State Input layout
                   <div className="flex items-center h-full">
-                    <span className="font-['Nunito'] font-normal text-[#656268] text-[16px] leading-[24px] tracking-[0px]">
-                      Zoom invite link
+                    <span className="font-['Nunito'] font-normal text-[var(--Text-Primary-Subtitle)] text-[16px] leading-[24px] tracking-[0px]">
+                      {modalPlatform === "custom-link" ? "Meeting link" : "Zoom invite link"}
                     </span>
                   </div>
                 )}
@@ -1403,7 +1614,7 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                   onClick={() => { setZoomLink(""); setIsZoomInputActive(false); }}
                   className="h-[48px] px-[0px] flex items-center justify-center"
                 >
-                  <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] underline">
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] underline">
                     Clear all
                   </span>
                 </button>
@@ -1412,8 +1623,8 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
                   disabled={zoomLink.trim() === ""}
                   className={`h-[48px] px-[16px] min-w-[101px] rounded-[16px] flex items-center justify-center transition-colors ${
                     zoomLink.trim() !== ""
-                      ? "bg-[#171519] text-[#fbf6ff] hover:bg-[#2f2c32] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer"
-                      : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+                      ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer"
+                      : "bg-[var(--Button-Primary-Surface-disabled)] text-[var(--Text-Primary-Disabled)] cursor-not-allowed"
                   }`}
                 >
                   <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">Apply</span>
@@ -1424,10 +1635,30 @@ export function SessionPlatformView({ onBack, onNext, onSaveExit, onQuestions }:
         )}
       </AnimatePresence>
 
+
+      {/* Google Meet Wait Screen */}
+      <AnimatePresence>
+        {isGeneratingMeet && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[200] bg-[var(--Surface-Primary-Background)] flex flex-col items-center justify-center rounded-[32px] backdrop-blur-[4px]"
+          >
+            <div className="w-12 h-12 border-4 border-[var(--Button-Primary-Stroke-Stroke-default)] border-t-[var(--Text-Primary-Text-brand)] rounded-full animate-spin mb-4" />
+            <h2 className="font-['Nunito'] font-bold text-[20px] text-[var(--Text-Primary-heading-1)]">Generating Google Meet Link...</h2>
+            <p className="font-['Nunito'] font-medium text-[16px] text-[var(--Text-Primary-Body)] mt-2 text-center px-8">
+              Please wait while we securely connect to Google Calendar to set up your meeting.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <SuccessToast
         isVisible={showCopyToast}
         message="Link copied to clipboard"
         onClose={() => setShowCopyToast(false)}
+        className="absolute bottom-[144px] left-[16px] w-[calc(100%-32px)] z-10 pointer-events-auto"
       />
     </div>
   );
