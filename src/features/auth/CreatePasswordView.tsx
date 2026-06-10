@@ -13,17 +13,17 @@ function SmallLoadingAnimation() {
       <motion.div
         animate={{ y: [0, -4, 0] }}
         transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-        className="w-[4px] h-[4px] rounded-full bg-[#a09da3]"
+        className="w-[4px] h-[4px] rounded-full bg-[var(--Text-Primary-Text-placeholder)]"
       />
       <motion.div
         animate={{ y: [0, -4, 0] }}
         transition={{ duration: 0.6, repeat: Infinity, delay: 0.15 }}
-        className="w-[4px] h-[4px] rounded-full bg-[#a09da3]"
+        className="w-[4px] h-[4px] rounded-full bg-[var(--Text-Primary-Text-placeholder)]"
       />
       <motion.div
         animate={{ y: [0, -4, 0] }}
         transition={{ duration: 0.6, repeat: Infinity, delay: 0.3 }}
-        className="w-[4px] h-[4px] rounded-full bg-[#a09da3]"
+        className="w-[4px] h-[4px] rounded-full bg-[var(--Text-Primary-Text-placeholder)]"
       />
     </div>
   );
@@ -123,16 +123,16 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
       return (
         <div className="flex flex-col gap-[8px]">
           <div className="flex items-center gap-[8px]">
-            <div className="w-[14px] h-[14px] rounded-full border-[1.5px] border-[#a09da3] shrink-0" />
-            <span className="font-['Nunito'] font-medium text-[14px] text-[#656268]">At least 8 characters</span>
+            <div className="w-[14px] h-[14px] rounded-full border-[1.5px] border-[var(--Button-Primary-Icon-Stroke-disabled)] shrink-0" />
+            <span className="font-['Nunito'] font-medium text-[14px] text-[var(--Text-Primary-Subtitle)]">At least 8 characters</span>
           </div>
           <div className="flex items-center gap-[8px]">
-            <div className="w-[14px] h-[14px] rounded-full border-[1.5px] border-[#a09da3] shrink-0" />
-            <span className="font-['Nunito'] font-medium text-[14px] text-[#656268]">At least 1 number (0–9)</span>
+            <div className="w-[14px] h-[14px] rounded-full border-[1.5px] border-[var(--Button-Primary-Icon-Stroke-disabled)] shrink-0" />
+            <span className="font-['Nunito'] font-medium text-[14px] text-[var(--Text-Primary-Subtitle)]">At least 1 number (0–9)</span>
           </div>
           <div className="flex items-center gap-[8px]">
-            <div className="w-[14px] h-[14px] rounded-full border-[1.5px] border-[#a09da3] shrink-0" />
-            <span className="font-['Nunito'] font-medium text-[14px] text-[#656268]">At least 1 special character (!, #, *, etc.)</span>
+            <div className="w-[14px] h-[14px] rounded-full border-[1.5px] border-[var(--Button-Primary-Icon-Stroke-disabled)] shrink-0" />
+            <span className="font-['Nunito'] font-medium text-[14px] text-[var(--Text-Primary-Subtitle)]">At least 1 special character (!, #, *, etc.)</span>
           </div>
         </div>
       );
@@ -159,19 +159,19 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
         {!criteriaLength && (
           <div className="flex items-center gap-[8px]">
             <ErrorIcon className="w-[14px] h-[14px] shrink-0 mt-[1px]" />
-            <span className="font-['Nunito'] font-medium text-[14px] text-[#870113]">At least 8 characters</span>
+            <span className="font-['Nunito'] font-medium text-[14px] text-[var(--Text-Error-primary)]">At least 8 characters</span>
           </div>
         )}
         {!criteriaNumber && (
           <div className="flex items-center gap-[8px]">
             <ErrorIcon className="w-[14px] h-[14px] shrink-0 mt-[1px]" />
-            <span className="font-['Nunito'] font-medium text-[14px] text-[#870113]">At least 1 number (0–9)</span>
+            <span className="font-['Nunito'] font-medium text-[14px] text-[var(--Text-Error-primary)]">At least 1 number (0–9)</span>
           </div>
         )}
         {!criteriaSpecial && (
           <div className="flex items-center gap-[8px]">
             <ErrorIcon className="w-[14px] h-[14px] shrink-0 mt-[1px]" />
-            <span className="font-['Nunito'] font-medium text-[14px] text-[#870113]">At least 1 special character (!, #, *, etc.)</span>
+            <span className="font-['Nunito'] font-medium text-[14px] text-[var(--Text-Error-primary)]">At least 1 special character (!, #, *, etc.)</span>
           </div>
         )}
       </div>
@@ -200,7 +200,7 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
     return (
       <div className="flex items-center gap-[8px]">
         <ErrorIcon className="w-[14px] h-[14px] shrink-0 mt-[1px]" />
-        <span className="font-['Nunito'] font-medium text-[14px] text-[#870113]">Passwords do not match</span>
+        <span className="font-['Nunito'] font-medium text-[14px] text-[var(--Text-Error-primary)]">Passwords do not match</span>
       </div>
     );
   };
@@ -209,10 +209,10 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
   const hasStartedTypingRepeat = repeatPassword.length > 0 || isTypingRepeat;
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Top Status Bar Placeholder (mocked) */}
       <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]"></div>
       </div>
 
       {/* Main Content Area */}
@@ -228,10 +228,10 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
 
         {/* Header */}
         <div className="w-full flex flex-col gap-[16px] items-start mb-[44px]">
-          <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[32px] tracking-[-0.7px]">
+          <h1 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[32px] tracking-[-0.7px]">
             Set Your Password
           </h1>
-          <p className="font-['Nunito'] font-medium text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+          <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] tracking-[0.1px]">
             To keep your account secure, create a unique password that's at least 8 characters long and includes a number and a special character.
           </p>
         </div>
@@ -241,12 +241,12 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
           {/* Create Password Input */}
           <div className="w-[352px] flex flex-col items-start gap-[8px] shrink-0">
             <div
-              className={`w-[352px] h-[56px] relative bg-[#fbf6ff] flex items-center justify-between px-[16px] cursor-text transition-all duration-300 shrink-0 ${
+              className={`w-[352px] h-[56px] relative bg-[var(--Surface-Primary-Background)] flex items-center justify-between px-[16px] cursor-text transition-all duration-300 shrink-0 ${
                 isSubmitEnabled
-                  ? "border-[2px] border-[#349024] rounded-[16px] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-sm"
+                  ? "border-[2px] border-[var(--Surface-Success-icon-bg-surface)] rounded-[16px] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-sm"
                   : activeInput === "new"
-                  ? "border-2 border-[#b7812f] rounded-[16px] shadow-skillbeek-sm"
-                  : "border-[1.5px] border-[#c0bcc3] rounded-[16px] shadow-skillbeek-xs hover:border-[#b7812f]"
+                  ? "border-2 border-[var(--Text-Primary-Text-brand)] rounded-[16px] shadow-skillbeek-sm"
+                  : "border-[1.5px] border-[var(--Button-Primary-Stroke-Stroke-default)] rounded-[16px] shadow-skillbeek-xs hover:border-[var(--Text-Primary-Text-brand)]"
               }`}
               onClick={() => {
                 setActiveInput("new");
@@ -273,8 +273,8 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
                 <span 
                   className={`absolute left-0 top-[16px] font-['Nunito'] font-semibold text-[16px] leading-[24px] tracking-[1.1px] transition-all duration-300 pointer-events-none origin-top-left ${
                     activeInput === "new" || newPassword.length > 0 
-                      ? "-translate-y-[8px] scale-[0.75] text-[#656268]" 
-                      : "translate-y-0 scale-100 text-[#a09da3] font-medium"
+                      ? "-translate-y-[8px] scale-[0.75] text-[var(--Text-Primary-Subtitle)]" 
+                      : "translate-y-0 scale-100 text-[var(--Text-Primary-Text-placeholder)] font-medium"
                   }`}
                 >
                   Create Your Password
@@ -286,7 +286,7 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
                   value={newPassword}
                   onChange={handleNewPasswordChange}
                   onFocus={() => setActiveInput("new")}
-                  className={`w-full bg-transparent border-none outline-none font-['Nunito'] font-semibold text-[#171519] tracking-[2px] text-[16px] leading-[24px] transition-opacity duration-300 ${
+                  className={`w-full bg-transparent border-none outline-none font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] tracking-[2px] text-[16px] leading-[24px] transition-opacity duration-300 ${
                     activeInput === "new" || newPassword.length > 0 ? "opacity-100 absolute bottom-[8px] left-0 z-10" : "opacity-0 absolute inset-0 z-10"
                   }`}
                 />
@@ -294,7 +294,7 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
 
               {(activeInput === "new" || newPassword.length > 0) && (
                 <button 
-                  className="w-[24px] h-[24px] flex items-center justify-center text-[#656268] hover:text-[#171519] transition-colors shrink-0 ml-[8px]"
+                  className="w-[24px] h-[24px] flex items-center justify-center text-[var(--Text-Primary-Subtitle)] hover:text-[var(--Text-Primary-heading-1)] transition-colors shrink-0 ml-[8px]"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsNewVisible(!isNewVisible);
@@ -327,12 +327,12 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
                 className="w-[352px] flex flex-col items-start gap-[8px] shrink-0"
               >
                 <div
-                  className={`w-[352px] h-[56px] relative bg-[#fbf6ff] flex items-center justify-between px-[16px] cursor-text transition-all duration-300 shrink-0 ${
+                  className={`w-[352px] h-[56px] relative bg-[var(--Surface-Primary-Background)] flex items-center justify-between px-[16px] cursor-text transition-all duration-300 shrink-0 ${
                     isSubmitEnabled
-                      ? "border-[2px] border-[#349024] rounded-[16px] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-sm"
+                      ? "border-[2px] border-[var(--Surface-Success-icon-bg-surface)] rounded-[16px] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-sm"
                       : activeInput === "repeat"
-                      ? "border-2 border-[#b7812f] rounded-[16px] shadow-skillbeek-sm"
-                      : "border-[1.5px] border-[#c0bcc3] rounded-[16px] shadow-skillbeek-xs hover:border-[#b7812f]"
+                      ? "border-2 border-[var(--Text-Primary-Text-brand)] rounded-[16px] shadow-skillbeek-sm"
+                      : "border-[1.5px] border-[var(--Button-Primary-Stroke-Stroke-default)] rounded-[16px] shadow-skillbeek-xs hover:border-[var(--Text-Primary-Text-brand)]"
                   }`}
                   onClick={() => {
                     setActiveInput("repeat");
@@ -358,8 +358,8 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
                     <span 
                       className={`absolute left-0 top-[16px] font-['Nunito'] font-semibold text-[16px] leading-[24px] tracking-[1.1px] transition-all duration-300 pointer-events-none origin-top-left ${
                         activeInput === "repeat" || repeatPassword.length > 0 
-                          ? "-translate-y-[8px] scale-[0.75] text-[#656268]" 
-                          : "translate-y-0 scale-100 text-[#a09da3] font-medium"
+                          ? "-translate-y-[8px] scale-[0.75] text-[var(--Text-Primary-Subtitle)]" 
+                          : "translate-y-0 scale-100 text-[var(--Text-Primary-Text-placeholder)] font-medium"
                       }`}
                     >
                       Repeat new password
@@ -371,7 +371,7 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
                       value={repeatPassword}
                       onChange={handleRepeatPasswordChange}
                       onFocus={() => setActiveInput("repeat")}
-                      className={`w-full bg-transparent border-none outline-none font-['Nunito'] font-semibold text-[#171519] tracking-[2px] text-[16px] leading-[24px] transition-opacity duration-300 ${
+                      className={`w-full bg-transparent border-none outline-none font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] tracking-[2px] text-[16px] leading-[24px] transition-opacity duration-300 ${
                         activeInput === "repeat" || repeatPassword.length > 0 ? "opacity-100 absolute bottom-[8px] left-0 z-10" : "opacity-0 absolute inset-0 z-10"
                       }`}
                     />
@@ -379,7 +379,7 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
 
                   {(activeInput === "repeat" || repeatPassword.length > 0) && (
                     <button 
-                      className="w-[24px] h-[24px] flex items-center justify-center text-[#656268] hover:text-[#171519] transition-colors shrink-0 ml-[8px]"
+                      className="w-[24px] h-[24px] flex items-center justify-center text-[var(--Text-Primary-Subtitle)] hover:text-[var(--Text-Primary-heading-1)] transition-colors shrink-0 ml-[8px]"
                       onClick={(e) => {
                         e.stopPropagation();
                         setIsRepeatVisible(!isRepeatVisible);
@@ -416,8 +416,8 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
               }}
               className={`w-[352px] h-[48px] rounded-[16px] flex items-center justify-center font-['Nunito'] font-bold text-[16px] transition-all duration-300 ${
                   isSubmitEnabled
-                  ? "bg-[#171519] text-[#fbf6ff] shadow-skillbeek-sm hover:bg-[#2f2c32]"
-                  : "bg-[#f0edf4] text-[#a09da3] shadow-[0px_1px_3px_0px_rgba(18,9,0,0.1)]"
+                  ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] shadow-skillbeek-sm hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)]"
+                  : "bg-[var(--Surface-UI-surface-surface-elevated)] text-[var(--Text-Primary-Text-placeholder)] shadow-[0px_1px_3px_0px_rgba(18,9,0,0.1)]"
               }`}
             >
               {mode === "reset" ? "Reset Password" : "Create Password"}
@@ -428,7 +428,7 @@ export function CreatePasswordView({ onBack, mode = "login" }: CreatePasswordVie
       
       {/* Bottom Home Indicator */}
       <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px]">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]"></div>
       </div>
 
       <SuccessAuthModal

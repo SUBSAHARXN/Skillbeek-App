@@ -15,24 +15,24 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
   const progressPercent = isValid ? 50 : 25;
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Top Status Bar Placeholder (mocked) */}
       <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]"></div>
       </div>
 
       {/* Header Action Buttons (Fixed at Top) */}
-      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[var(--Surface-Primary-Background)] z-20">
         <button
           onClick={() => setIsSaveModalOpen(true)}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
+          className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]"
         >
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">
             Save and Exit
           </span>
         </button>
-        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+        <button className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">
             Questions?
           </span>
         </button>
@@ -44,10 +44,10 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
         <div className="w-full px-[16px] flex flex-col gap-[32px] mb-[24px]">
           {/* Header Texts */}
           <div className="flex flex-col gap-[12px]">
-            <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px]">
+            <h1 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[36px]">
               What will people get from this offer?
             </h1>
-            <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] whitespace-pre-wrap">
+            <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] whitespace-pre-wrap">
               This is your chance to set expectations. Share what a typical session is like and what a learner will walk away with
             </p>
           </div>
@@ -56,7 +56,7 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
           <div className="flex flex-col gap-[8px] relative w-full shrink-0">
             {/* Input Wrapper */}
             <div className="flex flex-col gap-[20px] shrink-0 w-full relative z-20">
-              <label className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] pointer-events-none">
+              <label className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] pointer-events-none">
                 Offer description
               </label>
 
@@ -99,8 +99,8 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     className="w-full"
                   >
-                    <p className="font-['Nunito'] font-bold text-[#171519] text-[14px] tracking-[1px] leading-[20px]">
-                      {500 - description.length} <span className="font-medium text-[#656268]">characters available</span>
+                    <p className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[14px] tracking-[1px] leading-[20px]">
+                      {500 - description.length} <span className="font-medium text-[var(--Text-Primary-Subtitle)]">characters available</span>
                     </p>
                   </motion.div>
                 )}
@@ -114,7 +114,7 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     className="w-full"
                   >
-                    <p className="font-['Nunito'] font-bold text-[#171519] text-[14px] tracking-[1px] leading-[20px]">
+                    <p className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[14px] tracking-[1px] leading-[20px]">
                       Please expand on your description. To be effective, it needs at least 40 characters.
                     </p>
                   </motion.div>
@@ -129,7 +129,7 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     className="w-full"
                   >
-                    <p className="font-['Nunito'] font-medium text-[#171519] text-[14px] tracking-[1px] leading-[20px]">
+                    <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-heading-1)] text-[14px] tracking-[1px] leading-[20px]">
                       The sweet spot for a great description is usually 2 to 3 clear sentences
                     </p>
                   </motion.div>
@@ -144,7 +144,7 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
       </div>
 
       {/* Fixed Footer */}
-      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
+      <div className="absolute bottom-0 left-0 w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
         <div className="w-full flex justify-center">
           <OfferProgressBar currentStep={1} subStepProgress={progressPercent} />
         </div>
@@ -154,7 +154,7 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
             onClick={onBack}
             className="h-[48px] px-[16px] py-[12px] flex items-center justify-center rounded-[16px] transition-colors"
           >
-            <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px]">
+            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px] leading-[24px]">
               Back
             </span>
           </button>
@@ -163,8 +163,8 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
             disabled={!isValid}
             className={`h-[48px] px-[16px] py-[12px] flex justify-center items-center rounded-[16px] w-[101px] transition-all
               ${isValid
-                ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32] shadow-skillbeek-xs"
-                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+                ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] cursor-pointer hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] shadow-skillbeek-xs"
+                : "bg-[var(--Button-Primary-Surface-disabled)] text-[var(--Text-Primary-Disabled)] cursor-not-allowed"
               }`}
           >
             <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
@@ -176,7 +176,7 @@ export function OfferDescriptionView({ onBack, onNext }: { onBack?: () => void; 
 
       {/* Bottom Home Indicator */}
       <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]"></div>
       </div>
 
       <SaveExitModal

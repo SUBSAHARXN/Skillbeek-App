@@ -37,10 +37,10 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
   const isContinueEnabled = email.length > 0;
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Top Status Bar Placeholder (mocked) */}
       <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]"></div>
       </div>
 
       {/* Main Content Area */}
@@ -48,7 +48,7 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
         {/* Close Button / Top Area */}
         <div className="w-full pt-[8px] pb-[12px] flex justify-start shrink-0">
           <button className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-gray-100 transition-colors">
-            <CloseIcon className="w-[18px] h-[18px] text-[#171519]" />
+            <CloseIcon className="w-[18px] h-[18px] text-[var(--Text-Primary-heading-1)]" />
           </button>
         </div>
 
@@ -67,7 +67,7 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -88, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="absolute inset-x-0 top-0 flex justify-center items-center h-full font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[32px] tracking-[-0.7px] text-center w-full whitespace-nowrap"
+                className="absolute inset-x-0 top-0 flex justify-center items-center h-full font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[32px] tracking-[-0.7px] text-center w-full whitespace-nowrap"
               >
                 Login or sign up to Skillbeek
               </motion.h1>
@@ -80,7 +80,7 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 88, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="absolute inset-x-0 top-0 flex justify-center items-center h-full font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[32px] tracking-[-0.7px] text-center w-full whitespace-nowrap"
+                className="absolute inset-x-0 top-0 flex justify-center items-center h-full font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[32px] tracking-[-0.7px] text-center w-full whitespace-nowrap"
               >
                 Enter your Email
               </motion.h1>
@@ -89,23 +89,23 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
         </div>
 
         {/* Input & Continue Button Group */}
-        <motion.div layout className="w-full flex flex-col gap-[24px] z-50 relative bg-[#fbf6ff]">
+        <motion.div layout className="w-full flex flex-col gap-[24px] z-50 relative bg-[var(--Surface-Primary-Background)]">
           {/* Email Input & Error wrapper */}
           <div className="w-full flex flex-col items-center gap-[4px]">
             <motion.div
-              className={`w-[352px] h-[56px] bg-[#fbf6ff] flex flex-col justify-center px-[16px] cursor-text transition-all duration-300 shrink-0 ${
+              className={`w-[352px] h-[56px] bg-[var(--Surface-Primary-Background)] flex flex-col justify-center px-[16px] cursor-text transition-all duration-300 shrink-0 ${
                 hasError
-                  ? "border-2 border-[#870113] rounded-[16px] shadow-skillbeek-sm"
+                  ? "border-2 border-[var(--Button-Error-Stroke-error)] rounded-[16px] shadow-skillbeek-sm"
                   : isActive
-                  ? "border-2 border-[#b7812f] rounded-[16px] shadow-skillbeek-sm"
-                  : "border-[1.5px] border-[#c0bcc3] rounded-[16px] shadow-skillbeek-xs hover:border-[#b7812f]"
+                  ? "border-2 border-[var(--Text-Primary-Text-brand)] rounded-[16px] shadow-skillbeek-sm"
+                  : "border-[1.5px] border-[var(--Button-Primary-Stroke-Stroke-default)] rounded-[16px] shadow-skillbeek-xs hover:border-[var(--Text-Primary-Text-brand)]"
               }`}
               onClick={handleInputFocus}
             >
               {isActive ? (
                 // Active State Input layout
                 <div className="flex flex-col h-full justify-center w-full relative">
-                  <span className={`font-['Nunito'] font-normal text-[13px] leading-[18px] tracking-[0.0769em] ${hasError ? 'text-[#870113]' : 'text-[#656268]'}`}>
+                  <span className={`font-['Nunito'] font-normal text-[13px] leading-[18px] tracking-[0.0769em] ${hasError ? 'text-[var(--Text-Error-primary)]' : 'text-[var(--Text-Primary-Subtitle)]'}`}>
                     Email
                   </span>
                   <div className="flex items-center justify-between w-full relative">
@@ -140,8 +140,8 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
                       }}
                       className={`w-full outline-none font-['Nunito'] font-medium text-[16px] leading-[24px] pr-[16px] rounded-[4px] ${
                         isAutofill
-                          ? "bg-[#FDE2CD] text-[#a09da3] px-1 -ml-1" // text-placeholder color + highlighter background
-                          : "bg-transparent text-[#171519]"
+                          ? "bg-[var(--Surface-UI-surface-Surface-Universal-highlighter)] text-[var(--Text-Primary-Text-placeholder)] px-1 -ml-1" // text-placeholder color + highlighter background
+                          : "bg-transparent text-[var(--Text-Primary-heading-1)]"
                       }`}
                     />
                   </div>
@@ -149,7 +149,7 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
               ) : (
                 // Inactive State Input layout
                 <div className="flex items-center h-full">
-                  <span className="font-['Nunito'] font-normal text-[#656268] text-[16px] leading-[24px] tracking-[0px]">
+                  <span className="font-['Nunito'] font-normal text-[var(--Text-Primary-Subtitle)] text-[16px] leading-[24px] tracking-[0px]">
                     Email
                   </span>
                 </div>
@@ -166,7 +166,7 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
                   className="w-[352px] flex items-center gap-[4px] overflow-hidden shrink-0"
                 >
                   <ErrorIcon className="w-[14px] h-[14px] shrink-0" />
-                  <span className="font-['Nunito'] font-medium text-[#870113] text-[12px] leading-[20px] tracking-[1.1px]">
+                  <span className="font-['Nunito'] font-medium text-[var(--Text-Error-primary)] text-[12px] leading-[20px] tracking-[1.1px]">
                     {errorMsg}
                   </span>
                 </motion.div>
@@ -187,8 +187,8 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
               }}
               className={`w-full max-w-[352px] h-[48px] rounded-[16px] flex items-center justify-center font-['Nunito'] font-bold text-[16px] transition-all duration-300 ${
                 isContinueEnabled
-                  ? "bg-[#171519] text-[#fbf6ff] shadow-skillbeek-sm hover:bg-[#2f2c32]" // Assuming main brand dark for active btn based on standard OOUX maps, adjust if necessary
-                  : "bg-[#f0edf4] text-[#a09da3] shadow-skillbeek-xs"
+                  ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] shadow-skillbeek-sm hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)]" // Assuming main brand dark for active btn based on standard OOUX maps, adjust if necessary
+                  : "bg-[var(--Surface-UI-surface-surface-elevated)] text-[var(--Text-Primary-Text-placeholder)] shadow-skillbeek-xs"
               }`}
             >
               Continue
@@ -198,11 +198,11 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
 
         {/* OR Divider */}
         <motion.div layout className="w-full flex items-center justify-center gap-[12px] my-[24px]">
-          <div className="flex-1 h-px bg-[#c0bcc3] opacity-40"></div>
-          <span className="font-['Nunito'] font-semibold text-[#171519] text-[12px] leading-[20px]">
+          <div className="flex-1 h-px bg-[var(--Text-Primary-Caption-alt)] opacity-40"></div>
+          <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[12px] leading-[20px]">
             OR
           </span>
-          <div className="flex-1 h-px bg-[#c0bcc3] opacity-40"></div>
+          <div className="flex-1 h-px bg-[var(--Text-Primary-Caption-alt)] opacity-40"></div>
         </motion.div>
 
         {/* Social Buttons */}
@@ -216,9 +216,9 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
         {/* Footer Bar Placeholders (mocked) */}
         {!isActive && (
           <motion.div layout className="w-full flex justify-center mt-[44px] gap-[24px] font-['Nunito'] font-bold text-[14px]">
-            <a href="#" className="text-[#171519] underline decoration-solid underline-offset-4 decoration-[#c0bcc3]">Terms of Service</a>
-            <div className="w-[1px] h-[14px] bg-[#c0bcc3] mt-1"></div>
-            <a href="#" className="text-[#171519] underline decoration-solid underline-offset-4 decoration-[#c0bcc3]">Privacy Policy</a>
+            <a href="#" className="text-[var(--Text-Primary-heading-1)] underline decoration-solid underline-offset-4 decoration-[var(--Text-Primary-Caption-alt)]">Terms of Service</a>
+            <div className="w-[1px] h-[14px] bg-[var(--Text-Primary-Caption-alt)] mt-1"></div>
+            <a href="#" className="text-[var(--Text-Primary-heading-1)] underline decoration-solid underline-offset-4 decoration-[var(--Text-Primary-Caption-alt)]">Privacy Policy</a>
           </motion.div>
         )}
       </div>
@@ -228,7 +228,7 @@ export function LoginView({ onContinue }: { onContinue?: (email: string) => void
 
       {/* iOS Home Indicator Mock */}
       <div className="absolute bottom-0 left-0 right-0 h-[34px] flex items-center justify-center pb-[8px] pt-[24px]">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px] z-50"></div>
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px] z-50"></div>
       </div>
 
     </div>

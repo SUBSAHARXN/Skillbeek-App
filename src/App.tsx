@@ -29,10 +29,13 @@ import { PartnerRoleView } from "./features/offers/steps/PartnerRoleView";
 import { SkillLiveView } from "./features/offers/steps/SkillLiveView";
 import { SkillDetailsView } from "./features/offers/steps/SkillDetailsView";
 import { SessionCreateFlowView } from "./features/sessions/SessionCreateFlowView";
-import { SessionSetupView } from "./features/sessions/SessionSetupView";
+import { SessionSetupView, SessionSetupData } from "./features/sessions/SessionSetupView";
 import { SessionGoalView } from "./features/sessions/SessionGoalView";
+import { SessionPlatformView } from "./features/sessions/SessionPlatformView";
+import { SessionPreviewView } from "./features/sessions/SessionPreviewView";
+import { LiveSessionRoomView } from "./features/sessions/LiveSessionRoomView";
 
-type ViewState = "splash" | "login" | "password" | "otp" | "otpInput" | "createPassword" | "offerCreate" | "offerTitle" | "offerDescription" | "offerAddSkill" | "skillSelect" | "skillReview" | "skillLive" | "skillDetails" | "skillRole" | "proficiencyLevels" | "exchangeDetails" | "receiveSkillsAdd" | "receiveSkillsSelect" | "receiveSkillsReview" | "partnerRole" | "partnerProficiency" | "timeCreditRate" | "availability" | "offerSettings" | "offerExpiration" | "sessionLength" | "offerPreview" | "sessionCreate" | "sessionSetup" | "sessionGoal" | "sessionDuration" | "sessionExchangeDetails";
+type ViewState = "splash" | "login" | "password" | "otp" | "otpInput" | "createPassword" | "offerCreate" | "offerTitle" | "offerDescription" | "offerAddSkill" | "skillSelect" | "skillReview" | "skillLive" | "skillDetails" | "skillRole" | "proficiencyLevels" | "exchangeDetails" | "receiveSkillsAdd" | "receiveSkillsSelect" | "receiveSkillsReview" | "partnerRole" | "partnerProficiency" | "timeCreditRate" | "availability" | "offerSettings" | "offerExpiration" | "sessionLength" | "offerPreview" | "sessionCreate" | "sessionSetup" | "sessionPlatform" | "sessionPreview" | "liveSessionRoom";
 type AuthMode = "login" | "reset";
 
 function App() {
@@ -68,6 +71,9 @@ function App() {
   const [selectedSkillForDetails, setSelectedSkillForDetails] = useState<string | null>(null);
   const [isSessionFromChat, setIsSessionFromChat] = useState(false);
   const [isP1, setIsP1] = useState(true);
+  const [sessionSetupData, setSessionSetupData] = useState<SessionSetupData | null>(null);
+  const [jitsiLink, setJitsiLink] = useState("");
+  const [showLiveSessionRoom, setShowLiveSessionRoom] = useState(false);
 
   // Initialize global OverlayScrollbars
   const [initScrollbars] = useOverlayScrollbars({
@@ -157,6 +163,13 @@ function App() {
     }),
   };
 
+  /* ── Vertical Slide Transition ──────────────────────── */
+  const slideUpVariants = {
+    initial: { y: "100%", opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    exit: { y: "100%", opacity: 0 }
+  };
+
   const slideTransition = { duration: 0.35, ease: "easeInOut" as const };
 
   const navigateTo = (view: ViewState, direction: 1 | -1 = 1) => {
@@ -168,7 +181,7 @@ function App() {
     <div className="min-h-screen bg-neutral-900 flex flex-col items-center justify-center p-4 selection:bg-purple-200">
       
       {/* Dev Controls */}
-      <div className="mb-4 bg-neutral-800 p-4 rounded-[16px] flex flex-wrap gap-x-4 gap-y-2 items-center justify-center text-white font-['Nunito'] shadow-xl w-[396px] shrink-0">
+      <div className="mb-4 bg-neutral-800 p-4 rounded-[16px] flex flex-wrap gap-x-4 gap-y-2 items-center justify-center text-[var(--Text-Primary-Title-alt)] font-['Nunito'] shadow-xl w-[396px] shrink-0">
         <span className="font-bold text-[14px] shrink-0">Dev Toggles:</span>
         <label className="flex items-center gap-2 cursor-pointer text-[14px] shrink-0">
           <input 
@@ -236,7 +249,7 @@ function App() {
             setIsSkillOnlyFlow(false);
             setCurrentView("offerCreate");
           }}
-          className="px-3 py-1 bg-[#171519] hover:bg-[#2f2c32] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(23,21,25,0.4)] shrink-0"
+          className="px-3 py-1 bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] rounded-[8px] text-[12px] text-[var(--Text-Primary-Body-alt)] font-bold transition-colors shadow-[0_0_10px_rgba(23,21,25,0.4)] shrink-0"
         >
           Offer Create Flow
         </button>
@@ -246,7 +259,7 @@ function App() {
             setIsSessionFromChat(false);
             setCurrentView("sessionCreate");
           }}
-          className="px-3 py-1 bg-[#2563EB] hover:bg-[#3b82f6] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(37,99,235,0.4)] shrink-0"
+          className="px-3 py-1 bg-[var(--Button-Info-Info)] hover:bg-[var(--Button-Info-Info)] rounded-[8px] text-[12px] text-white font-bold transition-colors shadow-[0_0_10px_rgba(37,99,235,0.4)] shrink-0"
         >
           Session (Offer Flow)
         </button>
@@ -256,7 +269,7 @@ function App() {
             setIsSessionFromChat(true);
             setCurrentView("sessionCreate");
           }}
-          className="px-3 py-1 bg-[#8B5CF6] hover:bg-[#a78bfa] rounded-[8px] text-[12px] text-[#fbf6ff] font-bold transition-colors shadow-[0_0_10px_rgba(139,92,246,0.4)] shrink-0"
+          className="px-3 py-1 bg-[var(--Text-Primary-Text-brandPrimary)] hover:bg-[var(--Button-UI-comp-sur-Stroke-Stroke)] rounded-[8px] text-[12px] text-white font-bold transition-colors shadow-[0_0_10px_rgba(139,92,246,0.4)] shrink-0"
         >
           Session (Chat Flow)
         </button>
@@ -265,8 +278,8 @@ function App() {
       {/* Mobile constraint container for Desktop Sandboxing */}
       <div className="w-[396px] h-[824px] bg-black rounded-[36px] p-[6px] shadow-2xl relative overflow-hidden ring-4 ring-neutral-800">
         
-        {/* We use a wrapper with bg-[#fbf6ff] to ensure screens have a solid background color */}
-        <div className="w-full h-full relative overflow-hidden bg-[#fbf6ff] rounded-[30px]">
+        {/* We use a wrapper with bg-[var(--Surface-Primary-Background)] to ensure screens have a solid background color */}
+        <div className="w-full h-full relative overflow-hidden bg-[var(--Surface-Primary-Background)] rounded-[30px]">
 
           {/* ── Main Screen Routes ──────────────────────────────── */}
           <AnimatePresence mode="wait" custom={navDirection}>
@@ -279,7 +292,7 @@ function App() {
                 animate="animate"
                 exit="exit"
                 transition={slideTransition}
-                className="w-full h-full bg-[#06000c]"
+                className="w-full h-full bg-[var(--Text-Information-primary-darker)]"
               >
                 <SplashView onComplete={() => navigateTo("login", 1)} />
               </motion.div>
@@ -481,6 +494,8 @@ function App() {
                   onBack={() => {
                     if (isSkillOnlyFlow) {
                       navigateTo("login", -1);
+                    } else if (isSessionFromChat) {
+                      navigateTo("sessionSetup", -1);
                     } else {
                       navigateTo("exchangeDetails", -1);
                     }
@@ -652,7 +667,11 @@ function App() {
                 <ReceiveSkillsAddView
                   onBack={() => {
                     if (exchangeType === "time-credit") {
-                      navigateTo("exchangeDetails", -1);
+                      if (isSessionFromChat) {
+                        navigateTo("sessionSetup", -1);
+                      } else {
+                        navigateTo("exchangeDetails", -1);
+                      }
                     } else {
                       navigateTo("skillRole", -1);
                     }
@@ -965,18 +984,23 @@ function App() {
               >
                 <SessionSetupView
                   onBack={() => navigateTo("sessionCreate", -1)}
-                  onNext={() => navigateTo("sessionGoal", 1)}
+                  onNext={(data) => {
+                    setSessionSetupData(data);
+                    navigateTo("sessionPlatform", 1);
+                  }}
                   isP1={isP1}
                   isTimeCredit={true}
                   timeCreditRate={120}
                   sessionMinutes={60}
+                  isSessionFromChat={isSessionFromChat}
+                  initialData={sessionSetupData}
                 />
               </motion.div>
             )}
 
-            {currentView === "sessionGoal" && (
+            {currentView === "sessionPlatform" && (
               <motion.div
-                key="sessionGoal"
+                key="sessionPlatform"
                 custom={navDirection}
                 variants={slideVariants}
                 initial="initial"
@@ -985,49 +1009,27 @@ function App() {
                 transition={slideTransition}
                 className="w-full h-full"
               >
-                <SessionGoalView
+                <SessionPlatformView
                   onBack={() => navigateTo("sessionSetup", -1)}
-                  onNext={() => {
-                    if (isSessionFromChat) {
-                      navigateTo("sessionDuration", 1);
-                    } else {
-                      navigateTo("login", 1);
-                    }
-                  }}
-                />
-              </motion.div>
-            )}
-
-            {currentView === "sessionDuration" && (
-              <motion.div
-                key="sessionDuration"
-                custom={navDirection}
-                variants={slideVariants}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                transition={slideTransition}
-                className="w-full h-full"
-              >
-                <SessionLengthView
-                  isSessionBooking={true}
-                  onBack={() => navigateTo("sessionGoal", -1)}
-                  onNext={() => {
-                    if (isSessionFromChat) {
-                      navigateTo("sessionExchangeDetails", 1);
-                    } else {
-                      navigateTo("login", 1);
-                    }
-                  }}
+                  onNext={() => navigateTo("sessionPreview", 1)}
                   onSaveExit={() => console.log("Save and exit")}
                   onQuestions={() => console.log("Questions?")}
+                  onLaunchSession={(link) => {
+                    setJitsiLink(link);
+                    setShowLiveSessionRoom(true);
+                  }}
+                  sessionTitle={sessionSetupData?.title || (isSessionFromChat ? "Chat Session" : offerTitle)}
+                  sessionDuration={sessionSetupData?.duration}
+                  sessionAvailability={sessionSetupData?.availability}
+                  sessionDescription={sessionSetupData?.description}
+                  sessionParticipant={sessionSetupData?.participant}
                 />
               </motion.div>
             )}
 
-            {currentView === "sessionExchangeDetails" && (
+            {currentView === "sessionPreview" && (
               <motion.div
-                key="sessionExchangeDetails"
+                key="sessionPreview"
                 custom={navDirection}
                 variants={slideVariants}
                 initial="initial"
@@ -1036,22 +1038,46 @@ function App() {
                 transition={slideTransition}
                 className="w-full h-full"
               >
-                <ExchangeDetailsView
-                  isSessionBooking={true}
-                  chatPartnerName="Mei Lin"
-                  onBack={() => navigateTo("sessionDuration", -1)}
-                  onNext={(type) => {
-                    setExchangeType(type);
-                    navigateTo("login", 1);
-                  }}
+                <SessionPreviewView
+                  onBack={() => navigateTo("sessionPlatform", -1)}
+                  onSendRequest={() => console.log("Send request")}
+                  sessionTitle={sessionSetupData?.title || (isSessionFromChat ? "Chat Session" : offerTitle)}
+                  sessionDescription={sessionSetupData?.description || "In this hands-on session, we will cover the foundational principles of user research, how to conduct interviews, and..."}
+                  sessionDuration={sessionSetupData?.duration || 60}
+                  sessionAvailability={sessionSetupData?.availability}
+                  exchangeType={exchangeType || "skill-swap"}
+                  receiveSkills={receiveSkills}
+                  receiveTags={receiveTagsMap}
+                  receiveProficiencies={receiveProficiencies}
+                  timeCreditRate={timeCreditRate}
+                  preferredPlatform="google-meet"
+                  fallbackPlatform="zoom"
                 />
               </motion.div>
             )}
+
           </AnimatePresence>
 
-          {/* ── Loader Overlay (Top Layer) ──────────────────────── */}
+          {/* ── Modal & Loader Overlays (Top Layer) ──────────────────────── */}
           {/* This sits ON TOP of whichever screen is active */}
           <AnimatePresence>
+            {showLiveSessionRoom && (
+              <motion.div
+                key="liveSessionRoomOverlay"
+                variants={slideUpVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={slideTransition}
+                className="absolute inset-0 z-[60] bg-[var(--Surface-Primary-Background)]"
+              >
+                <LiveSessionRoomView
+                  sessionData={sessionSetupData}
+                  meetingLink={jitsiLink}
+                  onLeave={() => setShowLiveSessionRoom(false)}
+                />
+              </motion.div>
+            )}
             {isAuthenticating && (
               <motion.div
                 key="authenticating-overlay"
@@ -1060,7 +1086,7 @@ function App() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 // Using exactly #2F2C32 with 26% opacity via Tailwind arbitrary values
-                className="absolute inset-0 z-50 flex items-center justify-center bg-[#2F2C32]/[0.26]"
+                className="absolute inset-0 z-50 flex items-center justify-center bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)]/[0.26]"
               >
                 <SkillbeekLoader size={92} />
               </motion.div>

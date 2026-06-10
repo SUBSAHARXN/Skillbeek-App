@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { CloseIcon, SearchIcon } from "../../../components/common/Icons";
+import { BottomSheet } from "../../../components/ui/BottomSheet";
+import { SearchIcon } from "../../../components/common/Icons";
 import { CustomAnimatedRadioButton } from "../../../components/common/CustomAnimatedRadioButton";
 
 interface TimezoneModalProps {
@@ -279,102 +279,61 @@ export function TimezoneModal({ isOpen, onClose, selectedTimezone, onSelect }: T
   }, [filtered]);
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 z-40 bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Edit Timezone" style={{ maxHeight: "90%" }}>
+      {/* Description */}
+      <div className="px-[16px] w-full text-center mb-[16px] shrink-0">
+        <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
+          Search for your city or timezone to ensure your availability schedule is perfectly accurate.
+        </p>
+      </div>
+
+      {/* Search Field — same px-[16px] as list, shadow only (no border) */}
+      <div className="px-[16px] w-full mb-[24px] shrink-0">
+        <div className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] rounded-[12px] px-[12px] py-[16px] flex items-center">
+          <SearchIcon className="w-[20px] h-[20px] text-[var(--Text-Primary-Text-placeholder)] mr-[8px] shrink-0" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search cities, countries, or timezones..."
+            className="w-full bg-transparent outline-none font-['Nunito'] font-medium text-[var(--Text-Primary-heading-1)] text-[16px] placeholder:text-[var(--Text-Primary-Text-placeholder)]"
           />
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] h-[90%]"
-          >
-            {/* Drag Handle */}
-            <div className="flex justify-center mb-[16px] shrink-0">
-              <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px]" />
-            </div>
+        </div>
+      </div>
 
-            {/* Header */}
-            <div className="w-full flex items-center justify-between px-[16px] mb-[16px] shrink-0">
-              <div className="w-[48px]" />
-              <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
-                Edit Timezone
-              </h3>
-              <button
-                onClick={onClose}
-                className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors"
-              >
-                <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
-              </button>
-            </div>
-
-            {/* Divider */}
-            <div className="w-full h-[1px] bg-[#e0dce3] mb-[16px] shrink-0" />
-
-            {/* Description */}
-            <div className="px-[16px] w-full text-center mb-[16px] shrink-0">
-              <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
-                Search for your city or timezone to ensure your availability schedule is perfectly accurate.
-              </p>
-            </div>
-
-            {/* Search Field — same px-[16px] as list, shadow only (no border) */}
-            <div className="px-[16px] w-full mb-[24px] shrink-0">
-              <div className="w-full bg-[#faf7fe] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] rounded-[12px] px-[12px] py-[16px] flex items-center">
-                <SearchIcon className="w-[20px] h-[20px] text-[#a09da3] mr-[8px] shrink-0" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search cities, countries, or timezones..."
-                  className="w-full bg-transparent outline-none font-['Nunito'] font-medium text-[#171519] text-[16px] placeholder:text-[#a09da3]"
-                />
-              </div>
-            </div>
-
-            {/* List — same px-[16px] as search */}
-            <div className="w-full flex-1 overflow-y-auto px-[16px]">
-              {Object.entries(grouped).map(([region, tzs]) => (
-                <div key={region} className="mb-[24px]">
-                  <h4 className="font-['Nunito'] font-bold text-[#656268] text-[14px] leading-[20px] tracking-[1px] uppercase mb-[8px]">
-                    {region}
-                  </h4>
-                  <div className="flex flex-col gap-[6px]">
-                    {tzs.map((tz) => {
-                      const isSelected = tz.value === selectedTimezone;
-                      return (
-                        <div
-                          key={tz.value}
-                          onClick={() => onSelect(tz.value)}
-                          className="w-full bg-[#faf7fe] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] flex items-center justify-between px-[12px] py-[8px] rounded-[12px] cursor-pointer hover:bg-[#f0edf4] transition-colors"
-                        >
-                          <span className="font-['Nunito'] font-semibold text-[#2f2c32] text-[16px] leading-[24px]">
-                            {tz.label}
-                          </span>
-                          <CustomAnimatedRadioButton checked={isSelected} />
-                        </div>
-                      );
-                    })}
+      {/* List — same px-[16px] as search */}
+      <div className="w-full flex-1 overflow-y-auto px-[16px]">
+        {Object.entries(grouped).map(([region, tzs]) => (
+          <div key={region} className="mb-[24px]">
+            <h4 className="font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-[14px] leading-[20px] tracking-[1px] uppercase mb-[8px]">
+              {region}
+            </h4>
+            <div className="flex flex-col gap-[6px]">
+              {tzs.map((tz) => {
+                const isSelected = tz.value === selectedTimezone;
+                return (
+                  <div
+                    key={tz.value}
+                    onClick={() => onSelect(tz.value)}
+                    className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] flex items-center justify-between px-[12px] py-[8px] rounded-[12px] cursor-pointer hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
+                  >
+                    <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-3)] text-[16px] leading-[24px]">
+                      {tz.label}
+                    </span>
+                    <CustomAnimatedRadioButton checked={isSelected} />
                   </div>
-                </div>
-              ))}
-
-              {filtered.length === 0 && (
-                <p className="font-['Nunito'] font-medium text-[#a09da3] text-[16px] text-center mt-[32px]">
-                  No results for "{search}"
-                </p>
-              )}
+                );
+              })}
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </div>
+        ))}
+
+        {filtered.length === 0 && (
+          <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Text-placeholder)] text-[16px] text-center mt-[32px]">
+            No results for "{search}"
+          </p>
+        )}
+      </div>
+    </BottomSheet>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Lottie from "lottie-react";
 import { SaveExitModal } from "../offers/components/SaveExitModal";
+import { BackArrowIcon } from "../../components/common/Icons";
 
 // @ts-ignore
 import handsJson from "../../assets/animations/offer-create/Hands-ani-final-V4.json";
@@ -42,7 +43,7 @@ const steps: StepData[] = [
     subtitle: "Your offer is almost live! Just finalize visibility and notes and get ready to connect.",
     animationType: "json",
     animationData: confirmationJson,
-    customScale: 1.8,
+    customScale: 1.4,
     initialSegment: [0, 80],
   },
 ];
@@ -51,9 +52,9 @@ function NeumorphicDivider() {
   return (
     <div className="w-full flex items-center justify-center my-[16px]">
       <div
-        className="w-full h-[2px] rounded-full bg-[#fbf6ff]"
+        className="w-full h-[2px] rounded-full bg-[var(--Surface-Primary-Background)]"
         style={{
-          boxShadow: "inset 2px 2px 12px rgba(192, 188, 195, 0.5), inset -2px -2px 12px rgba(255, 255, 255, 0.9)"
+          boxShadow: "var(--Neumorphic-Divider-Shadow)"
         }}
       />
     </div>
@@ -118,26 +119,19 @@ export function SessionCreateFlowView({ onBack, onContinue }: { onBack?: () => v
   }, []);
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Top Status Bar Placeholder */}
       <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]"></div>
       </div>
 
       {/* Header Action Buttons */}
-      <div className="w-full flex justify-between items-center py-[16px] px-[16px] shrink-0 bg-[#fbf6ff] z-20">
+      <div className="w-full px-[16px] flex items-center py-[16px] shrink-0 bg-[var(--Surface-Primary-Background)] z-20">
         <button
           onClick={() => setIsSaveModalOpen(true)}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white pointer-events-auto"
+          className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors shrink-0 pointer-events-auto"
         >
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-            Save and Exit
-          </span>
-        </button>
-        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white pointer-events-auto">
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-            Questions?
-          </span>
+          <BackArrowIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
         </button>
       </div>
 
@@ -145,10 +139,10 @@ export function SessionCreateFlowView({ onBack, onContinue }: { onBack?: () => v
       <div className="flex-1 overflow-y-auto overflow-x-hidden w-full flex flex-col relative pt-[0px] pb-[180px] px-[16px] availability-scrollbar">
         {/* Header Texts */}
         <div className="w-full flex flex-col gap-[12px] mt-[8px] mb-[32px]">
-          <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1px]">
+          <h1 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[36px] tracking-[-1px]">
             Share Your Skills, Grow Together.
           </h1>
-          <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
+          <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
             It's simple to connect with others, share your expertise, and unlock new learning experiences on Skillbeek. Let's get your first offer ready in three quick steps.
           </p>
         </div>
@@ -168,21 +162,21 @@ export function SessionCreateFlowView({ onBack, onContinue }: { onBack?: () => v
                 >
                   {/* Number & Text Block */}
                   <div className="flex items-start gap-[8px] flex-1">
-                    <span className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] shrink-0 w-[20px] text-left">
+                    <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] shrink-0 w-[20px] text-left">
                       {step.id}
                     </span>
                     <div className="flex flex-col gap-[4px] mt-[2px] w-full pr-[12px]">
-                      <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[0px]">
+                      <h3 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] tracking-[0px]">
                         {step.title}
                       </h3>
-                      <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
+                      <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
                         {step.subtitle}
                       </p>
                     </div>
                   </div>
 
                   {/* 64x64px Animation Icon Container */}
-                  <div className="shrink-0 w-[64px] h-[64px] flex items-center justify-center relative bg-[#E0E5EC]/10 rounded-full overflow-visible">
+                  <div className="shrink-0 w-[64px] h-[64px] flex items-center justify-center relative bg-[var(--Surface-UI-surface-Surface-Universal-Hover)]/10 rounded-full overflow-visible">
                     <AnimatedStepIcon
                       step={step}
                       canPlay={canPlay}
@@ -206,14 +200,14 @@ export function SessionCreateFlowView({ onBack, onContinue }: { onBack?: () => v
 
       {/* Bottom CTA Block */}
       <div className="absolute bottom-0 left-0 w-full flex flex-col items-center pointer-events-none z-30">
-        <div className="w-[calc(100%-4px)] h-[156px] bg-gradient-to-t from-[#fbf6ff] via-[#fbf6ff]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-none">
+        <div className="w-[calc(100%-4px)] h-[156px] bg-gradient-to-t from-[var(--Surface-Primary-Background)] via-[var(--Surface-Primary-Background)]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-none">
           <button
             disabled={!isStep3Visible}
             onClick={onContinue}
             className={`w-full max-w-[352px] h-[48px] font-['Nunito'] font-bold text-[16px] rounded-[16px] leading-[24px] tracking-[0.16px] transition-all duration-500 pointer-events-auto
               ${isStep3Visible
-                ? "bg-[#171519] text-[#fbf6ff] shadow-[0px_4px_12px_rgba(0,0,0,0.15)] hover:bg-[#2f2c32] opacity-100 translate-y-0 cursor-pointer"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed opacity-0 translate-y-10"}`}
+                ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] shadow-[0px_4px_12px_rgba(0,0,0,0.15)] hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] opacity-100 translate-y-0 cursor-pointer"
+                : "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Disabled)] cursor-not-allowed opacity-0 translate-y-10"}`}
           >
             Book Session
           </button>
@@ -222,7 +216,7 @@ export function SessionCreateFlowView({ onBack, onContinue }: { onBack?: () => v
 
       {/* Bottom Home Indicator */}
       <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px] pointer-events-none">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]"></div>
       </div>
 
       <SaveExitModal

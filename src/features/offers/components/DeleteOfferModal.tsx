@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
+import { CenterModal } from "../../../components/ui/CenterModal";
+import { Button } from "../../../components/ui/Button";
 import binSlamData from "../../../assets/animations/Bin-slam-Whole.json";
 
 interface DeleteOfferModalProps {
@@ -66,74 +67,56 @@ export function DeleteOfferModal({
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 z-[200] bg-[#2f2c32]/[0.26] backdrop-blur-[4px]"
-          />
+    <CenterModal
+      isOpen={isOpen}
+      onClose={onClose}
+      zIndex={200}
+      className="overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, #BA3430 -229.67%, #FEF6F5 55.67%)",
+      }}
+    >
+      {/* Lottie Animation Container with Circle Background */}
+      <div className="w-[88px] h-[88px] bg-[var(--Surface-Primary-Background)] rounded-full flex items-center justify-center mb-[24px] overflow-hidden">
+        <Lottie
+          lottieRef={lottieRef}
+          animationData={binSlamData}
+          loop={isLooping}
+          autoplay={false}
+          onComplete={handleAnimationComplete}
+          style={{ width: 124, height: 124, flexShrink: 0 }}
+        />
+      </div>
 
-          {/* Modal Container */}
-          <div className="absolute inset-0 z-[210] flex items-center justify-center p-[16px] pointer-events-none">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="w-full max-w-[352px] rounded-[16px] overflow-hidden flex flex-col items-center p-[24px] pointer-events-auto"
-              style={{
-                background: "linear-gradient(180deg, #BA3430 -229.67%, #FEF6F5 55.67%)",
-                boxShadow: "12px 12px 24px -8px rgba(18, 9, 0, 0.00), 0 4px 12px 0 rgba(18, 9, 0, 0.15)"
-              }}
-            >
-              {/* Lottie Animation Container with Circle Background */}
-              <div className="w-[88px] h-[88px] bg-white rounded-full flex items-center justify-center mb-[24px] overflow-hidden">
-                <Lottie
-                  lottieRef={lottieRef}
-                  animationData={binSlamData}
-                  loop={isLooping}
-                  autoplay={false}
-                  onComplete={handleAnimationComplete}
-                  style={{ width: 124, height: 124, flexShrink: 0 }}
-                />
-              </div>
+      {/* Text Content */}
+      <div className="w-full flex flex-col gap-[12px] mb-[40px] text-center">
+        <h2 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[36px] tracking-[-1.2px]">
+          {title}
+        </h2>
+        <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
+          {body}
+        </p>
+      </div>
 
-              {/* Text Content */}
-              <div className="w-full flex flex-col gap-[12px] mb-[40px] text-center">
-                <h2 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
-                  {title}
-                </h2>
-                <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
-                  {body}
-                </p>
-              </div>
-
-              {/* Actions */}
-              <div className="w-full flex items-center gap-[16px]">
-                <button
-                  onClick={onClose}
-                  className="flex-1 h-[48px] flex items-center justify-center font-['Nunito'] font-bold text-[#49464c] text-[16px] hover:bg-[#f0edf4] rounded-[16px] transition-colors"
-                >
-                  {cancelText}
-                </button>
-                <button
-                  onClick={handleDeleteClick}
-                  className="flex-1 h-[48px] bg-[#c13733] hover:bg-[#a12d2a] rounded-[16px] flex items-center justify-center transition-colors shadow-skillbeek-xs"
-                >
-                  <span className="font-['Nunito'] font-bold text-[#fbf6ff] text-[16px]">
-                    {confirmText}
-                  </span>
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        </>
-      )}
-    </AnimatePresence>
+      {/* Actions */}
+      <div className="w-full flex items-center gap-[16px]">
+        <Button
+          variant="ghost"
+          onClick={onClose}
+          className="flex-1 no-underline text-[var(--Text-Primary-Body)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] hover:no-underline rounded-[16px]"
+        >
+          {cancelText}
+        </Button>
+        <Button
+          variant="primary"
+          onClick={handleDeleteClick}
+          className="flex-1 bg-[var(--mapped\/surface\/error\/icon-bg-surface,var(--Surface-Error-icon-bg-surface))] hover:bg-[var(--mapped\/surface\/error\/icon-bg-surface,var(--Surface-Error-icon-bg-surface))] rounded-[16px] border-0 shadow-skillbeek-xs"
+        >
+          <span className="text-[var(--mapped\/text\/error\/text-default,var(--Text-Error-Text-default))]">
+            {confirmText}
+          </span>
+        </Button>
+      </div>
+    </CenterModal>
   );
 }

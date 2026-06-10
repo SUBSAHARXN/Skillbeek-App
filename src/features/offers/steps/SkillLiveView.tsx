@@ -96,19 +96,19 @@ export function SkillLiveView({ skills, proficiencies, onBack, onSkillClick }: S
   };
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Status Bar */}
-      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[#fbf6ff]">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
+      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[var(--Surface-Primary-Background)]">
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]" />
       </div>
 
       {/* Header Action Buttons */}
-      <div className="w-full px-[16px] flex items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
+      <div className="w-full px-[16px] flex items-center py-[16px] shrink-0 bg-[var(--Surface-Primary-Background)] z-20">
         <button
           onClick={onBack}
-          className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors shrink-0"
+          className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors shrink-0"
         >
-          <BackArrowIcon className="w-[24px] h-[24px] text-[#171519]" />
+          <BackArrowIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
         </button>
       </div>
 
@@ -119,7 +119,7 @@ export function SkillLiveView({ skills, proficiencies, onBack, onSkillClick }: S
             key={tab}
             onClick={() => handleTabClick(tab)}
             className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[8px] rounded-[99px] transition-all duration-200 ${
-              activeTab === tab ? "bg-[#f0edf4] text-[#171519]" : "text-[#a09da3] hover:bg-[#f0edf4]/50"
+              activeTab === tab ? "bg-[var(--Surface-UI-surface-surface-elevated)] text-[var(--Text-Primary-heading-1)]" : "text-[var(--Text-Primary-Text-placeholder)] hover:bg-[var(--Surface-UI-surface-surface-elevated)]"
             }`}
           >
             {tab}
@@ -149,20 +149,20 @@ export function SkillLiveView({ skills, proficiencies, onBack, onSkillClick }: S
                 <div
                   key={skill}
                   onClick={() => onSkillClick(skill)}
-                  className="w-full bg-[#faf7fe] rounded-[16px] p-[16px] flex items-center gap-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.02)] border border-[#f0edf4] cursor-pointer hover:bg-[#f3ebfa] transition-colors"
+                  className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] p-[16px] flex items-center gap-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.02)] border border-[var(--Surface-UI-surface-surface-elevated)] cursor-pointer hover:bg-[var(--Surface-UI-surface-Surface-Universal-Hover)] transition-colors"
                 >
-                  <div className="w-[48px] h-[48px] shrink-0 bg-[#fbf6ff] rounded-full flex items-center justify-center">
-                    <UniversalSkillIcon className="w-[32px] h-[32px] text-[#b85f38]" />
+                  <div className="w-[48px] h-[48px] shrink-0 bg-[var(--Surface-Primary-Background)] rounded-full flex items-center justify-center">
+                    <UniversalSkillIcon className="w-[32px] h-[32px] text-[var(--Text-Warning-Text-primary)]" />
                   </div>
                   <div className="flex flex-col items-start gap-[8px]">
                     <div className="flex items-center gap-[8px]">
-                      <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px]">
+                      <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[18px] leading-[28px]">
                         {skill}
                       </span>
                       <PBadge size={16} />
                     </div>
-                    <div className="bg-[#f8efff] px-[8px] py-[8px] rounded-[8px]">
-                      <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] capitalize">
+                    <div className="bg-[var(--Surface-UI-surface-surface-variant)] px-[8px] py-[8px] rounded-[8px]">
+                      <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-[12px] leading-[16px] tracking-[1.1px] capitalize">
                         {formatProficiency(proficiencies[skill])}
                       </span>
                     </div>
@@ -246,7 +246,7 @@ export function SkillLiveView({ skills, proficiencies, onBack, onSkillClick }: S
                     </clipPath>
                   </defs>
                 </svg>
-                <span className="font-['Nunito'] font-bold text-[#49464c] text-[20px] leading-[28px] tracking-[-0.2px]">
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[20px] leading-[28px] tracking-[-0.2px]">
                   No verified skills yet.
                 </span>
               </div>
@@ -257,7 +257,7 @@ export function SkillLiveView({ skills, proficiencies, onBack, onSkillClick }: S
 
       {/* Home Indicator */}
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30 pointer-events-none">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]" />
       </div>
     </div>
   );

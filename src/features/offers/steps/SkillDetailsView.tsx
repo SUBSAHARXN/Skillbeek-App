@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { ChevronLeftIcon, BookmarkIcon, BookmarkFilledIcon, PlusIcon, ClockIcon, TimeCreditIcon, MoreIcon, TrashIcon, CloseIcon } from "../../../components/common/Icons";
 import { SuccessToast } from "../../../components/common/SuccessToast";
+import { GlobalAddTagsModal } from "../components/GlobalAddTagsModal";
 import { OfferDuration } from "../../../components/common/OfferDuration";
 import { SkillTag } from "../../../components/common/SkillTag";
 import { ProficiencyTag } from "../../../components/common/ProficiencyTag";
@@ -33,7 +34,7 @@ export function BBadge({ size = 20, children = "B" }: { size?: number; children?
       </svg>
       {/* Dynamic letter/number overlay */}
       <div 
-        className="relative z-10 flex items-center justify-center font-['Nunito'] font-bold text-[#F4FBF2] leading-none select-none"
+        className="relative z-10 flex items-center justify-center font-['Nunito'] font-bold text-[var(--Text-Success-Default)] leading-none select-none"
         style={{ fontSize: `${size * 0.55}px` }}
       >
         {children}
@@ -240,13 +241,13 @@ export function CardBookmarkButton({ offerTitle }: { offerTitle: string }) {
       initial={clickCount > 0 ? { scale: 0.6 } : false}
       animate={{ scale: 1 }}
       transition={{ type: "spring", stiffness: 400, damping: 10 }}
-      className="flex w-12 h-12 items-center justify-center gap-2 relative bg-[#fbf6ff] rounded-[32px] hover:bg-[#f0edf4] transition-colors focus:outline-none origin-center shrink-0"
+      className="flex w-12 h-12 items-center justify-center gap-2 relative bg-[var(--Surface-Primary-Background)] rounded-[32px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors focus:outline-none origin-center shrink-0"
       aria-label={isBookmarked ? "Remove bookmark" : "Bookmark offer"}
     >
       {isBookmarked ? (
-        <BookmarkFilledIcon className="!aspect-[1] !relative !w-6 !h-6 text-[#b7812f]" />
+        <BookmarkFilledIcon className="!aspect-[1] !relative !w-6 !h-6 text-[var(--Text-Primary-Text-brand)]" />
       ) : (
-        <BookmarkIcon className="!aspect-[1] !relative !w-6 !h-6 text-[#b7812f]" />
+        <BookmarkIcon className="!aspect-[1] !relative !w-6 !h-6 text-[var(--Text-Primary-Text-brand)]" />
       )}
     </motion.button>
   );
@@ -257,6 +258,7 @@ export function StaticFlameIcon({ className }: { className?: string }) {
     <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_3856_17955)">
         <path d="M11.9998 0C7.1998 6.4 4.7998 12 4.7998 16.8C4.7998 18.7096 5.55837 20.5409 6.90864 21.8912C8.2589 23.2414 10.0902 24 11.9998 24C13.9094 24 15.7407 23.2414 17.091 21.8912C18.4412 20.5409 19.1998 18.7096 19.1998 16.8C19.1998 12 16.7998 6.4 11.9998 0Z" fill="#BA3430"/>
+        <path d="M12.0002 7.19922C8.8002 11.9992 7.2002 15.9992 7.2002 19.1992C7.2002 20.4723 7.70591 21.6932 8.60608 22.5933C9.50626 23.4935 10.7272 23.9992 12.0002 23.9992C13.2732 23.9992 14.4941 23.4935 15.3943 22.5933C16.2945 21.6932 16.8002 20.4723 16.8002 19.1992C16.8002 15.9992 15.2002 11.9992 12.0002 7.19922Z" fill="#D98A68"/>
         <path d="M12.0002 7.19922C8.8002 11.9992 7.2002 15.9992 7.2002 19.1992C7.2002 20.4723 7.70591 21.6932 8.60608 22.5933C9.50626 23.4935 10.7272 23.9992 12.0002 23.9992C13.2732 23.9992 14.4941 23.4935 15.3943 22.5933C16.2945 21.6932 16.8002 20.4723 16.8002 19.1992C16.8002 15.9992 15.2002 11.9992 12.0002 7.19922Z" fill="#D98A68"/>
         <path d="M11.9996 13.1992C10.3996 16.3992 9.59961 18.7992 9.59961 20.3992C9.59961 21.0357 9.85247 21.6462 10.3026 22.0963C10.7526 22.5464 11.3631 22.7992 11.9996 22.7992C12.6361 22.7992 13.2466 22.5464 13.6967 22.0963C14.1468 21.6462 14.3996 21.0357 14.3996 20.3992C14.3996 18.7992 13.5996 16.3992 11.9996 13.1992Z" fill="#FED5C5"/>
       </g>
@@ -380,6 +382,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
   const [showSearchSkills, setShowSearchSkills] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [toastAction, setToastAction] = useState<"view" | "undo" | "okay">("view");
   const [isScreenLoading, setIsScreenLoading] = useState(false);
   const [showAllOffers, setShowAllOffers] = useState(false);
@@ -391,7 +394,6 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
   const [skillsTags, setSkillsTags] = useState<Record<string, string[]>>({ [skillName]: tags || [] });
   const [skillsProficiencies, setSkillsProficiencies] = useState<Record<string, string>>({ [skillName]: proficiency || "Intermediate" });
 
-  const [isAddTagsOpen, setIsAddTagsOpen] = useState(false);
   const [isSetProficiencyOpen, setIsSetProficiencyOpen] = useState(false);
   const [tempTags, setTempTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -628,7 +630,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
   const handlePlusClick = () => {
     setTempTags(skillsTags[currentSkillName] || []);
     setTagInput("");
-    setIsAddTagsOpen(true);
+    setIsTagModalOpen(true);
   };
 
   const toggleTempTag = (tag: string) => {
@@ -651,7 +653,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
   };
 
   const handleApplyTags = () => {
-    setIsAddTagsOpen(false);
+    setIsTagModalOpen(false);
     setSelectedProficiency(skillsProficiencies[currentSkillName] || "Intermediate");
     setIsSetProficiencyOpen(true);
   };
@@ -689,30 +691,30 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
     setIsBookmarked(newBookmarked);
     setBookmarkClickCount(prev => prev + 1);
     setToastMessage(newBookmarked ? `${currentSkillName} added to your Bookmarks` : `${currentSkillName} removed from Bookmarks`);
-    setToastIcon(<BookmarkIcon className="w-[22px] h-[22px] text-white" />);
+    setToastIcon(<BookmarkIcon className="w-[22px] h-[22px] text-[var(--Text-Primary-Title-alt)]" />);
     setToastAction(newBookmarked ? "view" : "okay");
     setToastVisible(true);
   };
 
   return (
     <LayoutGroup>
-      <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+      <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
         {/* Status Bar */}
-      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[#fbf6ff]">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
+      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[var(--Surface-Primary-Background)]">
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]" />
       </div>
 
       {/* Header Action Buttons */}
-      <div className="w-full px-[16px] flex items-center justify-between py-[16px] shrink-0 bg-[#fbf6ff] relative">
+      <div className="w-full px-[16px] flex items-center justify-between py-[16px] shrink-0 bg-[var(--Surface-Primary-Background)] relative">
         {/* Left Back and Title */}
         <div className="flex items-center gap-[12px]">
           <button
             onClick={handleBackClick}
-            className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[#fbf6ff] hover:bg-[#f0edf4] transition-colors shrink-0"
+            className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[var(--Surface-Primary-Background)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors shrink-0"
           >
-            <ChevronLeftIcon className="w-[20px] h-[20px] text-[#171519] stroke-[2.5]" />
+            <ChevronLeftIcon className="w-[20px] h-[20px] text-[var(--Text-Primary-heading-1)] stroke-[2.5]" />
           </button>
-          <span className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] tracking-[-0.2px]">
             Skill
           </span>
         </div>
@@ -726,9 +728,9 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
               initial={plusClickCount > 0 ? { scale: 0.6 } : false}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[#fbf6ff] hover:bg-[#f0edf4] transition-colors origin-center focus:outline-none shrink-0"
+              className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[var(--Surface-Primary-Background)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors origin-center focus:outline-none shrink-0"
             >
-              <PlusIcon className="w-[20px] h-[20px] text-[#b85f38]" />
+              <PlusIcon className="w-[20px] h-[20px] text-[var(--Text-Warning-Text-primary)]" />
             </motion.button>
           )}
           {!isCurrentSkillAdded && (
@@ -738,15 +740,15 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
               initial={bookmarkClickCount > 0 ? { scale: 0.6 } : false}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[#fbf6ff] hover:bg-[#f0edf4] transition-colors origin-center focus:outline-none shrink-0"
+              className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[var(--Surface-Primary-Background)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors origin-center focus:outline-none shrink-0"
             >
-              {isBookmarked ? <BookmarkFilledIcon className="w-[20px] h-[20px] text-[#b85f38]" /> : <BookmarkIcon className="w-[20px] h-[20px] text-[#b85f38]" />}
+              {isBookmarked ? <BookmarkFilledIcon className="w-[20px] h-[20px] text-[var(--Text-Warning-Text-primary)]" /> : <BookmarkIcon className="w-[20px] h-[20px] text-[var(--Text-Warning-Text-primary)]" />}
             </motion.button>
           )}
           {isCurrentSkillAdded && (
             <button 
               onClick={() => setShowMoreMenu(!showMoreMenu)}
-              className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[#fbf6ff] hover:bg-[#f0edf4] transition-colors focus:outline-none shrink-0 text-[#171519] relative z-50"
+              className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[var(--Surface-Primary-Background)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors focus:outline-none shrink-0 text-[var(--Text-Primary-heading-1)] relative z-50"
             >
               <MoreIcon className="w-[20px] h-[20px]" />
             </button>
@@ -765,7 +767,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
             className="absolute inset-0 z-30 flex"
           >
             <div 
-              className="absolute inset-0 bg-[#2f2c3242] backdrop-blur-[4px]" 
+              className="absolute inset-0 bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px]" 
               onClick={() => setShowMoreMenu(false)} 
             />
             <motion.div 
@@ -773,14 +775,14 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute right-[28px] top-[120px] w-[279px] bg-[#faf7fe] rounded-[16px] p-[8px] flex flex-col gap-[8px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] z-40"
+              className="absolute right-[28px] top-[120px] w-[279px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] p-[8px] flex flex-col gap-[8px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] z-40"
             >
               <button 
                 onClick={handleRemoveSkill}
-                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#fef6f5] active:scale-[0.98] transition-colors text-[#870113] text-left"
+                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[var(--Surface-Error-bg-surface)] active:scale-[0.98] transition-colors text-[var(--Text-Error-primary)] text-left"
               >
-                <TrashIcon className="w-[24px] h-[24px] text-[#870113]" />
-                <span className="font-['Nunito'] font-bold text-[#870113] text-[16px] leading-[24px]">Remove Skill</span>
+                <TrashIcon className="w-[24px] h-[24px] text-[var(--Text-Error-primary)]" />
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Error-primary)] text-[16px] leading-[24px]">Remove Skill</span>
               </button>
             </motion.div>
           </motion.div>
@@ -794,7 +796,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
           {isCurrentSkillAdded && <ProficiencyTag level={skillsProficiencies[currentSkillName] || "Intermediate"} />}
           
           <div className="flex items-center gap-[8px] justify-start w-full">
-            <h1 className="font-['Nunito'] font-bold text-[28px] leading-[36px] text-[#171519] tracking-[-1.2px] text-left break-words">
+            <h1 className="font-['Nunito'] font-bold text-[28px] leading-[36px] text-[var(--Text-Primary-heading-1)] tracking-[-1.2px] text-left break-words">
               {currentSkillName}
             </h1>
             {isCurrentSkillAdded && (
@@ -811,7 +813,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                   <SkillTag key={tag} tag={tag} />
                 ))
               ) : (
-                <span className="font-['Nunito'] text-[14px] text-[#a09da3]">No tags selected.</span>
+                <span className="font-['Nunito'] text-[14px] text-[var(--Text-Primary-Text-placeholder)]">No tags selected.</span>
               )}
             </div>
           )}
@@ -820,10 +822,10 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
         {/* Recent Sessions */}
         {isCurrentSkillAdded && (
         <div className="w-full flex flex-col gap-[12px] mb-[32px]">
-          <h2 className="font-['Nunito'] font-bold text-[18px] leading-[24px] text-[#171519]">
+          <h2 className="font-['Nunito'] font-bold text-[18px] leading-[24px] text-[var(--Text-Primary-heading-1)]">
             Recent Sessions
           </h2>
-          <div className="w-full bg-[#faf7fe] border border-[#f0edf4] rounded-[16px] py-[24px] flex flex-col items-center justify-center gap-[16px] text-center px-[24px]">
+          <div className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] border border-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] py-[24px] flex flex-col items-center justify-center gap-[16px] text-center px-[24px]">
             <svg width="150" height="118" viewBox="0 0 300 236" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
               <g clipPath="url(#clip0_3767_17431)">
                 <path d="M189.176 90.4649C181.186 90.8 173.224 91.5984 165.328 92.8568C159.036 94.0865 147.531 95.888 143.192 101.328C141.562 103.373 140.307 112.985 139.802 116.003C137.235 130.885 135.402 145.887 134.308 160.952C133.704 169.811 133.296 181.21 134.487 189.962C134.888 193.211 135.357 195.812 136.203 199.009C136.591 200.476 137.231 202.317 137.556 203.71L137.933 204.453C138.354 205.553 138.843 206.929 139.318 207.978C144.355 218.431 152.392 226.66 163.302 230.827C181.733 237.872 222.002 237.881 239.985 229.619C250.561 224.761 258.523 215.26 262.573 204.425C263.12 203.127 264.113 198.863 264.683 198.41C267.803 188.18 264.637 140.084 262.664 117.314C261.842 116.5 261.071 107.476 260.784 105.656C260.338 102.832 259.387 100.997 257.058 99.3168C244.523 90.2751 205.268 89.7413 189.176 90.4649Z" fill="url(#paint0_linear_3767_17431)"/>
@@ -844,82 +846,82 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                 <path d="M194.405 95.8057C203.455 95.4914 248.343 96.4325 252.102 103.52C252.136 104.169 252.124 104.497 251.66 104.981C246.524 110.347 216.048 111.955 208.405 112.081C198.683 112.797 157.797 111.292 151.068 105.328C150.624 104.934 150.23 104.403 150.248 103.778C150.261 103.327 150.519 102.941 150.822 102.63C155.873 97.4304 186.556 96.1012 194.405 95.8057Z" fill="url(#paint15_linear_3767_17431)"/>
                 <path d="M43.9087 72.2139C42.2479 75.358 41.6236 82.2677 41.0194 86.0248C37.5702 108.438 32.2504 156.116 38.5637 167.521C39.0078 167.888 40.665 175.336 41.4136 176.966C45.4485 188.028 53.3126 197.334 64.0434 202.33C80.466 209.973 120.543 210.215 137.378 203.785C137.438 203.761 137.497 203.735 137.556 203.711C137.231 202.318 136.591 200.476 136.203 199.01C135.357 195.813 134.888 193.211 134.487 189.963C133.295 181.211 133.704 169.812 134.307 160.953C135.402 145.888 137.235 130.886 139.801 116.003C140.307 112.986 141.561 103.374 143.192 101.329C147.531 95.8887 159.036 94.0872 165.327 92.8577C164.077 91.9131 163.219 74.9741 160.472 71.2358C156.727 66.1351 144.504 63.8701 138.314 62.8545C127.164 61.0251 115.746 60.465 104.459 60.3356C91.0029 60.1815 57.5268 61.2546 46.4553 69.3826C45.3812 70.1712 44.5398 71.019 43.9087 72.2139Z" fill="url(#paint16_linear_3767_17431)"/>
                 <path d="M2.23536 101.857C8.28767 84.9325 25.1679 78.4837 41.5492 84.531C40.9867 88.1272 40.3379 95.1383 39.6786 98.2418C34.0916 96.0254 28.6105 94.3058 22.7403 97.0156C10.9717 102.448 11.6637 119.089 16.2258 129.161C20.2539 138.054 28.5407 146.822 37.4799 150.824C38.0117 155.707 38.4482 160.542 39.255 165.392C39.2825 165.557 39.1663 165.864 39.0935 166.027C24.0118 160.104 11.9971 150.81 4.69634 135.834C-0.18579 125.379 -1.68655 112.823 2.23536 101.857Z" fill="url(#paint17_linear_3767_17431)"/>
-                <path d="M41.4135 176.966L41.7426 176.9C46.3151 180.549 51.4232 183.766 56.897 185.818C76.8022 193.28 103.155 193.99 124.009 191.602C127.521 191.188 131.016 190.642 134.487 189.964C134.888 193.212 135.357 195.814 136.203 199.01C136.591 200.477 137.231 202.318 137.556 203.711C137.497 203.735 137.438 203.761 137.378 203.785C120.543 210.216 80.4659 209.973 64.0433 202.33C53.3129 197.334 45.4485 188.029 41.4135 176.966Z" fill="url(#paint18_linear_3767_17431)"/>
+                <path d="M41.4135 176.966L41.7426 176.9C46.3151 180.549 51.4232 183.766 56.897 185.818C76.8022 193.28 103.155 193.99 124.009 191.602C127.521 191.188 131.016 190.642 134.487 189.964C134.888 193.212 135.357 195.814 136.203 199.01C136.591 200.477 137.231 202.318 137.556 203.711C137.497 203.761 137.497 203.735 137.378 203.785C120.543 210.216 80.4659 209.973 64.0433 202.33C53.3129 197.334 45.4485 188.029 41.4135 176.966Z" fill="url(#paint18_linear_3767_17431)"/>
                 <path d="M93.4634 65.9753C106.695 65.2547 140.33 66.1408 151.482 71.7255C152.433 72.2011 153.307 72.6809 153.664 73.736C153.581 74.2402 153.553 74.4369 153.21 74.838C148.69 80.1256 118.253 81.7844 110.923 82.1065C99.5003 82.5317 60.9197 81.5903 52.6899 75.5759C52.0611 75.1166 51.7032 74.7239 51.566 73.9268C51.6592 73.4292 51.7605 73.0921 52.1061 72.7095C56.6482 67.6878 86.3682 66.2494 93.4634 65.9753Z" fill="url(#paint19_linear_3767_17431)"/>
                 <path d="M101.264 110.076C102.316 109.969 103.345 109.977 104.374 110.242C106.2 110.696 107.755 111.896 108.662 113.551C110.904 117.597 108.979 121.911 105.005 123.865C105.004 125.012 105.039 126.204 105.057 127.354C106.613 127.376 113.227 127.004 113.977 127.971C117.606 132.657 107.277 131.538 105.04 131.534C105.014 134.414 104.85 151.484 105.51 153.528C106.831 155.14 108.333 154.577 110.018 154.02C114.772 152.453 117.626 148.763 119.739 144.386C119.458 144.195 119.182 143.996 118.911 143.791C117.966 143.059 117.996 142.135 118.724 141.44C124.732 135.72 125.662 136.486 125.648 144.531C125.645 146.41 123.541 145.413 123.248 146.215C120.963 152.459 116.884 158.024 110.596 160.59C107.531 161.82 106.082 162.099 103.454 164.314C103.041 164.525 103.032 164.475 102.554 164.561C101.559 164.304 100.913 163.647 100.038 163.054C97.9884 161.663 95.5706 161.112 93.2505 159.921C89.2392 157.863 86.1269 154.866 84.0314 150.847C83.244 149.336 82.8026 147.501 81.8725 146.018C81.6304 145.953 81.3356 145.867 81.0884 145.893C78.5133 146.152 79.7074 142.856 79.6981 141.466C79.6757 138.166 81.1301 136.538 83.9887 139.008C84.9887 139.872 87.0375 141.494 86.9502 142.858C86.5647 143.62 86.3816 143.684 85.6699 144.229L85.4469 144.396C87.51 148.536 90.2686 152.29 94.756 153.908C96.5424 154.553 99.49 155.387 99.8625 152.575C100.152 150.387 100.101 147.959 100.131 145.734L100.219 131.536C98.1272 131.457 92.2783 131.984 91.3663 130.917C87.2964 126.158 99.2537 127.316 100.172 127.33L100.191 123.879C98.1637 122.798 96.6511 121.588 95.9175 119.285C95.3418 117.43 95.5278 115.42 96.4353 113.704C97.5447 111.615 99.1508 110.767 101.264 110.076Z" fill="url(#paint20_linear_3767_17431)"/>
                 <path d="M101.999 114.321C103.507 114.005 104.995 114.94 105.37 116.441C105.744 117.944 104.87 119.473 103.391 119.906C102.382 120.201 101.293 119.92 100.553 119.17C99.8126 118.422 99.5395 117.325 99.8411 116.314C100.143 115.303 100.971 114.538 101.999 114.321Z" fill="url(#paint21_linear_3767_17431)"/>
                 <path d="M93.2343 0.000113924C93.8738 -0.00426497 93.9107 0.116355 94.2375 0.575941C94.2 1.21446 92.6964 2.85058 92.2074 3.48633C88.3048 8.55929 85.3731 16.6292 88.6997 22.703C91.7932 28.6639 99.1388 26.9545 104.01 28.5693C118.298 33.3066 112.094 49.2752 101.608 54.057C100.927 54.3671 100.432 54.6733 99.732 54.4321C99.3987 53.7979 99.5 54.1535 99.6563 53.271C101.673 47.6697 99.3958 42.6458 93.8844 40.7695C88.9595 39.0928 84.5061 39.6035 79.7035 36.934C76.2844 35.0535 73.767 31.8648 72.7226 28.0924C69.1275 15.2031 81.7896 3.16228 93.2343 0.000113924Z" fill="#EDF2FF"/>
-                <path d="M210.952 83.2292C210.329 83.3716 210.267 83.2618 209.849 82.8837C209.749 82.2521 210.867 80.3293 211.208 79.6028C213.932 73.8048 215.066 65.2903 210.515 60.0782C206.217 54.9258 199.41 58.1833 194.307 57.6593C179.338 56.1224 181.975 39.1866 191.191 32.25C191.789 31.7998 192.207 31.3937 192.942 31.478C193.404 32.0254 193.229 31.6997 193.265 32.5955C192.495 38.5017 195.797 42.9155 201.581 43.5559C206.749 44.1287 210.989 42.6672 216.251 44.2356C219.993 45.3327 223.135 47.9024 224.963 51.3605C231.236 63.1705 221.451 77.6667 210.952 83.2292Z" fill="#F9F4EE"/>
+                <path d="M210.952 83.2292C210.329 83.3716 210.267 83.2618 209.849 82.8837C209.749 82.2521 210.867 80.3293 211.208 79.6028C213.932 73.8048 215.066 65.2903 210.515 60.0782C206.217 54.9258 199.41 58.1833 194.307 57.6593C179.338 56.1224 181.975 39.1866 191.191 32.25C191.789 31.7998 192.207 31.3937 192.942 31.478C193.404 32.0254 193.229 31.6997 193.265 32.5955C192.495 38.5017 195.797 42.9155 201.581 43.5559C206.749 44.1287 210.989 42.6672 216.251 44.2356C219.993 45.3327 223.135 47.9024 224.963 51.3605C231.236 63.1705 221.451 77.6667 210.952 83.2292Z" fill="#f9f4ee"/>
               </g>
               <defs>
                 <linearGradient id="paint0_linear_3767_17431" x1="133.722" y1="90.2383" x2="278.774" y2="221.894" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="0.5" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="0.5" stopColor="#f4dcbf"/>
                   <stop offset="1" stopColor="#E7C292"/>
                 </linearGradient>
                 <linearGradient id="paint1_linear_3767_17431" x1="259.547" y1="115.789" x2="324.8" y2="147.537" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="0.5" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="0.5" stopColor="#f4dcbf"/>
                   <stop offset="1" stopColor="#E7C292"/>
                 </linearGradient>
                 <linearGradient id="paint2_linear_3767_17431" x1="139.318" y1="204.426" x2="154.474" y2="263.641" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="0.5" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="0.5" stopColor="#f4dcbf"/>
                   <stop offset="1" stopColor="#E7C292"/>
                 </linearGradient>
                 <linearGradient id="paint3_linear_3767_17431" x1="137.933" y1="204.453" x2="141.273" y2="206.851" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="0.5" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="0.5" stopColor="#f4dcbf"/>
                   <stop offset="1" stopColor="#E7C292"/>
                 </linearGradient>
                 <linearGradient id="paint4_linear_3767_17431" x1="170.742" y1="138.93" x2="226.713" y2="194.578" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="0.5" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="0.5" stopColor="#f4dcbf"/>
                   <stop offset="1" stopColor="#E7C292"/>
                 </linearGradient>
                 <linearGradient id="paint5_linear_3767_17431" x1="199.975" y1="171.205" x2="196.157" y2="167.404" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint6_linear_3767_17431" x1="190.837" y1="167.789" x2="187.809" y2="164.84" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint7_linear_3767_17431" x1="208.704" y1="168.333" x2="206.154" y2="165.326" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint8_linear_3767_17431" x1="199.887" y1="161.097" x2="196.472" y2="158.642" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint9_linear_3767_17431" x1="193.532" y1="178.667" x2="190.766" y2="175.912" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint10_linear_3767_17431" x1="204.959" y1="178.879" x2="202.224" y2="176.157" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint11_linear_3767_17431" x1="182.691" y1="164.411" x2="180.677" y2="162.406" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint12_linear_3767_17431" x1="188.084" y1="185.132" x2="186.096" y2="183.153" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint13_linear_3767_17431" x1="216.418" y1="165.891" x2="214.461" y2="163.943" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint14_linear_3767_17431" x1="199.957" y1="151.384" x2="198.137" y2="149.572" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="1" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="1" stopColor="#f4dcbf"/>
                 </linearGradient>
                 <linearGradient id="paint15_linear_3767_17431" x1="150.247" y1="95.7539" x2="155.451" y2="127.895" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F9F4EE"/>
-                  <stop offset="0.5" stopColor="#F4DCBF"/>
+                  <stop stopColor="#f9f4ee"/>
+                  <stop offset="0.5" stopColor="#f4dcbf"/>
                   <stop offset="1" stopColor="#E7C292"/>
                 </linearGradient>
                 <linearGradient id="paint16_linear_3767_17431" x1="35.6276" y1="60.3223" x2="182.375" y2="188.897" gradientUnits="userSpaceOnUse">
@@ -956,12 +958,12 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                 </clipPath>
               </defs>
             </svg>
-            <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#49464c]">
+            <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[var(--Text-Primary-Body)]">
               When you complete a session, it will show up right here.
             </span>
             <button 
               onClick={onCreateOffer}
-              className="mt-[8px] px-[24px] py-[12px] bg-[#b7812f] hover:bg-[#a7721b] active:scale-[0.98] text-[#fbf6ff] rounded-[16px] font-['Nunito'] font-bold text-[14px] leading-[20px] tracking-[0.16px] transition-all duration-150 shadow-[0px_1px_3px_0px_rgba(18,9,0,0.1)]"
+              className="mt-[8px] px-[24px] py-[12px] bg-[var(--Button-Primary-Surface-default)] hover:bg-[var(--Button-Primary-Surface-default)] active:scale-[0.98] text-[var(--Text-Primary-Body-alt)] rounded-[16px] font-['Nunito'] font-bold text-[14px] leading-[20px] tracking-[0.16px] transition-all duration-150 shadow-[0px_1px_3px_0px_rgba(18,9,0,0.1)]"
             >
               Create an Offer
             </button>
@@ -971,7 +973,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
 
         {/* Related Skills */}
         <div className="w-full flex flex-col gap-[12px] mb-[32px]">
-          <h2 className="font-['Nunito'] font-bold text-[18px] leading-[24px] text-[#171519]">
+          <h2 className="font-['Nunito'] font-bold text-[18px] leading-[24px] text-[var(--Text-Primary-heading-1)]">
             Related Skills
           </h2>
           <div className="flex flex-wrap gap-[8px]">
@@ -979,9 +981,9 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
               <button 
                 key={related} 
                 onClick={() => handleRelatedSkillClick(related)}
-                className="px-[16px] py-[8px] bg-[#fbf6ff] border border-[#f0edf4] rounded-[99px] flex items-center shadow-skillbeek-xs hover:bg-[#f0edf4] active:scale-[0.98] transition-all duration-150"
+                className="px-[16px] py-[8px] bg-[var(--Surface-Primary-Background)] border border-[var(--Surface-UI-surface-surface-elevated)] rounded-[99px] flex items-center shadow-skillbeek-xs hover:bg-[var(--Surface-UI-surface-surface-elevated)] active:scale-[0.98] transition-all duration-150"
               >
-                <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#171519]">
+                <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[var(--Text-Primary-heading-1)]">
                   {related}
                 </span>
               </button>
@@ -989,7 +991,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
           </div>
           <button 
             onClick={() => setShowSearchSkills(true)}
-            className="self-start h-[48px] p-0 mt-[-6px] flex items-center justify-start font-['Nunito'] font-bold text-[16px] leading-[24px] text-[#171519] underline tracking-[-0.2px] hover:text-[#49464c] transition-colors"
+            className="self-start h-[48px] p-0 mt-[-6px] flex items-center justify-start font-['Nunito'] font-bold text-[16px] leading-[24px] text-[var(--Text-Primary-heading-1)] underline tracking-[-0.2px] hover:text-[var(--Text-Primary-Body)] transition-colors"
           >
             Show more Skills
           </button>
@@ -997,12 +999,12 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
 
         {/* Latest Offers */}
         <div className="w-full flex flex-col gap-[16px] mb-[24px]">
-          <h2 className="font-['Nunito'] font-bold text-[18px] leading-[24px] text-[#171519]">
+          <h2 className="font-['Nunito'] font-bold text-[18px] leading-[24px] text-[var(--Text-Primary-heading-1)]">
             Latest offers with skill
           </h2>
           <div className="overflow-hidden -mx-4 relative">
             {!isCarouselAtEnd && (
-              <div className="absolute right-0 top-[16px] h-[520px] w-[48px] bg-gradient-to-l from-[#fbf6ff] via-[#fbf6ff]/80 to-transparent pointer-events-none z-[2]" />
+              <div className="absolute right-0 top-[16px] h-[520px] w-[48px] bg-gradient-to-l from-[var(--Surface-Primary-Background)] via-[var(--Surface-Primary-Background)]/80 to-transparent pointer-events-none z-[2]" />
             )}
             
             {/* Floating View all Button — uses tween transition to avoid spring re-trigger "dancing", but keeps whileTap bounce */}
@@ -1026,9 +1028,9 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                 style={{
                   pointerEvents: (!isScreenLoading && !selectedOfferId && showViewAll) ? "auto" : "none"
                 }}
-                className="absolute top-1/2 right-0 inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[#2F2C32] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)]"
+                className="absolute top-1/2 right-0 inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)]"
               >
-                <span className="font-['Nunito'] font-bold text-[#FAF8FC] text-[16px] leading-[24px]">
+                <span className="font-['Nunito'] font-bold text-[var(--Button-UI-comp-sur-Text-primary)] text-[16px] leading-[24px]">
                   View all
                 </span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FAF8FC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1056,15 +1058,15 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                 key={offer.id}
                 transition={{ layout: spring }}
                 whileHover={{ y: -3, scale: 1.015 }}
-                className="cursor-pointer flex flex-col justify-between items-start p-4 relative bg-[#faf7fe] rounded-[32px] shadow-[0px_12px_32px_0px_rgba(23,21,25,0.08)] shrink-0 w-[280px] h-[520px] select-none snap-center overflow-hidden"
+                className="cursor-pointer flex flex-col justify-between items-start p-4 relative bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[32px] shadow-[0px_12px_32px_0px_rgba(23,21,25,0.08)] shrink-0 w-[280px] h-[520px] select-none snap-center overflow-hidden"
               >
                 <header className="flex flex-col w-full items-start gap-3 bg-transparent relative flex-[0_0_auto]">
                   <div className="flex items-center justify-between self-stretch w-full relative flex-[0_0_auto]">
                     {offer.badge ? (
                       <div className={`inline-flex items-center gap-1.5 p-3 rounded-xl relative flex-[0_0_auto] ${
-                        offer.badge.type === 'hot' ? 'bg-[#fef6f5]' :
-                        offer.badge.type === 'closing' ? 'bg-[#fffbf2]' :
-                        'bg-[#f0f4ff]'
+                        offer.badge.type === 'hot' ? 'bg-[var(--Surface-Error-bg-surface)]' :
+                        offer.badge.type === 'closing' ? 'bg-[var(--Surface-Warning-bg-surface)]' :
+                        'bg-[var(--Surface-Information-bg-surface)]'
                       }`}>
                         <div className="relative w-6 h-6" aria-hidden="true">
                           {offer.badge.type === 'hot' && <FlameIcon className="w-full h-full" />}
@@ -1072,9 +1074,9 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                           {offer.badge.type === 'new' && <CodeSparkleIcon />}
                         </div>
                         <div className={`relative w-fit [font-family:'Nunito-Bold',Helvetica] font-bold text-sm tracking-[1.00px] leading-5 whitespace-nowrap overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical] ${
-                          offer.badge.type === 'hot' ? 'text-[#870113]' :
-                          offer.badge.type === 'closing' ? 'text-[#b87d18]' :
-                          'text-[#133aa8]'
+                          offer.badge.type === 'hot' ? 'text-[var(--Text-Error-primary)]' :
+                          offer.badge.type === 'closing' ? 'text-[var(--Text-Primary-Text-brand)]' :
+                          'text-[var(--Text-Information-primary)]'
                         }`}>
                           {offer.badge.text}
                         </div>
@@ -1087,8 +1089,8 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                   <div className="flex flex-col items-start gap-2 relative self-stretch w-full flex-[0_0_auto]">
                     {offer.time ? (
                       <div className="inline-flex items-center gap-1.5 relative flex-[0_0_auto]">
-                        <ClockIcon className="!relative !w-6 !h-6 text-[#656268] stroke-[2.5]" />
-                        <div className="relative flex items-center w-fit [font-family:'Nunito-SemiBold',Helvetica] font-semibold text-[#656268] text-sm tracking-[1px] leading-5 whitespace-nowrap">
+                        <ClockIcon className="!relative !w-6 !h-6 text-[var(--Text-Primary-Subtitle)] stroke-[2.5]" />
+                        <div className="relative flex items-center w-fit [font-family:'Nunito-SemiBold',Helvetica] font-semibold text-[var(--Text-Primary-Subtitle)] text-sm tracking-[1px] leading-5 whitespace-nowrap">
                           {offer.time}
                         </div>
                       </div>
@@ -1099,7 +1101,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                       layoutId={`offer-${offer.id}-title`}
                       layout="position"
                       transition={{ layout: spring }}
-                      className="[display:-webkit-box] items-center self-stretch tracking-normal overflow-hidden text-ellipsis [-webkit-line-clamp:3] [-webkit-box-orient:vertical] relative [font-family:'Nunito-Bold',Helvetica] font-bold text-[#171519] text-lg leading-[28px] h-[84px]"
+                      className="[display:-webkit-box] items-center self-stretch tracking-normal overflow-hidden text-ellipsis [-webkit-line-clamp:3] [-webkit-box-orient:vertical] relative [font-family:'Nunito-Bold',Helvetica] font-bold text-[var(--Text-Primary-heading-1)] text-lg leading-[28px] h-[84px]"
                     >
                       {offer.title}
                     </motion.h1>
@@ -1111,9 +1113,9 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                           tag.hasBadge ? (
                             <div
                               key={tagIndex}
-                              className="gap-1.5 p-2 bg-[#f8efff] rounded-lg inline-flex items-center relative flex-[0_0_auto]"
+                              className="gap-1.5 p-2 bg-[var(--Surface-UI-surface-surface-variant)] rounded-lg inline-flex items-center relative flex-[0_0_auto]"
                             >
-                              <div className="relative [display:-webkit-box] items-center w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[#49464c] text-xs tracking-[1.10px] leading-4 whitespace-nowrap overflow-hidden text-ellipsis [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
+                              <div className="relative [display:-webkit-box] items-center w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[var(--Text-Primary-Body)] text-xs tracking-[1.10px] leading-4 whitespace-nowrap overflow-hidden text-ellipsis [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
                                 {tag.label}
                               </div>
                               <BBadge size={16}>{(tag as any).badgeText || "B"}</BBadge>
@@ -1121,9 +1123,9 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                           ) : (
                             <div
                               key={tagIndex}
-                              className="inline-flex items-center justify-center gap-2.5 p-2 relative flex-[0_0_auto] bg-[#f8efff] rounded-lg"
+                              className="inline-flex items-center justify-center gap-2.5 p-2 relative flex-[0_0_auto] bg-[var(--Surface-UI-surface-surface-variant)] rounded-lg"
                             >
-                              <div className="relative w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[#8c35be] text-xs tracking-[1.10px] leading-4 whitespace-nowrap overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
+                              <div className="relative w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-xs tracking-[1.10px] leading-4 whitespace-nowrap overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
                                 {tag.label}
                               </div>
                             </div>
@@ -1138,7 +1140,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                             data-mapped-colour-styles-mode="light"
                             aria-label={`Show ${offer.extraTagsCount} more categories`}
                           >
-                            <div className="flex w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[#656268] text-xs text-center tracking-[0.16px] leading-6 whitespace-nowrap items-center justify-center relative">
+                            <div className="flex w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[var(--Text-Primary-Subtitle)] text-xs text-center tracking-[0.16px] leading-6 whitespace-nowrap items-center justify-center relative">
                               +{offer.extraTagsCount}
                             </div>
                           </button>
@@ -1160,7 +1162,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                       <div 
                         className="relative w-10 h-10 shrink-0 rounded-full"
                         style={{
-                          border: "4px solid var(--mapped\\/surface\\/ui-surface-stroke, var(--mapped-button-ui-comp-sur-stroke, #eacfff))",
+                          border: "4px solid var(--mapped\\/surface\\/ui-surface-stroke, #eacfff)",
                           boxSizing: "content-box"
                         }}
                       >
@@ -1172,13 +1174,13 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                       <div className="flex-col items-start justify-center gap-2 flex relative flex-1 grow min-w-0">
                         <div className="items-center gap-1.5 inline-flex relative flex-[0_0_auto]">
                           <div className="flex-col items-start gap-1 inline-flex relative flex-[0_0_auto]">
-                            <h2 className="relative flex items-end w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[#171519] text-base tracking-[1.00px] leading-6 whitespace-nowrap">
+                            <h2 className="relative flex items-end w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[var(--Text-Primary-heading-1)] text-base tracking-[1.00px] leading-6 whitespace-nowrap">
                               {offer.profile.name}
                             </h2>
                             <p 
                               className="relative w-fit whitespace-nowrap"
                               style={{
-                                color: "var(--Mapped-Text-Primary-Subtitle, #656268)",
+                                color: "#656268",
                                 fontFamily: "var(--Typeface-Nunito, Nunito)",
                                 fontSize: "var(--Font-size-Subtitle, 14px)",
                                 fontStyle: "normal",
@@ -1197,21 +1199,21 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
                             aria-label={`Rating ${offer.profile.rating.toFixed(1)} out of 5`}
                           >
                             <div className="inline-flex items-center gap-1.5 relative flex-[0_0_auto]">
-                              <StarIcon className="relative w-4 h-4 aspect-[1] text-[#b7812f]" />
+                              <StarIcon className="relative w-4 h-4 aspect-[1] text-[var(--Text-Primary-Text-brand)]" />
                             </div>
-                            <div className="relative flex items-end w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[#656268] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
+                            <div className="relative flex items-end w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[var(--Text-Primary-Subtitle)] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
                               {offer.profile.rating.toFixed(1)}
                             </div>
                           </div>
-                          <div className="w-px h-3 relative bg-[#656268]/40" aria-hidden="true" />
+                          <div className="w-px h-3 relative bg-[var(--Text-Primary-Subtitle)]/40" aria-hidden="true" />
                           <div className="inline-flex items-center justify-center relative flex-[0_0_auto]">
                             <button
                               type="button"
-                              className="all-[unset] box-border inline-flex items-center justify-center gap-1.5 relative self-stretch flex-[0_0_auto] rounded-2xl cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171519]"
+                              className="all-[unset] box-border inline-flex items-center justify-center gap-1.5 relative self-stretch flex-[0_0_auto] rounded-2xl cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--Surface-UI-surface-Surface-Universal-alternate)]"
                               data-mapped-colour-styles-mode="light"
                               aria-label={`${offer.profile.reviewsCount} reviews`}
                             >
-                              <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[#8C35BE] text-sm text-center tracking-[1.00px] leading-5 whitespace-nowrap">
+                              <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Nunito-Bold',Helvetica] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-sm text-center tracking-[1.00px] leading-5 whitespace-nowrap">
                                 {offer.profile.reviewsCount} reviews
                               </span>
                             </button>
@@ -1239,7 +1241,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
 
       {/* Home Indicator */}
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30 pointer-events-none">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]" />
       </div>
 
       {/* Success Toast */}
@@ -1265,7 +1267,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "100%" }}
               transition={{ type: "tween", ease: "easeInOut", duration: 0.3 }}
-              className="absolute inset-0 z-[1000] bg-[#fbf6ff] flex"
+              className="absolute inset-0 z-[1000] bg-[var(--Surface-Primary-Background)] flex"
             >
               <AllOffersView 
                 onBack={() => setShowAllOffers(false)} 
@@ -1353,10 +1355,9 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
         )}
 
         {/* Add Tags Modal */}
-        <AddTagsModal
-          isOpen={isAddTagsOpen}
-          onClose={() => setIsAddTagsOpen(false)}
-          skillName={currentSkillName}
+        <GlobalAddTagsModal
+          isOpen={isTagModalOpen}
+          onClose={() => setIsTagModalOpen(false)}
           tags={tempTags}
           onToggleTag={toggleTempTag}
           onApply={handleApplyTags}
@@ -1382,7 +1383,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-[#2f2c3242] backdrop-blur-[4px] z-[1100] flex items-center justify-center pointer-events-auto"
+            className="absolute inset-0 bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px] z-[1100] flex items-center justify-center pointer-events-auto"
           >
             <SkillbeekLoader size={92} />
           </motion.div>
@@ -1393,80 +1394,7 @@ export function SkillDetailsView({ skillName, proficiency, tags, isAdded, onBack
   );
 }
 
-function AddTagsModal({
-  isOpen,
-  onClose,
-  skillName,
-  tags,
-  onToggleTag,
-  onApply,
-  onClear,
-  tagInput,
-  setTagInput,
-  onTagInputKeyDown
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  skillName: string;
-  tags: string[];
-  onToggleTag: (tag: string) => void;
-  onApply: () => void;
-  onClear: () => void;
-  tagInput: string;
-  setTagInput: (val: string) => void;
-  onTagInputKeyDown: (e: React.KeyboardEvent) => void;
-}) {
-  return (
-    <>
-      <div
-        className={`absolute inset-0 z-[110] bg-[#2f2c32]/26 backdrop-blur-[4px] transition-opacity duration-300 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-        onClick={onClose}
-      />
-      <div
-        className={`absolute bottom-0 left-0 w-full bg-[#faf7fe] rounded-t-[24px] flex flex-col pt-[8px] pb-[44px] z-[120] transition-transform duration-300 ${isOpen ? "translate-y-0 ease-out" : "translate-y-full ease-in"}`}
-      >
-        <div className="w-full flex flex-col items-center gap-[32px]">
-          <div className="w-full px-[16px] flex flex-col gap-[16px] items-center">
-            <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px]" />
-            <div className="w-full flex items-center justify-between relative h-[24px]">
-              <div className="flex-1 flex justify-center">
-                <h3 className="font-['Nunito'] font-bold text-[20px] leading-[28px] text-[#171519] tracking-[-0.2px]">
-                  Add tags
-                </h3>
-              </div>
-              <button onClick={onClose} className="absolute right-0 w-[24px] h-[24px] flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              </button>
-            </div>
-            <div className="w-full h-px bg-[#e0dce3]" />
-            <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#49464c] text-center px-[16px]">
-              Add up to 5 specific tags to help others discover you. Separate each with a comma.
-            </p>
-          </div>
-          <div className="w-full px-[16px] flex flex-col gap-[24px]">
-            {tags.length > 0 && (
-              <div className="flex flex-wrap gap-[12px]">
-                {tags.map(tag => (
-                  <div key={tag} onClick={() => onToggleTag(tag)} className="flex items-center gap-[12px] px-[12px] py-[12px] rounded-[12px] bg-[#f0edf4] cursor-pointer transition-all duration-200 active:scale-95">
-                    <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[1px]">{tag}</span>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b7812f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="w-full bg-[#faf7fe] rounded-[12px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] px-[12px] py-[16px]">
-              <input type="text" placeholder="wireframing, prototyping," value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={onTagInputKeyDown} className="w-full bg-transparent border-none outline-none font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#171519] placeholder-[#a09da3]" />
-            </div>
-          </div>
-          <div className="w-full flex items-center justify-between px-[16px]">
-            <button onClick={onClear} className="font-['Nunito'] font-bold text-[16px] leading-[24px] text-[#49464c] underline px-[16px] py-[12px]">Clear all</button>
-            <button onClick={onApply} disabled={tags.length === 0} className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] transition-colors ${tags.length > 0 ? "bg-[#171519] text-[#fbf6ff]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"}`}>Apply</button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
+
 
 function SetProficiencyModal({
   isOpen,
@@ -1487,18 +1415,18 @@ function SetProficiencyModal({
   return (
     <>
       <div
-        className={`absolute inset-0 z-[110] bg-[#2f2c32]/26 backdrop-blur-[4px] transition-opacity duration-300 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        className={`absolute inset-0 z-[110] bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px] transition-opacity duration-300 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
         onClick={onClose}
       />
       <div
-        className={`absolute bottom-0 left-0 w-full bg-[#faf7fe] rounded-t-[24px] flex flex-col pt-[8px] pb-[44px] z-[120] transition-transform duration-300 ${isOpen ? "translate-y-0 ease-out" : "translate-y-full ease-in"}`}
+        className={`absolute bottom-0 left-0 w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-t-[24px] flex flex-col pt-[8px] pb-[44px] z-[120] transition-transform duration-300 ${isOpen ? "translate-y-0 ease-out" : "translate-y-full ease-in"}`}
       >
         <div className="w-full flex flex-col items-center gap-[32px]">
           <div className="w-full px-[16px] flex flex-col gap-[16px] items-center">
-            <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px]" />
+            <div className="w-[64px] h-[8px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[4px]" />
             <div className="w-full flex items-center justify-between relative h-[24px]">
               <div className="flex-1 flex justify-center">
-                <h3 className="font-['Nunito'] font-bold text-[20px] leading-[28px] text-[#171519] tracking-[-0.2px]">
+                <h3 className="font-['Nunito'] font-bold text-[20px] leading-[28px] text-[var(--Text-Primary-heading-1)] tracking-[-0.2px]">
                   Set Proficiency
                 </h3>
               </div>
@@ -1506,20 +1434,20 @@ function SetProficiencyModal({
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
-            <div className="w-full h-px bg-[#e0dce3]" />
+            <div className="w-full h-px bg-[var(--Surface-UI-surface-Surface-Universal-Hover)]" />
           </div>
           <div className="w-full px-[16px] flex flex-col gap-[12px]">
             {PROFICIENCY_LEVELS.map(level => (
-               <div key={level} onClick={() => onSelectProficiency(level)} className="w-full bg-[#faf7fe] flex items-center justify-between p-[12px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.15)] cursor-pointer hover:bg-[#f0edf4] transition-colors">
-                  <span className={`font-['Nunito'] ${selectedProficiency === level ? "font-bold" : "font-semibold"} text-[16px] pl-[8px] text-[#171519]`}>{level}</span>
-                  <div className={`w-[24px] h-[24px] rounded-full border-[2px] flex items-center justify-center ${selectedProficiency === level ? "border-[#171519]" : "border-[#a09da3]"}`}>
-                    {selectedProficiency === level && <div className="w-[12px] h-[12px] rounded-full bg-[#171519]" />}
+               <div key={level} onClick={() => onSelectProficiency(level)} className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] flex items-center justify-between p-[12px] rounded-[12px] shadow-[0px_1px_1.5px_rgba(18,9,0,0.15)] cursor-pointer hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors">
+                  <span className={`font-['Nunito'] ${selectedProficiency === level ? "font-bold" : "font-semibold"} text-[16px] pl-[8px] text-[var(--Text-Primary-heading-1)]`}>{level}</span>
+                  <div className={`w-[24px] h-[24px] rounded-full border-[2px] flex items-center justify-center ${selectedProficiency === level ? "border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)]" : "border-[var(--Button-Primary-Icon-Stroke-disabled)]"}`}>
+                    {selectedProficiency === level && <div className="w-[12px] h-[12px] rounded-full bg-[var(--Surface-UI-surface-Surface-Universal-alternate)]" />}
                   </div>
                </div>
             ))}
           </div>
           <div className="w-full flex items-center justify-end px-[16px]">
-            <button onClick={onApply} className="flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] transition-colors bg-[#171519] text-[#fbf6ff]">Apply</button>
+            <button onClick={onApply} className="flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] transition-colors bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)]">Apply</button>
           </div>
         </div>
       </div>

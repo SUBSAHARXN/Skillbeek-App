@@ -44,13 +44,13 @@ export function SocialButton({
 
   const stateClasses = {
     default:
-      "bg-[#fbf6ff] border-[1.5px] border-[#c0bcc3] text-[#171519] cursor-pointer hover:bg-gray-50",
+      "bg-[var(--Surface-Primary-Background)] border-[1.5px] border-[var(--Button-Primary-Stroke-Stroke-default)] text-[var(--Text-Primary-heading-1)] cursor-pointer hover:bg-gray-50",
     disabled:
-      "bg-[#fbf6ff] border-[1.5px] border-[#a09da3] text-[#a09da3] cursor-not-allowed opacity-70",
+      "bg-[var(--Surface-Primary-Background)] border-[1.5px] border-[var(--Button-Primary-Icon-Stroke-disabled)] text-[var(--Text-Primary-Text-placeholder)] cursor-not-allowed opacity-70",
     active:
-      "bg-[#fbf6ff] border-2 border-[#b7812f] text-[#171519] cursor-pointer",
+      "bg-[var(--Surface-Primary-Background)] border-2 border-[var(--Text-Primary-Text-brand)] text-[var(--Text-Primary-heading-1)] cursor-pointer",
     activeHover:
-      "bg-[#fbf6ff] border-2 border-[#a7721b] text-[#171519] cursor-pointer",
+      "bg-[var(--Surface-Primary-Background)] border-2 border-[var(--Text-Primary-Text-brand)] text-[var(--Text-Primary-heading-1)] cursor-pointer",
   };
 
   return (

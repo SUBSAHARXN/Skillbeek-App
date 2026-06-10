@@ -37,14 +37,14 @@ export function OfferProgressBar({ currentStep, subStepProgress, totalSteps = 5 
         return (
           <div 
             key={step} 
-            className="h-[4px] relative bg-[#e0dce3]"
+            className="h-[4px] relative bg-[var(--Surface-UI-surface-Surface-Universal-Hover)]"
             style={{ 
               width: `${barWidth}px`,
               borderRadius: step === 1 ? "9999px 0 0 9999px" : isLastStep ? "0 9999px 9999px 0" : "0",
             }}
           >
             <motion.div
-              className="absolute left-0 top-0 h-full bg-[#171519]"
+              className="absolute left-0 top-0 h-full bg-[var(--Surface-UI-surface-Surface-Universal-alternate)]"
               initial={{ width: `${progress}%` }}
               animate={{ 
                 width: `${progress}%`,

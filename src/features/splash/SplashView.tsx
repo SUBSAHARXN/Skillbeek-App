@@ -30,7 +30,7 @@ export function SplashView({ onComplete }: SplashViewProps) {
   ];
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl bg-[#06000c]">
+    <div className="w-full max-w-[384px] h-[812px] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl bg-[var(--Text-Information-primary-darker)]">
       
       {/* BACKGROUND LOTTIE (Always present, but hidden by video until Phase 2) */}
       <div className="absolute inset-0 z-0">
@@ -48,7 +48,7 @@ export function SplashView({ onComplete }: SplashViewProps) {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="absolute inset-0 z-20 pointer-events-none bg-[#e9d5ff]/85"
+            className="absolute inset-0 z-20 pointer-events-none bg-[var(--Button-UI-comp-sur-Surface-Primary)]/85"
           />
         )}
       </AnimatePresence>
@@ -103,7 +103,7 @@ export function SplashView({ onComplete }: SplashViewProps) {
                 initial={{ y: "100%", opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
-                className="font-['Nunito'] font-bold text-[44px] text-[#f0edf4] tracking-[1px] select-none leading-none"
+                className="font-['Nunito'] font-bold text-[44px] text-[var(--Text-Primary-Title-alt)] tracking-[1px] select-none leading-none"
               >
                 SKILLBEEK
               </motion.h1>
@@ -117,7 +117,7 @@ export function SplashView({ onComplete }: SplashViewProps) {
                 initial={{ y: "100%", opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
-                className="font-['Nunito'] font-bold text-[#f0edf4] text-[24px] leading-[32px] tracking-[-0.7px] text-center whitespace-pre-wrap"
+                className="font-['Nunito'] font-bold text-[var(--Text-Primary-Title-alt)] text-[24px] leading-[32px] tracking-[-0.7px] text-center whitespace-pre-wrap"
               >
                 {`Discover new skills,\nshare what you know`}
               </motion.h2>
@@ -136,7 +136,7 @@ export function SplashView({ onComplete }: SplashViewProps) {
                       delay: 0.9 + i * 0.15,
                     }}
                     style={{ originX: 0, originY: 1 }}
-                    className="font-['Nunito'] font-bold text-[#e0dce3] text-[18px] leading-[28px] text-center"
+                    className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body-alt)] text-[18px] leading-[28px] text-center"
                   >
                     {line}
                   </motion.p>
@@ -160,9 +160,9 @@ export function SplashView({ onComplete }: SplashViewProps) {
             <button
               type="button"
               onClick={onComplete}
-              className="w-full max-w-[352px] h-[48px] rounded-[16px] bg-[#b7812f] hover:bg-[#835501] active:bg-[#915d00] flex items-center justify-center transition-colors shadow-[0px_1px_3px_0px_rgba(18,9,0,0.1)] group relative overflow-hidden"
+              className="w-full max-w-[352px] h-[48px] rounded-[16px] bg-[var(--Button-Primary-Surface-default)] hover:bg-[var(--Button-Primary-Surface-hover)] active:bg-[var(--Button-Primary-Surface-hover)] flex items-center justify-center transition-colors shadow-[0px_1px_3px_0px_rgba(18,9,0,0.1)] group relative overflow-hidden"
             >
-              <span className="font-['Nunito'] font-bold text-[16px] text-[#f5f4f5] tracking-[0.16px]">
+              <span className="font-['Nunito'] font-bold text-[16px] text-[var(--Button-Primary-Surface-default-sec)] tracking-[0.16px]">
                 Let's Get Started
               </span>
               {/* Subtle shine effect on hover (optional enhancement) */}

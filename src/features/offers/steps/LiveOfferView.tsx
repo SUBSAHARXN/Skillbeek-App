@@ -77,15 +77,15 @@ function SkillCard({
   };
 
   return (
-    <div className="w-full bg-[#faf7fe] rounded-[16px] p-[16px] flex flex-col gap-[16px] shadow-skillbeek-sm">
+    <div className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] p-[16px] flex flex-col gap-[16px] shadow-skillbeek-sm">
       {/* Top row: skill name + proficiency badge */}
       <div className="flex items-center gap-[12px]">
-        <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px]">
+        <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[24px] leading-[32px] tracking-[-0.7px]">
           {title}
         </span>
         {proficiency && (
-          <div className="bg-[#f8efff] px-[8px] py-[8px] rounded-[8px]">
-            <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
+          <div className="bg-[var(--Surface-UI-surface-surface-variant)] px-[8px] py-[8px] rounded-[8px]">
+            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-[12px] leading-[16px] tracking-[1.1px]">
               {formatProf(proficiency)}
             </span>
           </div>
@@ -95,7 +95,7 @@ function SkillCard({
       {/* Role Badge */}
       {role && (
         <div
-          className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#e8fae5] p-2 relative self-start"
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[var(--Surface-Success-bg-surface-padding)] p-2 relative self-start"
           role="img"
           aria-label={role}
         >
@@ -116,7 +116,7 @@ function SkillCard({
               </linearGradient>
             </defs>
           </svg>
-          <span className="[display:-webkit-box] relative w-fit items-center overflow-hidden text-ellipsis whitespace-nowrap [font-family:'Nunito-Bold',Helvetica] text-xs font-bold leading-4 tracking-[1.10px] text-[#0b3700] [-webkit-box-orient:vertical] [-webkit-line-clamp:1]">
+          <span className="[display:-webkit-box] relative w-fit items-center overflow-hidden text-ellipsis whitespace-nowrap [font-family:'Nunito-Bold',Helvetica] text-xs font-bold leading-4 tracking-[1.10px] text-[var(--Surface-Success-Pressed)] [-webkit-box-orient:vertical] [-webkit-line-clamp:1]">
             {role}
           </span>
         </div>
@@ -126,8 +126,8 @@ function SkillCard({
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-[12px]">
           {tags.map(tag => (
-            <div key={tag} className="bg-[#f0edf4] px-[12px] py-[12px] rounded-[12px]">
-              <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
+            <div key={tag} className="bg-[var(--Mapped-Surface-UI-surface-surface-variant)] px-[12px] py-[12px] rounded-[12px]">
+              <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-Text-brand)] text-[14px] leading-[20px] tracking-[1px]">
                 {tag}
               </span>
             </div>
@@ -138,7 +138,7 @@ function SkillCard({
       {/* View more button */}
       {onViewMore && extraText && (
         <button onClick={onViewMore} className="self-start mt-[4px]">
-          <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] underline">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] underline">
             {extraText}
           </span>
         </button>
@@ -190,11 +190,11 @@ export function LiveOfferView({
       exit={layoutIdPrefix ? { opacity: 0 } : { x: "100%", opacity: 0 }}
       transition={layoutIdPrefix ? { layout: spring } : { type: "spring", damping: 28, stiffness: 280 }}
       layoutId={layoutIdPrefix ? `${layoutIdPrefix}-container` : undefined}
-      className="absolute inset-0 w-full h-full bg-[#fbf6ff] flex flex-col z-[400] overflow-hidden rounded-[32px]"
+      className="absolute inset-0 w-full h-full bg-[var(--Surface-Primary-Background)] flex flex-col z-[400] overflow-hidden rounded-[32px]"
     >
       {/* Status Bar */}
       <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]" />
       </div>
 
       {/* Top Action Row: back (left) + bookmark/more (right) */}
@@ -202,9 +202,9 @@ export function LiveOfferView({
         {/* Back Button */}
         <button
           onClick={onBack}
-          className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[#faf7fe] hover:bg-[#f0edf4] transition-colors"
+          className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[var(--Surface-UI-surface-surface-elevated)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
         >
-          <ChevronLeftIcon className="w-[24px] h-[24px] text-[#171519]" />
+          <ChevronLeftIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
         </button>
 
         <div className="flex items-center gap-[16px]">
@@ -217,17 +217,17 @@ export function LiveOfferView({
             }}
             animate={isWiggling ? { scale: [1, 0.8, 1.25, 0.95, 1.05, 1] } : {}}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[#faf7fe] hover:bg-[#f0edf4] transition-colors origin-center focus:outline-none"
+            className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[var(--Surface-UI-surface-surface-elevated)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors origin-center focus:outline-none"
           >
-            <BookmarkIcon className="w-[24px] h-[24px] text-[#b7812f]" />
+            <BookmarkIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-Text-brand)]" />
           </motion.button>
           {/* More */}
           <button
             onClick={() => setIsMoreMenuOpen(prev => !prev)}
-            className={`w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[#faf7fe] hover:bg-[#f0edf4] transition-colors ${isMoreMenuOpen ? "relative z-[520]" : ""
+            className={`w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[var(--Surface-UI-surface-surface-elevated)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors ${isMoreMenuOpen ? "relative z-[520]" : ""
               }`}
           >
-            <MoreIcon className="w-[24px] h-[24px] text-[#171519]" />
+            <MoreIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
           </button>
         </div>
       </div>
@@ -241,8 +241,8 @@ export function LiveOfferView({
           {/* Active Badge / Dynamic Badge */}
           {isOwner ? (
             <div className="inline-flex">
-              <div className="bg-[#edf2ff] px-[8px] py-[4px] rounded-[6px]">
-                <span className="font-['Nunito'] font-bold text-[#153094] text-[12px] leading-[16px] tracking-[0.5px]">
+              <div className="bg-[var(--Surface-Information-bg-surface)] px-[8px] py-[4px] rounded-[6px]">
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Information-primary)] text-[12px] leading-[16px] tracking-[0.5px]">
                   Active
                 </span>
               </div>
@@ -250,9 +250,9 @@ export function LiveOfferView({
           ) : badge ? (
             <div className="inline-flex">
               <div className={`inline-flex items-center gap-1 px-[8px] py-[4px] rounded-[6px] ${
-                badge.type === 'hot' ? 'bg-[#fef6f5]' :
-                badge.type === 'closing' ? 'bg-[#fffbf2]' :
-                'bg-[#f0f4ff]'
+                badge.type === 'hot' ? 'bg-[var(--Surface-Error-bg-surface)]' :
+                badge.type === 'closing' ? 'bg-[var(--Surface-Warning-bg-surface)]' :
+                'bg-[var(--Surface-Information-bg-surface)]'
               }`}>
                 <div className="relative w-4 h-4 shrink-0 flex items-center justify-center" aria-hidden="true">
                   {badge.type === 'hot' && <FlameIcon className="w-full h-full" />}
@@ -260,9 +260,9 @@ export function LiveOfferView({
                   {badge.type === 'new' && <CodeSparkleIcon />}
                 </div>
                 <span className={`font-['Nunito'] font-bold text-[12px] leading-[16px] tracking-[0.5px] ${
-                  badge.type === 'hot' ? 'text-[#870113]' :
-                  badge.type === 'closing' ? 'text-[#b87d18]' :
-                  'text-[#133aa8]'
+                  badge.type === 'hot' ? 'text-[var(--Text-Error-primary)]' :
+                  badge.type === 'closing' ? 'text-[var(--Text-Primary-Text-brand)]' :
+                  'text-[var(--Text-Information-primary)]'
                 }`}>
                   {badge.text}
                 </span>
@@ -275,7 +275,7 @@ export function LiveOfferView({
             layoutId={layoutIdPrefix ? `${layoutIdPrefix}-title` : undefined}
             layout="position"
             transition={layoutIdPrefix ? { layout: spring } : undefined}
-            className="font-['Nunito'] font-bold text-[#171519] text-[26px] leading-[34px] tracking-[-0.5px] mb-[16px] break-words w-full min-w-0"
+            className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[26px] leading-[34px] tracking-[-0.5px] mb-[16px] break-words w-full min-w-0"
           >
             {offerTitle}
           </motion.h1>
@@ -283,7 +283,7 @@ export function LiveOfferView({
           {/* Social Proof */}
           {requestsCount && requestsCount > 0 ? (
             <aside
-              className="relative flex w-full items-center gap-1.5 rounded-[4px] bg-[#edf2ff] p-2 mb-[12px]"
+              className="relative flex w-full items-center gap-1.5 rounded-[4px] bg-[var(--Surface-Information-bg-surface)] p-2 mb-[12px]"
               aria-label="Offer demand details"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
@@ -311,7 +311,7 @@ export function LiveOfferView({
               <p 
                 className="relative flex-1 min-w-0 whitespace-nowrap overflow-hidden text-ellipsis"
                 style={{
-                  color: "var(--Mapped-Text-Information-primary-darker, #000010)",
+                  color: "#000010",
                   fontFamily: "var(--Typeface-Nunito, Nunito)",
                   fontSize: "var(--Font-size-Subtitle, 14px)",
                   fontStyle: "normal",
@@ -332,35 +332,35 @@ export function LiveOfferView({
           <motion.article
             layoutId={layoutIdPrefix ? `${layoutIdPrefix}-author` : undefined}
             transition={layoutIdPrefix ? { layout: spring } : undefined}
-            className="w-full bg-[#faf7fe] rounded-[12px] px-[16px] py-[16px] flex items-center justify-between shadow-skillbeek-sm mb-[16px]"
+            className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[12px] px-[16px] py-[16px] flex items-center justify-between shadow-skillbeek-sm mb-[16px]"
             aria-label={`David Chen profile summary`}
           >
             <div className="relative flex flex-1 grow items-center gap-3">
               <div 
                 className="relative w-[48px] h-[48px] shrink-0 rounded-full"
                 style={{
-                  border: "4px solid var(--mapped\\/surface\\/ui-surface-stroke, var(--mapped-button-ui-comp-sur-stroke, #eacfff))",
+                  border: "4px solid var(--mapped\\/surface\\/ui-surface-stroke, #eacfff)",
                   boxSizing: "content-box"
                 }}
               >
                 <PersonaPfpSet className="w-full h-full rounded-full" />
               </div>
               <div className="relative flex flex-1 grow flex-col items-start gap-1">
-                <h2 className="relative self-stretch -mt-[1px] font-['Nunito'] text-xl font-bold leading-7 tracking-[-1.20px] text-[#171519]">
+                <h2 className="relative self-stretch -mt-[1px] font-['Nunito'] text-xl font-bold leading-7 tracking-[-1.20px] text-[var(--Text-Primary-heading-1)]">
                   David Chen
                 </h2>
                 <div className="relative flex w-full items-center gap-1.5 self-stretch">
                   <div className="relative inline-flex items-center gap-1">
                     <SkillbeekSingleStar rating={4.0} iconClassName="w-[16px] h-[16px]" />
                   </div>
-                  <div className="w-px h-3 bg-[#656268]"></div>
+                  <div className="w-px h-3 bg-[var(--Text-Primary-Subtitle)]"></div>
                   <div className="relative inline-flex items-center justify-center">
                     <button
                       type="button"
                       className="relative inline-flex flex-[0_0_auto] items-center justify-center gap-1.5 self-stretch rounded-2xl"
                       aria-label="12 reviews for David Chen"
                     >
-                      <span className="relative -mt-[1px] flex w-fit items-center justify-center whitespace-nowrap font-['Nunito'] text-center text-sm font-bold leading-5 tracking-[1.00px] text-[#8c35be]">
+                      <span className="relative -mt-[1px] flex w-fit items-center justify-center whitespace-nowrap font-['Nunito'] text-center text-sm font-bold leading-5 tracking-[1.00px] text-[var(--Text-Primary-Text-brandPrimary)]">
                         12 reviews
                       </span>
                     </button>
@@ -381,7 +381,7 @@ export function LiveOfferView({
                     <path d="M20.25 25.125C20.8713 25.125 21.375 24.6213 21.375 24C21.375 23.3787 20.8713 22.875 20.25 22.875C19.6287 22.875 19.125 23.3787 19.125 24C19.125 24.6213 19.6287 25.125 20.25 25.125Z" fill="#171519"/>
                     <path d="M28.5 25.125C29.1213 25.125 29.625 24.6213 29.625 24C29.625 23.3787 29.1213 22.875 28.5 22.875C27.8787 22.875 27.375 23.3787 27.375 24C27.375 24.6213 27.8787 25.125 28.5 25.125Z" fill="#171519"/>
                   </svg>
-                  <div className="absolute left-[calc(50%-4px)] top-[calc(50%-4px)] h-2 w-2 rounded bg-[#e0dce3] opacity-0 aspect-square" />
+                  <div className="absolute left-[calc(50%-4px)] top-[calc(50%-4px)] h-2 w-2 rounded bg-[var(--Surface-UI-surface-Surface-Universal-Hover)] opacity-0 aspect-square" />
                 </button>
               </div>
             )}
@@ -394,14 +394,14 @@ export function LiveOfferView({
           {/* Offer description section */}
           <SectionCard title="Offer description" className="rounded-[12px] px-[16px] py-[16px] shadow-skillbeek-sm mb-[16px]">
             <div className="flex flex-col gap-[6px] w-full min-w-0">
-              <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[1px] line-clamp-5 overflow-hidden break-words break-all w-full min-w-0">
+              <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[1px] line-clamp-5 overflow-hidden break-words break-all w-full min-w-0">
                 {offerDescription}
               </p>
               <button
                 onClick={() => setActiveModal({ title: "Offer description", content: offerDescription })}
                 className="self-start"
               >
-                <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] underline">
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] underline">
                   Show all
                 </span>
               </button>
@@ -410,7 +410,7 @@ export function LiveOfferView({
 
           {/* Divider label — How this swap works */}
           <div className="w-full mt-[16px] mb-[16px]">
-            <h2 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
+            <h2 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[36px] tracking-[-1.2px]">
               {isTimeCredit ? "How this offer works" : "How this swap works"}
             </h2>
           </div>
@@ -418,7 +418,7 @@ export function LiveOfferView({
           {/* Skills You'll Learn section */}
           {!isTimeCredit && reviewSkills.length > 0 && (
             <div className="w-full flex flex-col gap-[12px] mb-[16px]">
-              <span className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px]">
+              <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px]">
                 Offered Skills
               </span>
               <div className="flex flex-col gap-[12px]">
@@ -437,7 +437,7 @@ export function LiveOfferView({
           {/* Skills Wanted section */}
           {receiveSkills.length > 0 && (
             <div className="w-full flex flex-col gap-[12px] mb-[16px]">
-              <span className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px]">
+              <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px]">
                 {isTimeCredit ? "Skills you want" : "Skills wanted in return"}
               </span>
               <div className="flex flex-col gap-[12px]">
@@ -458,14 +458,14 @@ export function LiveOfferView({
             <motion.div 
               layoutId={layoutIdPrefix ? `${layoutIdPrefix}-duration` : undefined}
               transition={layoutIdPrefix ? { layout: spring } : undefined}
-              className="w-full bg-[#faf7fe] rounded-[16px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-skillbeek-sm mb-[16px]"
+              className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-skillbeek-sm mb-[16px]"
             >
-              <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px]">
+              <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[18px] leading-[28px]">
                 Rate (per session)
               </span>
               <div className="flex items-center gap-[12px]">
                 <TimeCreditIcon className="w-[24px] h-[24px]" />
-                <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px]">
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[24px] leading-[32px] tracking-[-0.7px]">
                   {timeCreditRate}
                 </span>
               </div>
@@ -475,8 +475,8 @@ export function LiveOfferView({
 
 
           {/* Availability section */}
-          <div className="w-full bg-[#faf7fe] rounded-[16px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-skillbeek-sm mb-[16px]">
-            <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px]">
+          <div className="w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-skillbeek-sm mb-[16px]">
+            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[18px] leading-[28px]">
               Availability
             </span>
             <div className="flex flex-col gap-[12px]">
@@ -486,14 +486,14 @@ export function LiveOfferView({
                   return (
                     <>
                       <div className="flex items-center gap-[8px]">
-                        <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
-                        <span className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px]">
+                        <CalendarIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                        <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px]">
                           {getRecurringDaysText(firstSlot.days)}
                         </span>
                       </div>
                       <div className="flex items-center gap-[8px]">
-                        <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
-                        <span className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px]">
+                        <ClockIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                        <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px]">
                           {firstSlot.timeRange.start} - {firstSlot.timeRange.end}
                         </span>
                       </div>
@@ -506,14 +506,14 @@ export function LiveOfferView({
                   return (
                     <>
                       <div className="flex items-center gap-[8px]">
-                        <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
-                        <span className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px]">
+                        <CalendarIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                        <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px]">
                           {getSpecificDatesText(firstSlot.dateRange)}
                         </span>
                       </div>
                       <div className="flex items-center gap-[8px]">
-                        <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
-                        <span className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px]">
+                        <ClockIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                        <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px]">
                           {firstSlot.timeRange.start} - {firstSlot.timeRange.end}
                         </span>
                       </div>
@@ -523,14 +523,14 @@ export function LiveOfferView({
               ) : (
                 <>
                   <div className="flex items-center gap-[8px]">
-                    <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
-                    <span className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px]">
+                    <CalendarIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                    <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px]">
                       Available Sep 30 - Oct 3
                     </span>
                   </div>
                   <div className="flex items-center gap-[8px]">
-                    <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
-                    <span className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px]">
+                    <ClockIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                    <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px]">
                       Weekdays, 9 AM - 5 PM
                     </span>
                   </div>
@@ -545,7 +545,7 @@ export function LiveOfferView({
                   onClick={() => setIsAvailabilityModalOpen(true)}
                   className="self-start mt-[4px]"
                 >
-                  <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] underline">
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] underline">
                     View more
                   </span>
                 </button>
@@ -568,8 +568,8 @@ export function LiveOfferView({
           background: "linear-gradient(180deg, rgba(250, 247, 254, 0) 0%, #FAF7FE 100%)",
         }}
       >
-        <button className="w-full h-[48px] bg-[#171519] hover:bg-[#2f2c32] rounded-[16px] flex items-center justify-center transition-colors shadow-skillbeek-sm pointer-events-auto">
-          <span className="font-['Nunito'] font-bold text-[#fbf6ff] text-[16px] leading-[24px] tracking-[0.16px]">
+        <button className="w-full h-[48px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] rounded-[16px] flex items-center justify-center transition-colors shadow-skillbeek-sm pointer-events-auto">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body-alt)] text-[16px] leading-[24px] tracking-[0.16px]">
             Book Session
           </span>
         </button>
@@ -577,33 +577,33 @@ export function LiveOfferView({
 
       {/* Home indicator */}
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-40 pointer-events-none">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]" />
       </div>
 
       {/* Detail Modal Bottom Sheet */}
       <div
-        className={`absolute inset-0 z-[500] bg-[#2f2c32]/25 backdrop-blur-[4px] transition-opacity duration-300 ${activeModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        className={`absolute inset-0 z-[500] bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px] transition-opacity duration-300 ${activeModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         onClick={() => setActiveModal(null)}
       />
       <div
-        className={`absolute bottom-0 left-0 w-full bg-[#faf7fe] rounded-t-[24px] flex flex-col pt-[8px] pb-[44px] z-[510] transition-transform duration-300 shadow-[0px_-4px_24px_rgba(18,9,0,0.1)] ${activeModal ? "translate-y-0 ease-[cubic-bezier(0,0,0.2,1)]" : "translate-y-full ease-[cubic-bezier(0.4,0,1,1)]"
+        className={`absolute bottom-0 left-0 w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-t-[24px] flex flex-col pt-[8px] pb-[44px] z-[510] transition-transform duration-300 shadow-[0px_-4px_24px_rgba(18,9,0,0.1)] ${activeModal ? "translate-y-0 ease-[cubic-bezier(0,0,0.2,1)]" : "translate-y-full ease-[cubic-bezier(0.4,0,1,1)]"
           }`}
       >
         {/* Handle Bar */}
-        <div className="w-[48px] h-[5px] bg-[#c0bcc3] rounded-[100px] mx-auto mt-[4px] mb-[16px]" />
+        <div className="w-[48px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px] mx-auto mt-[4px] mb-[16px]" />
 
         {/* Header */}
         <div className="w-full relative flex items-center justify-center h-[28px] px-[16px]">
-          <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[18px] leading-[28px]">
             {activeModal?.title}
           </span>
           <button
             onClick={() => setActiveModal(null)}
-            className="absolute right-[16px] w-[40px] h-[40px] flex items-center justify-center rounded-full hover:bg-[#f0edf4] transition-colors"
+            className="absolute right-[16px] w-[40px] h-[40px] flex items-center justify-center rounded-full hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
             aria-label="Close"
           >
-            <svg className="w-[24px] h-[24px] text-[#171519]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -616,11 +616,11 @@ export function LiveOfferView({
         {/* Body Content */}
         <div className="px-[24px] pb-[16px] overflow-y-auto max-h-[300px]">
           {activeModal?.title === "Topic" ? (
-            <p className="font-['Nunito'] font-medium text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px] break-words">
+            <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] tracking-[-0.2px] break-words">
               {activeModal?.content}
             </p>
           ) : (
-            <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[1px] break-words break-all">
+            <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[1px] break-words break-all">
               {activeModal?.content}
             </p>
           )}
@@ -662,13 +662,13 @@ export function LiveOfferView({
             transition={{ duration: 0.2 }}
             className="absolute inset-0 z-[500] flex"
           >
-            <div className="absolute inset-0 bg-[#2f2c3242] backdrop-blur-[4px]" onClick={() => setIsMoreMenuOpen(false)} />
+            <div className="absolute inset-0 bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px]" onClick={() => setIsMoreMenuOpen(false)} />
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: -10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: -10 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute right-[28px] top-[120px] w-[279px] bg-[#faf7fe] rounded-[16px] p-[8px] flex flex-col gap-[8px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] pointer-events-auto"
+              className="absolute right-[28px] top-[120px] w-[279px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] p-[8px] flex flex-col gap-[8px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] pointer-events-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Share Offer */}
@@ -677,14 +677,14 @@ export function LiveOfferView({
                   console.log("Share Offer clicked");
                   setIsMoreMenuOpen(false);
                 }}
-                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
+                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
               >
-                <svg className="w-[24px] h-[24px] text-[#171519]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
                   <polyline points="16 6 12 2 8 6" />
                   <line x1="12" y1="2" x2="12" y2="15" />
                 </svg>
-                <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px]">
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
                   Share Offer
                 </span>
               </button>
@@ -696,13 +696,13 @@ export function LiveOfferView({
                     console.log("Pause Offer clicked");
                     setIsMoreMenuOpen(false);
                   }}
-                  className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
+                  className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
                 >
-                  <svg className="w-[24px] h-[24px] text-[#171519]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="6" y="4" width="4" height="16" rx="1" />
                     <rect x="14" y="4" width="4" height="16" rx="1" />
                   </svg>
-                  <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px]">
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
                     Pause Offer
                   </span>
                 </button>
@@ -715,13 +715,13 @@ export function LiveOfferView({
                     console.log("Report Offer clicked");
                     setIsMoreMenuOpen(false);
                   }}
-                  className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
+                  className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
                 >
-                  <svg className="w-[24px] h-[24px] text-[#171519]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
                     <line x1="4" y1="22" x2="4" y2="15" />
                   </svg>
-                  <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px]">
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
                     Report Offer
                   </span>
                 </button>
@@ -734,15 +734,15 @@ export function LiveOfferView({
                     setIsMoreMenuOpen(false);
                     setIsDeleteModalOpen(true);
                   }}
-                  className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
+                  className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
                 >
-                  <svg className="w-[24px] h-[24px] text-[#8c1d18]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-[24px] h-[24px] text-[var(--Text-Error-primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6" />
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                     <line x1="10" y1="11" x2="10" y2="17" />
                     <line x1="14" y1="11" x2="14" y2="17" />
                   </svg>
-                  <span className="font-['Nunito'] font-bold text-[#8c1d18] text-[16px] leading-[24px]">
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Error-primary)] text-[16px] leading-[24px]">
                     Delete Offer
                   </span>
                 </button>
@@ -759,7 +759,7 @@ export function LiveOfferView({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
-            className="absolute inset-0 z-[1000] bg-[#fbf6ff] flex"
+            className="absolute inset-0 z-[1000] bg-[var(--Surface-Primary-Background)] flex"
           >
             <AllOffersView 
               onBack={() => setShowAllOffers(false)} 
@@ -780,7 +780,7 @@ export function LiveOfferView({
           setToastVisible(false);
         }}
         onClose={() => setToastVisible(false)}
-        customIcon={<BookmarkIcon className="w-[22px] h-[22px] text-white" />}
+        customIcon={<BookmarkIcon className="w-[22px] h-[22px] text-[var(--Text-Primary-Title-alt)]" />}
         iconBg="#2e8b22"
         bgColor="#f3fbf2"
         borderColor="#e3f6df"

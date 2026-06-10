@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { BottomSheet } from "../../../components/ui/BottomSheet";
+import { Button } from "../../../components/ui/Button";
 import { CloseIcon, ChevronRightIcon, ChevronLeftIcon, PlusIcon } from "../../../components/common/Icons";
 import { SpecificDatesModal } from "./SpecificDatesModal";
 
@@ -102,50 +103,20 @@ export function FilterOffersModal({
     });
   };
 
-  if (!isOpen) return null;
-
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="absolute inset-0 z-40 bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
-      />
-      <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        onClick={(e) => e.stopPropagation()}
-        className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col items-center shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] select-none"
+      <BottomSheet
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Filter Offers"
+        zIndex={500}
       >
-        {/* Drag Handle */}
-        <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
-
-        {/* Header */}
-        <div className="w-full flex items-center justify-between px-[16px] mb-[4px]">
-          <div className="w-[48px]" />
-          <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
-            Filter Offers
-          </h3>
-          <button
-            onClick={onClose}
-            className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors"
-          >
-            <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
-          </button>
-        </div>
-
-        {/* Divider */}
-        <div className="w-full h-[1px] bg-[#e0dce3] mb-[20px]" />
 
         {/* Filter Body */}
         <section className="flex flex-col items-start gap-6 px-4 py-0 relative self-stretch w-full">
           {/* Date Range Section */}
-          <section className="flex flex-col items-start gap-3 p-4 relative self-stretch w-full bg-[#faf7fe] rounded-xl shadow-SM">
-            <h2 className="relative self-stretch mt-[-1.00px] [font-family:'Nunito'] font-bold text-[#656268] text-base tracking-[1.00px] leading-6">
+          <section className="flex flex-col items-start gap-3 p-4 relative self-stretch w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-xl shadow-SM">
+            <h2 className="relative self-stretch mt-[-1.00px] [font-family:'Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-base tracking-[1.00px] leading-6">
               Filter by date range
             </h2>
             <div
@@ -162,7 +133,7 @@ export function FilterOffersModal({
                     setCustomRange(null);
                   }}
                   className={`box-border inline-flex items-center justify-center gap-1.5 p-3 relative rounded-2xl shadow-XS cursor-pointer transition-colors ${
-                    selectedDateRange === "last30" ? "bg-[#f8efff] text-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3]"
+                    selectedDateRange === "last30" ? "bg-[var(--Surface-UI-surface-surface-variant)] text-[var(--Text-Primary-heading-3)]" : "bg-[var(--Surface-UI-surface-surface-elevated)] text-[var(--Text-Primary-Text-placeholder)]"
                   }`}
                 >
                   <div className="flex justify-center w-fit mt-[-1.00px] [font-family:'Nunito'] font-bold text-sm text-center tracking-[1.00px] leading-5 whitespace-nowrap relative items-center">
@@ -178,7 +149,7 @@ export function FilterOffersModal({
                   setIsDatePickerOpen(true);
                 }}
                 className={`inline-flex justify-center gap-1.5 p-3 rounded-2xl shadow-XS relative items-center cursor-pointer transition-colors ${
-                  selectedDateRange === "custom" ? "bg-[#edf2ff] text-[#000010]" : "bg-[#f0edf4] text-[#a09da3]"
+                  selectedDateRange === "custom" ? "bg-[var(--Surface-Information-bg-surface)] text-[var(--Text-Information-primary-darker)]" : "bg-[var(--Surface-UI-surface-surface-elevated)] text-[var(--Text-Primary-Text-placeholder)]"
                 }`}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="!relative !w-4 !h-4 !aspect-[1]">
@@ -197,9 +168,9 @@ export function FilterOffersModal({
                       setCustomRange(null);
                       setSelectedDateRange("");
                     }}
-                    className="w-[44px] h-[44px] -my-3 -mr-2 flex items-center justify-center rounded-full hover:bg-black/5 active:bg-black/10 transition-colors cursor-pointer"
+                    className="w-[44px] h-[44px] -my-3 -mr-2 flex items-center justify-center rounded-full hover:bg-[var(--Surface-UI-surface-Surface-Universal-Hover)] active:bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] transition-colors cursor-pointer"
                   >
-                    <CloseIcon className="w-[16px] h-[16px] text-[#000010]" />
+                    <CloseIcon className="w-[16px] h-[16px] text-[var(--Text-Information-primary-darker)]" />
                   </span>
                 )}
               </button>
@@ -207,16 +178,16 @@ export function FilterOffersModal({
           </section>
  
           {/* Skill Filter */}
-          <section className="flex flex-col items-start gap-3 p-4 relative self-stretch w-full bg-[#faf7fe] rounded-2xl shadow-SM">
-            <h2 className="relative self-stretch mt-[-1.00px] [font-family:'Nunito'] font-bold text-[#656268] text-base tracking-[1.00px] leading-6">
+          <section className="flex flex-col items-start gap-3 p-4 relative self-stretch w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-2xl shadow-SM">
+            <h2 className="relative self-stretch mt-[-1.00px] [font-family:'Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-base tracking-[1.00px] leading-6">
               Filter by Skill
             </h2>
             <div className="flex flex-col gap-3 w-full">
               {skills.map(s => (
-                <div key={s} className="w-[fit-content] bg-[#f0edf4] rounded-[16px] flex items-center justify-between px-4 py-3 gap-[16px]">
-                  <span className="font-['Nunito'] font-bold text-[#b7812f] text-[16px] leading-[24px] tracking-[1px]">{s}</span>
+                <div key={s} className="w-[fit-content] bg-[var(--Mapped-Surface-UI-surface-surface-variant)] rounded-[16px] flex items-center justify-between px-4 py-3 gap-[16px]">
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brand)] text-[16px] leading-[24px] tracking-[1px]">{s}</span>
                   <button onClick={() => setSkills(prev => prev.filter(x => x !== s))} className="hover:opacity-70 transition-opacity">
-                    <CloseIcon className="w-5 h-5 text-[#a09da3]" />
+                    <CloseIcon className="w-5 h-5 text-[var(--Text-Primary-Text-placeholder)]" />
                   </button>
                 </div>
               ))}
@@ -224,12 +195,12 @@ export function FilterOffersModal({
                 <button
                   type="button"
                   onClick={() => setIsSkillModalOpen(true)}
-                  className="w-fit inline-flex items-center justify-center gap-2 px-4 py-3 relative bg-[#f8efff] rounded-[16px] cursor-pointer hover:bg-[#eedeff] transition-colors"
+                  className="w-fit inline-flex items-center justify-center gap-2 px-4 py-3 relative bg-[var(--Surface-UI-surface-surface-variant)] rounded-[16px] cursor-pointer hover:bg-[var(--Button-UI-comp-sur-Surface-Primary)] transition-colors"
                 >
-                  <span className="font-['Nunito'] font-bold text-[#2f2c32] text-[16px] leading-[24px]">
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-3)] text-[16px] leading-[24px]">
                     {skills.length === 0 ? "Choose Skill" : "Add more skills"}
                   </span>
-                  <PlusIcon className="w-[24px] h-[24px] text-[#2f2c32]" />
+                  <PlusIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-3)]" />
                 </button>
               )}
             </div>
@@ -239,9 +210,9 @@ export function FilterOffersModal({
           {cards.map((card) => (
             <section
               key={card.key}
-              className="flex flex-col items-start gap-3 p-4 relative self-stretch w-full bg-[#faf7fe] rounded-2xl shadow-SM"
+              className="flex flex-col items-start gap-3 p-4 relative self-stretch w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-2xl shadow-SM"
             >
-              <h2 className="relative self-stretch mt-[-1.00px] [font-family:'Nunito'] font-bold text-[#656268] text-base tracking-[1.00px] leading-6">
+              <h2 className="relative self-stretch mt-[-1.00px] [font-family:'Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-base tracking-[1.00px] leading-6">
                 {card.title}
               </h2>
               <div className="inline-flex items-center gap-4 relative">
@@ -250,9 +221,9 @@ export function FilterOffersModal({
                     type="button"
                     onClick={() => setHighlights("")}
                     className={`inline-flex items-center gap-1.5 p-3 rounded-2xl relative shadow-XS transition-colors hover:opacity-80 ${
-                      highlights === "Hot now" ? "bg-[#fef6f5] text-[#870113]" :
-                      highlights === "Closing soon" ? "bg-[#fffbf2] text-[#b87d18]" :
-                      "bg-[#f0f4ff] text-[#133aa8]"
+                      highlights === "Hot now" ? "bg-[var(--Surface-Error-bg-surface)] text-[var(--Text-Error-primary)]" :
+                      highlights === "Closing soon" ? "bg-[var(--Surface-Warning-bg-surface)] text-[var(--Text-Primary-Text-brand)]" :
+                      "bg-[var(--Surface-Information-bg-surface)] text-[var(--Text-Information-primary)]"
                     }`}
                   >
                     <div className="relative w-6 h-6 flex items-center justify-center" aria-hidden="true">
@@ -264,22 +235,22 @@ export function FilterOffersModal({
                       {highlights}
                     </div>
                     <CloseIcon className={`w-5 h-5 ml-1 ${
-                      highlights === "Hot now" ? "text-[#870113]" :
-                      highlights === "Closing soon" ? "text-[#b87d18]" :
-                      "text-[#133aa8]"
+                      highlights === "Hot now" ? "text-[var(--Text-Error-primary)]" :
+                      highlights === "Closing soon" ? "text-[var(--Text-Primary-Text-brand)]" :
+                      "text-[var(--Text-Information-primary)]"
                     }`} />
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={() => handleOpenPicker(card.key)}
-                    className="inline-flex items-center justify-center gap-1.5 p-3 relative bg-[#f8efff] rounded-2xl shadow-XS cursor-pointer hover:bg-[#eedeff] transition-colors"
+                    className="inline-flex items-center justify-center gap-1.5 p-3 relative bg-[var(--Surface-UI-surface-surface-variant)] rounded-2xl shadow-XS cursor-pointer hover:bg-[var(--Button-UI-comp-sur-Surface-Primary)] transition-colors"
                     aria-label={card.value}
                   >
-                    <div className="flex justify-center w-fit mt-[-1.00px] [font-family:'Nunito'] font-bold text-[#2f2c32] text-sm text-center tracking-[1.00px] leading-5 whitespace-nowrap relative items-center">
+                    <div className="flex justify-center w-fit mt-[-1.00px] [font-family:'Nunito'] font-bold text-[var(--Text-Primary-heading-3)] text-sm text-center tracking-[1.00px] leading-5 whitespace-nowrap relative items-center">
                       {card.value}
                     </div>
-                    <ChevronRightIcon className="!relative !w-4 !h-4 !aspect-[1] text-[#2f2c32]" />
+                    <ChevronRightIcon className="!relative !w-4 !h-4 !aspect-[1] text-[var(--Text-Primary-heading-3)]" />
                   </button>
                 )}
               </div>
@@ -289,27 +260,26 @@ export function FilterOffersModal({
  
         {/* Action Footer Buttons */}
         <div className="w-full flex items-center justify-between px-[16px] mt-[24px]">
-          <button 
-            onClick={handleClearAll} 
-            className="font-['Nunito'] font-bold text-[16px] leading-[24px] text-[#49464c] underline px-[16px] py-[12px]"
-          >
+          <Button variant="ghost" onClick={handleClearAll}>
             Clear all
-          </button>
-          <button 
-            onClick={handleApply} 
-            disabled={!hasActiveFilters} 
-            className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] transition-colors ${hasActiveFilters ? "bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] hover:bg-[#2f2c32] active:scale-95" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"}`}
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleApply}
+            disabled={!hasActiveFilters}
+            className="min-w-[101px]"
           >
             Apply
-          </button>
+          </Button>
         </div>
-      </motion.div>
+      </BottomSheet>
 
       <SpecificDatesModal
         isOpen={isDatePickerOpen}
         onClose={handleDatePickerClose}
         onApply={handleDateRangeApply}
         initialRange={customRange}
+        zIndex={600}
       />
 
       <FilterSkillsModal
@@ -320,6 +290,7 @@ export function FilterOffersModal({
           setSkills(newSkills);
           setIsSkillModalOpen(false);
         }}
+        zIndex={600}
       />
       <FilterHighlightsModal
         isOpen={isHighlightsModalOpen}
@@ -328,6 +299,7 @@ export function FilterOffersModal({
         onSelect={(highlight) => {
           setHighlights(highlight);
         }}
+        zIndex={600}
       />
     </>
   );

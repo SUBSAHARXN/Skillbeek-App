@@ -17,7 +17,7 @@ function NeumorphicDivider() {
   return (
     <div className="w-full flex items-center justify-center my-[16px]">
       <div
-        className="w-full h-[2px] rounded-full bg-[#fbf6ff]"
+        className="w-full h-[2px] rounded-full bg-[var(--Surface-Primary-Background)]"
         style={{
           boxShadow: "inset 2px 2px 12px rgba(192, 188, 195, 0.5), inset -2px -2px 12px rgba(255, 255, 255, 0.9)"
         }}
@@ -44,24 +44,24 @@ export function ProficiencyLevelsView({
   const isNextEnabled = selectedSkills.every(skill => proficiencies[skill] !== "");
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Status Bar */}
-      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[#fbf6ff]">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
+      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[var(--Surface-Primary-Background)]">
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]" />
       </div>
 
       {/* Header Action Buttons (Fixed at Top) */}
-      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[var(--Surface-Primary-Background)] z-20">
         <button
           onClick={() => setIsSaveModalOpen(true)}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
+          className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]"
         >
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">
             Save and Exit
           </span>
         </button>
-        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+        <button className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">
             Questions?
           </span>
         </button>
@@ -71,10 +71,10 @@ export function ProficiencyLevelsView({
 
         {/* Page Header */}
         <div className="w-full px-[16px] flex flex-col gap-[12px] mb-[32px]">
-          <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
+          <h1 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[36px] tracking-[-1.2px]">
             Set your proficiency levels
           </h1>
-          <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
+          <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
             Choose your current ability level. Honesty helps you find the right matches.
           </p>
         </div>
@@ -84,7 +84,7 @@ export function ProficiencyLevelsView({
           {selectedSkills.map((skill, index) => (
             <React.Fragment key={skill}>
               <div className="flex flex-col gap-[12px]">
-                <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px]">
+                <h3 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px]">
                   {skill}
                 </h3>
                 <div className="flex flex-col">
@@ -97,7 +97,7 @@ export function ProficiencyLevelsView({
                         className="flex items-center gap-[6px] cursor-pointer group py-[10px]"
                       >
                         <CustomAnimatedRadioButton checked={isSelected} />
-                        <span className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] leading-[24px] text-[#2f2c32] tracking-[0.1px] transition-all`}>
+                        <span className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] leading-[24px] text-[var(--Text-Primary-heading-3)] tracking-[0.1px] transition-all`}>
                           {level}
                         </span>
                       </div>
@@ -115,7 +115,7 @@ export function ProficiencyLevelsView({
       </div>
 
       {/* Fixed Footer */}
-      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
+      <div className="absolute bottom-0 left-0 w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
         {/* Progress Bar */}
         <div className="w-full flex justify-center">
           <OfferProgressBar currentStep={2} subStepProgress={50} totalSteps={3} />
@@ -125,7 +125,7 @@ export function ProficiencyLevelsView({
         <div className="w-full flex items-center justify-between px-[16px]">
           <button
             onClick={onBack}
-            className="flex h-[48px] items-center justify-center px-[16px] py-[12px] font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] tracking-[0.16px] underline"
+            className="flex h-[48px] items-center justify-center px-[16px] py-[12px] font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.16px] underline"
           >
             Back
           </button>
@@ -133,8 +133,8 @@ export function ProficiencyLevelsView({
             onClick={() => isNextEnabled && onNext(proficiencies)}
             disabled={!isNextEnabled}
             className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
-              ? "bg-[#171519] text-[#fbf6ff]"
-              : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)]"
+              : "bg-[var(--Button-Primary-Surface-disabled)] text-[var(--Text-Primary-Disabled)] cursor-not-allowed"
               }`}
           >
             Next
@@ -144,7 +144,7 @@ export function ProficiencyLevelsView({
 
       {/* Home Indicator */}
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]" />
       </div>
 
       <SaveExitModal

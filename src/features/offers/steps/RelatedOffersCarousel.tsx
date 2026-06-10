@@ -229,7 +229,7 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-[#2f2c3242] backdrop-blur-[4px] z-[2000] flex items-center justify-center pointer-events-auto"
+          className="fixed inset-0 bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px] z-[2000] flex items-center justify-center pointer-events-auto"
         >
           <SkillbeekLoader size={92} />
         </motion.div>
@@ -284,12 +284,12 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
     <>
       {/* Latest Offers */}
       <div className="w-full flex flex-col gap-[16px] mb-[24px]">
-        <h2 className="font-['Nunito'] font-bold text-[18px] leading-[24px] text-[#171519]">
+        <h2 className="font-['Nunito'] font-bold text-[18px] leading-[24px] text-[var(--Text-Primary-heading-1)]">
           Latest offers with skill
         </h2>
         <div className="overflow-hidden -mx-4 relative">
           {!isCarouselAtEnd && (
-            <div className="absolute right-0 top-[16px] h-[520px] w-[48px] bg-gradient-to-l from-[#fbf6ff] via-[#fbf6ff]/80 to-transparent pointer-events-none z-[2]" />
+            <div className="absolute right-0 top-[16px] h-[520px] w-[48px] bg-gradient-to-l from-[var(--Surface-Primary-Background)] via-[var(--Surface-Primary-Background)]/80 to-transparent pointer-events-none z-[2]" />
           )}
 
           {/* Floating View all Button — uses tween transition to avoid spring re-trigger "dancing", but keeps whileTap bounce */}
@@ -315,9 +315,9 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
               style={{
                 pointerEvents: (!isScreenLoading && !selectedOfferId && showViewAll) ? "auto" : "none"
               }}
-              className="absolute top-1/2 right-0 inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[#2F2C32] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)]"
+              className="absolute top-1/2 right-0 inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)]"
             >
-              <span className="font-['Nunito'] font-bold text-[#FAF8FC] text-[16px] leading-[24px]">
+              <span className="font-['Nunito'] font-bold text-[var(--Button-UI-comp-sur-Text-primary)] text-[16px] leading-[24px]">
                 View all
               </span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FAF8FC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -345,15 +345,15 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
                 key={offer.id}
                 transition={{ layout: spring }}
                 whileHover={{ y: -3, scale: 1.015 }}
-                className="cursor-pointer flex flex-col justify-between items-start p-4 relative bg-[#faf7fe] rounded-[32px] shadow-[0px_12px_32px_0px_rgba(23,21,25,0.08)] shrink-0 w-[280px] h-[520px] select-none snap-center overflow-hidden"
+                className="cursor-pointer flex flex-col justify-between items-start p-4 relative bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[32px] shadow-[0px_12px_32px_0px_rgba(23,21,25,0.08)] shrink-0 w-[280px] h-[520px] select-none snap-center overflow-hidden"
               >
                 <header className="flex flex-col w-full items-start gap-3 bg-transparent relative flex-[0_0_auto]">
                   <div className="flex items-center justify-between self-stretch w-full relative flex-[0_0_auto]">
                     {offer.badge ? (
                       <div className={`inline-flex items-center gap-1.5 p-3 rounded-xl relative flex-[0_0_auto] ${
-                        offer.badge.type === 'hot' ? 'bg-[#fef6f5]' :
-                        offer.badge.type === 'closing' ? 'bg-[#fffbf2]' :
-                        'bg-[#f0f4ff]'
+                        offer.badge.type === 'hot' ? 'bg-[var(--Surface-Error-bg-surface)]' :
+                        offer.badge.type === 'closing' ? 'bg-[var(--Surface-Warning-bg-surface)]' :
+                        'bg-[var(--Surface-Information-bg-surface)]'
                       }`}>
                         <div className="relative w-6 h-6" aria-hidden="true">
                           {offer.badge.type === 'hot' && <FlameIcon className="w-full h-full" />}
@@ -361,9 +361,9 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
                           {offer.badge.type === 'new' && <CodeSparkleIcon />}
                         </div>
                         <div className={`relative w-fit font-['Nunito'] font-bold text-sm tracking-[1.00px] leading-5 whitespace-nowrap ${
-                          offer.badge.type === 'hot' ? 'text-[#870113]' :
-                          offer.badge.type === 'closing' ? 'text-[#b87d18]' :
-                          'text-[#133aa8]'
+                          offer.badge.type === 'hot' ? 'text-[var(--Text-Error-primary)]' :
+                          offer.badge.type === 'closing' ? 'text-[var(--Text-Primary-Text-brand)]' :
+                          'text-[var(--Text-Information-primary)]'
                         }`}>
                           {offer.badge.text}
                         </div>
@@ -376,8 +376,8 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
                   <div className="flex flex-col items-start gap-2 relative self-stretch w-full flex-[0_0_auto]">
                     {offer.time ? (
                       <div className="inline-flex items-center gap-1.5 relative flex-[0_0_auto]">
-                        <ClockIcon className="!relative !w-6 !h-6 text-[#656268] stroke-[2.5]" />
-                        <div className="relative flex items-center w-fit font-['Nunito'] font-semibold text-[#656268] text-sm tracking-[1px] leading-5 whitespace-nowrap">
+                        <ClockIcon className="!relative !w-6 !h-6 text-[var(--Text-Primary-Subtitle)] stroke-[2.5]" />
+                        <div className="relative flex items-center w-fit font-['Nunito'] font-semibold text-[var(--Text-Primary-Subtitle)] text-sm tracking-[1px] leading-5 whitespace-nowrap">
                           {offer.time}
                         </div>
                       </div>
@@ -388,7 +388,7 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
                       layoutId={`${layoutIdPrefix}-${offer.id}-title`}
                       layout="position"
                       transition={{ layout: spring }}
-                      className="[display:-webkit-box] items-center self-stretch tracking-normal overflow-hidden text-ellipsis [-webkit-line-clamp:3] [-webkit-box-orient:vertical] relative font-['Nunito'] font-bold text-[#171519] text-lg leading-[28px] h-[84px]"
+                      className="[display:-webkit-box] items-center self-stretch tracking-normal overflow-hidden text-ellipsis [-webkit-line-clamp:3] [-webkit-box-orient:vertical] relative font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-lg leading-[28px] h-[84px]"
                     >
                       {offer.title}
                     </motion.h1>
@@ -400,9 +400,9 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
                           (tag as any).hasBadge ? (
                             <div
                               key={tagIndex}
-                              className="gap-1.5 p-2 bg-[#f8efff] rounded-lg inline-flex items-center relative flex-[0_0_auto]"
+                              className="gap-1.5 p-2 bg-[var(--Surface-UI-surface-surface-variant)] rounded-lg inline-flex items-center relative flex-[0_0_auto]"
                             >
-                              <div className="relative font-['Nunito'] font-bold text-[#49464c] text-xs tracking-[1.10px] leading-4 whitespace-nowrap">
+                              <div className="relative font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-xs tracking-[1.10px] leading-4 whitespace-nowrap">
                                 {tag.label.length > 16 ? tag.label.substring(0, 16) + '...' : tag.label}
                               </div>
                               <BBadge size={16}>B</BBadge>
@@ -410,9 +410,9 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
                           ) : (
                             <div
                               key={tagIndex}
-                              className="inline-flex items-center justify-center gap-2.5 p-2 relative flex-[0_0_auto] bg-[#f8efff] rounded-lg"
+                              className="inline-flex items-center justify-center gap-2.5 p-2 relative flex-[0_0_auto] bg-[var(--Surface-UI-surface-surface-variant)] rounded-lg"
                             >
-                              <div className="relative w-fit font-['Nunito'] font-bold text-[#8c35be] text-xs tracking-[1.10px] leading-4 whitespace-nowrap">
+                              <div className="relative w-fit font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-xs tracking-[1.10px] leading-4 whitespace-nowrap">
                                 {tag.label.length > 16 ? tag.label.substring(0, 16) + '...' : tag.label}
                               </div>
                             </div>
@@ -421,7 +421,7 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
                       </div>
                       {offer.extraTagsCount > 0 && (
                         <div className="inline-flex items-center justify-center p-2 relative flex-[0_0_auto]">
-                          <span className="font-['Nunito'] font-bold text-[#656268] text-xs tracking-[0.16px] leading-6">
+                          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-xs tracking-[0.16px] leading-6">
                             +{offer.extraTagsCount}
                           </span>
                         </div>
@@ -454,10 +454,10 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
                       <div className="flex-col items-start justify-center gap-2 flex relative flex-1 grow min-w-0">
                         <div className="items-center gap-1.5 inline-flex relative flex-[0_0_auto]">
                           <div className="flex-col items-start gap-1 inline-flex relative flex-[0_0_auto]">
-                            <h2 className="relative flex items-end w-fit font-['Nunito'] font-bold text-[#171519] text-base tracking-[1.00px] leading-6 whitespace-nowrap">
+                            <h2 className="relative flex items-end w-fit font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-base tracking-[1.00px] leading-6 whitespace-nowrap">
                               {offer.profile.name}
                             </h2>
-                            <p className="relative w-fit font-['Nunito'] font-semibold text-[#656268] text-sm leading-5 tracking-[1px] whitespace-nowrap">
+                            <p className="relative w-fit font-['Nunito'] font-semibold text-[var(--Text-Primary-Subtitle)] text-sm leading-5 tracking-[1px] whitespace-nowrap">
                               {offer.profile.role}
                             </p>
                           </div>
@@ -465,14 +465,14 @@ export function RelatedOffersCarousel({ currentSkillName, hash = 0, layoutIdPref
                         <div className="flex items-center gap-1.5 relative self-stretch w-full flex-[0_0_auto]">
                           <div className="inline-flex items-center gap-1 relative flex-[0_0_auto]">
                             <div className="inline-flex items-center gap-1.5 relative flex-[0_0_auto]">
-                              <StarIcon className="relative w-4 h-4 text-[#b7812f]" />
+                              <StarIcon className="relative w-4 h-4 text-[var(--Text-Primary-Text-brand)]" />
                             </div>
-                            <div className="relative font-['Nunito'] font-bold text-[#656268] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
+                            <div className="relative font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
                               {offer.profile.rating.toFixed(1)}
                             </div>
                           </div>
-                          <div className="w-px h-3 relative bg-[#656268]/40" aria-hidden="true" />
-                          <span className="font-['Nunito'] font-bold text-[#8C35BE] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
+                          <div className="w-px h-3 relative bg-[var(--Text-Primary-Subtitle)]/40" aria-hidden="true" />
+                          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
                             {offer.profile.reviewsCount} reviews
                           </span>
                         </div>

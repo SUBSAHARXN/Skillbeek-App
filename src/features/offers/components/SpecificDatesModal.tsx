@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { BottomSheet } from "../../../components/ui/BottomSheet";
 import { CloseIcon } from "../../../components/common/Icons";
 
 export interface SpecificDatesModalProps {
@@ -9,12 +10,14 @@ export interface SpecificDatesModalProps {
   mode?: "single" | "range";
   initialRange?: { start: Date; end: Date } | null;
   disabledRanges?: { start: Date; end: Date }[];
+  isDateAllowed?: (date: Date) => boolean;
+  zIndex?: number;
 }
 
 const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DOW = ["S", "M", "T", "W", "T", "F", "S"];
 
-export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", initialRange, disabledRanges }: SpecificDatesModalProps) {
+export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", initialRange, disabledRanges, isDateAllowed, zIndex }: SpecificDatesModalProps) {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -34,8 +37,18 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
     return { today: t, maxDate: m };
   }, []);
 
+  const getMidnightMs = (d: Date | string | null) => {
+    if (!d) return 0;
+    const date = new Date(d);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  };
+
+  const sameDay = (a: Date | string | null, b: Date | string | null) => {
+    if (!a || !b) return false;
+    return getMidnightMs(a) === getMidnightMs(b);
+  };
+
   const toMs = (d: Date | null) => (d ? d.getTime() : null);
-  const sameDay = (a: Date | null, b: Date | null) => a && b && toMs(a) === toMs(b);
   const fmt = (d: Date | null) => (d ? `${MONTH_NAMES[d.getMonth()]} ${d.getDate()}` : "");
 
   // Calculate rendering range (4 months)
@@ -56,10 +69,13 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
     // Check built-in limits (today/90 days)
     if (msSel > (toMs(maxDate) || Infinity) || msSel < (toMs(today) || 0)) return;
     
+    // Check custom constraints
+    if (isDateAllowed && !isDateAllowed(sel)) return;
+
     // Check disabled ranges (already selected)
     const isAlreadySelected = disabledRanges?.some(range => {
-      const startMs = range.start.getTime();
-      const endMs = range.end.getTime();
+      const startMs = getMidnightMs(range.start);
+      const endMs = getMidnightMs(range.end);
       return msSel >= startMs && msSel <= endMs;
     });
     if (isAlreadySelected) return;
@@ -97,11 +113,11 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
     const ms = toMs(thisDate);
     if (ms === null) return { isDisabled: true, isStart: false, isEnd: false, isMid: false, isAlreadySelected: false };
 
-    const isOutOfRange = ms > (toMs(maxDate) || Infinity) || ms < (toMs(today) || 0);
+    const isOutOfRange = ms > (toMs(maxDate) || Infinity) || ms < (toMs(today) || 0) || (isDateAllowed && !isDateAllowed(thisDate));
     
     const isAlreadySelected = disabledRanges?.some(range => {
-      const startMs = range.start.getTime();
-      const endMs = range.end.getTime();
+      const startMs = getMidnightMs(range.start);
+      const endMs = getMidnightMs(range.end);
       return ms >= startMs && ms <= endMs;
     }) || false;
 
@@ -137,125 +153,110 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
   }
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 z-[140] bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
-          />
-
-          {/* Bottom Sheet */}
-          <motion.div
-            key="bottom-sheet"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-[150] bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)]"
-          >
-            <div className="w-full flex flex-col px-0">
-              {/* Drag Handle */}
-              <div className="w-full flex justify-center px-[16px]">
-                <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
-              </div>
-
-              {/* Header */}
-              <div className="w-full flex items-center justify-between px-[16px] mb-[16px]">
-                <div className="w-[48px]" />
-                <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
-                  Select Date
-                </h3>
-                <button
-                  onClick={onClose}
-                  className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors"
-                >
-                  <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
-                </button>
-              </div>
-
-              {/* Divider */}
-              <div className="w-full h-[1px] bg-[#e0dce3]" />
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Select Date"
+      zIndex={zIndex}
+      style={{}} // Ensure no maxHeight constraint if they want it to fit content
+    >
+      <div className="w-full flex flex-col px-0">
 
               {/* Date Feedback Label */}
               <div className="w-full flex items-center justify-center py-[12px] mb-[12px] min-h-[44px] border-b border-black/5">
-                <span className="font-['Nunito'] font-medium text-[#171519] text-[16px] leading-[24px]">
+                <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
                   {feedbackText}
                 </span>
               </div>
 
-              {/* Scroll Area */}
-              <div className="w-full max-h-[400px] overflow-y-auto px-0 modal-scrollbar relative">
-                {months.map(({ year, month }, idx) => {
-                  const firstDow = new Date(year, month, 1).getDay();
-                  const daysInMonth = new Date(year, month + 1, 0).getDate();
-                  const blanks = Array.from({ length: firstDow });
-                  const days = Array.from({ length: daysInMonth }).map((_, i) => i + 1);
+              {/* Scroll Area with Fade Overlays */}
+              <div className="relative w-full">
+                {/* Top Scroll Fade */}
+                <div className="absolute top-0 left-0 right-0 h-[32px] bg-gradient-to-b from-[var(--Surface-UI-surface-Background)] to-transparent pointer-events-none z-20" />
 
-                  return (
-                    <div key={idx} className="w-full flex flex-col items-center mb-[24px] px-[16px]">
-                      <h4 className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px] mb-[16px] uppercase">
-                        {MONTH_NAMES[month]} {year}
-                      </h4>
-                      
-                      {/* DOW Row */}
-                      <div className="w-full grid grid-cols-7 mb-[8px]">
-                        {DOW.map((n, i) => (
-                          <div key={`dow-${idx}-${i}`} className="flex items-center justify-center font-['Nunito'] font-bold text-[#171519] text-[14px] leading-[20px] tracking-[1px] h-[44px]">
-                            {n}
-                          </div>
-                        ))}
-                      </div>
+                {/* Scroll Area */}
+                <div className="w-full max-h-[400px] overflow-y-auto px-0 modal-scrollbar relative pt-[8px] pb-[8px]">
+                  {months.map(({ year, month }, idx) => {
+                    const firstDow = new Date(year, month, 1).getDay();
+                    const daysInMonth = new Date(year, month + 1, 0).getDate();
+                    const blanks = Array.from({ length: firstDow });
+                    const days = Array.from({ length: daysInMonth }).map((_, i) => i + 1);
 
-                      {/* Days Grid */}
-                      <div className="w-full grid grid-cols-7 gap-y-[0px]">
-                        {blanks.map((_, i) => <div key={`blank-${idx}-${i}`} className="h-[44px]" />)}
+                    return (
+                      <div key={idx} className="w-full flex flex-col items-center mb-[24px] px-[16px]">
+                        <h4 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] tracking-[0.1px] mb-[16px] uppercase">
+                          {MONTH_NAMES[month]} {year}
+                        </h4>
                         
-                        {days.map((day) => {
-                          const { isDisabled, isStart, isEnd, isMid, isAlreadySelected, isAlreadyStart, isAlreadyEnd, isAlreadyMid } = getDayClass(year, month, day);
-
-                          // Logic for text and inner circle
-                          let textClass = "text-[#171519]";
-                          let innerCircleClass = "bg-transparent";
-                          if (isDisabled && !isAlreadySelected) {
-                            textClass = "text-[#c0bcc3]";
-                          } else if (isStart || isEnd) {
-                            textClass = "text-[#f0edf4]";
-                            innerCircleClass = "bg-[#b7812f]";
-                          } else if (isAlreadySelected) {
-                            textClass = "text-[#171519]/50";
-                          }
-
-                          return (
-                            <div 
-                              key={`day-${idx}-${day}`} 
-                              className={`relative h-[44px] flex items-center justify-center ${isDisabled ? "cursor-default pointer-events-none" : "cursor-pointer"}`}
-                              onClick={() => handleDayClick(year, month, day)}
-                            >
-                              {/* Background for already selected range (previously saved) - solid rectangle fill */}
-                              {isAlreadySelected && <div className="absolute inset-y-0 w-full bg-[#b7812f]/10" />}
-
-                              {/* Background for active selection range */}
-                              {isMid && <div className="absolute inset-y-0 w-full bg-[#f4dcbf]" />}
-                              {isStart && !isEnd && (startDate && endDate) && <div className="absolute inset-y-0 right-0 w-[50%] bg-[#f4dcbf]" />}
-                              {isEnd && !isStart && (startDate && endDate) && <div className="absolute inset-y-0 left-0 w-[50%] bg-[#f4dcbf]" />}
-                              
-                              {/* Inner Circle and Text */}
-                              <div className={`relative z-10 w-[44px] h-[44px] rounded-full flex items-center justify-center font-['Nunito'] font-semibold text-[16px] leading-[24px] tracking-[0.1px] transition-colors duration-150 ${innerCircleClass} ${textClass} ${!isDisabled && !isStart && !isEnd ? "hover:bg-black/5" : ""}`}>
-                                {day}
-                              </div>
+                        {/* DOW Row */}
+                        <div className="w-full grid grid-cols-7 mb-[8px]">
+                          {DOW.map((n, i) => (
+                            <div key={`dow-${idx}-${i}`} className="flex items-center justify-center font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[14px] leading-[20px] tracking-[1px] h-[44px]">
+                              {n}
                             </div>
-                          );
-                        })}
+                          ))}
+                        </div>
+
+                        {/* Days Grid */}
+                        <div className="w-full grid grid-cols-7 gap-y-[0px]">
+                          {blanks.map((_, i) => <div key={`blank-${idx}-${i}`} className="h-[44px]" />)}
+                          
+                          {days.map((day) => {
+                            const { isDisabled, isStart, isEnd, isMid, isAlreadySelected, isAlreadyStart, isAlreadyEnd, isAlreadyMid } = getDayClass(year, month, day);
+
+                            const dow = (firstDow + day - 1) % 7;
+                            const isLeftEdge = dow === 0;
+                            const isRightEdge = dow === 6;
+
+                            // Logic for text and inner circle
+                            let textClass = "text-[var(--Text-Primary-heading-1)]";
+                            let innerCircleClass = "bg-transparent";
+                            if (isDisabled && !isAlreadySelected) {
+                              textClass = "text-[var(--Text-Primary-Caption-alt)]";
+                            } else if (isStart || isEnd) {
+                              textClass = "text-[var(--Text-Primary-Title-alt)]";
+                              innerCircleClass = "bg-[var(--Button-Primary-Surface-default)]";
+                            } else if (isAlreadySelected) {
+                              textClass = "text-[var(--Text-Primary-heading-1)]/50";
+                            }
+
+                            return (
+                              <div 
+                                key={`day-${idx}-${day}`} 
+                                className={`relative h-[44px] flex items-center justify-center ${isDisabled ? "cursor-default pointer-events-none" : "cursor-pointer"}`}
+                                onClick={() => handleDayClick(year, month, day)}
+                              >
+                                {/* Background for already selected range (previously saved) - solid rectangle fill with edge fades */}
+                                {isAlreadySelected && (
+                                  <div className={`absolute inset-y-0 w-full ${isLeftEdge ? 'bg-gradient-to-r from-transparent to-[var(--Text-Primary-Text-brand)]/10' : isRightEdge ? 'bg-gradient-to-r from-[var(--Text-Primary-Text-brand)]/10 to-transparent' : 'bg-[var(--Button-Primary-Surface-default)]/10'}`} />
+                                )}
+
+                                {/* Background for active selection range with edge fades */}
+                                {isMid && (
+                                  <div className={`absolute inset-y-0 w-full ${isLeftEdge ? 'bg-gradient-to-r from-transparent to-[var(--Surface-UI-surface-Surface-Universal-highlighter)]' : isRightEdge ? 'bg-gradient-to-r from-[var(--Surface-UI-surface-Surface-Universal-highlighter)] to-transparent' : 'bg-[var(--Surface-UI-surface-Surface-Universal-highlighter)]'}`} />
+                                )}
+                                {isStart && !isEnd && (startDate && endDate) && (
+                                  <div className={`absolute inset-y-0 right-0 w-[50%] ${isRightEdge ? 'bg-gradient-to-r from-[var(--Surface-UI-surface-Surface-Universal-highlighter)] to-transparent' : 'bg-[var(--Surface-UI-surface-Surface-Universal-highlighter)]'}`} />
+                                )}
+                                {isEnd && !isStart && (startDate && endDate) && (
+                                  <div className={`absolute inset-y-0 left-0 w-[50%] ${isLeftEdge ? 'bg-gradient-to-r from-transparent to-[var(--Surface-UI-surface-Surface-Universal-highlighter)]' : 'bg-[var(--Surface-UI-surface-Surface-Universal-highlighter)]'}`} />
+                                )}
+                                
+                                {/* Inner Circle and Text */}
+                                <div className={`relative z-10 w-[44px] h-[44px] rounded-full flex items-center justify-center font-['Nunito'] font-semibold text-[16px] leading-[24px] tracking-[0.1px] transition-colors duration-150 ${innerCircleClass} ${textClass} ${!isDisabled && !isStart && !isEnd ? "hover:bg-[var(--Surface-UI-surface-Surface-Universal-Hover)]" : ""}`}>
+                                  {day}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+
+                {/* Bottom Scroll Fade */}
+                <div className="absolute bottom-0 left-0 right-0 h-[32px] bg-gradient-to-t from-[var(--Surface-UI-surface-Background)] to-transparent pointer-events-none z-20" />
               </div>
 
               {/* Action Buttons */}
@@ -264,7 +265,7 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
                   onClick={clearAll}
                   className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
                 >
-                  <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] leading-[24px]">
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-placeholder)] text-[16px] leading-[24px]">
                     Clear all
                   </span>
                 </button>
@@ -276,7 +277,7 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
                     }
                   }}
                   className={`px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center transition-colors ${
-                    hasSelection ? "bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+                    hasSelection ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] cursor-pointer hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)]" : "bg-[var(--Button-Primary-Surface-disabled)] text-[var(--Text-Primary-Disabled)] cursor-not-allowed"
                   }`}
                 >
                   <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
@@ -285,9 +286,6 @@ export function SpecificDatesModal({ isOpen, onClose, onApply, mode = "range", i
                 </button>
               </div>
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+    </BottomSheet>
   );
 }

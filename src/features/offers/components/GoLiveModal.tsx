@@ -1,6 +1,7 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Lottie from "lottie-react";
+import { CenterModal } from "../../../components/ui/CenterModal";
+import { Button } from "../../../components/ui/Button";
 import lighthouseData from "../../../assets/animations/Light-house-4.json";
 
 interface GoLiveModalProps {
@@ -11,73 +12,56 @@ interface GoLiveModalProps {
 
 export function GoLiveModal({ isOpen, onClose, onViewLive }: GoLiveModalProps) {
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 z-[200] bg-[#2f2c32]/[0.26] backdrop-blur-[4px]"
-          />
+    <CenterModal
+      isOpen={isOpen}
+      onClose={onClose}
+      zIndex={200}
+      className="bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden"
+    >
+      {/* Lottie Animation Container with Bleeding Gradient */}
+      <div 
+        className="w-[112px] h-[112px] flex items-center justify-center mb-[24px] relative"
+        style={{
+          maskImage: 'radial-gradient(circle, black 30%, transparent 70%)',
+          WebkitMaskImage: 'radial-gradient(circle, black 30%, transparent 70%)'
+        }}
+      >
+        <Lottie
+          animationData={lighthouseData}
+          loop={true}
+          style={{ width: 112, height: 112 }}
+        />
+      </div>
 
-          {/* Modal Container */}
-          <div className="absolute inset-0 z-[210] flex items-center justify-center p-[16px] pointer-events-none">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="w-full max-w-[352px] bg-[#fbf6ff] rounded-[32px] overflow-hidden flex flex-col items-center p-[24px] pointer-events-auto shadow-[0px_10px_30px_rgba(0,0,0,0.1)]"
-            >
-              {/* Lottie Animation Container with Bleeding Gradient */}
-              <div 
-                className="w-[112px] h-[112px] flex items-center justify-center mb-[24px] relative"
-                style={{
-                  maskImage: 'radial-gradient(circle, black 30%, transparent 70%)',
-                  WebkitMaskImage: 'radial-gradient(circle, black 30%, transparent 70%)'
-                }}
-              >
-                <Lottie
-                  animationData={lighthouseData}
-                  loop={true}
-                  style={{ width: 112, height: 112 }}
-                />
-              </div>
+      {/* Text Content */}
+      <div className="w-full flex flex-col gap-[12px] mb-[40px] text-center px-[8px]">
+        <h2 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[32px] tracking-[-0.7px]">
+          You're live!
+        </h2>
+        <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
+          Your offer is officially published and visible to the community. Partners can now start booking sessions with you.
+        </p>
+      </div>
 
-              {/* Text Content */}
-              <div className="w-full flex flex-col gap-[12px] mb-[40px] text-center px-[8px]">
-                <h2 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[32px] tracking-[-0.7px]">
-                  You're live!
-                </h2>
-                <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
-                  Your offer is officially published and visible to the community. Partners can now start booking sessions with you.
-                </p>
-              </div>
-
-              {/* Actions */}
-              <div className="w-full flex items-center gap-[16px]">
-                <button
-                  onClick={onViewLive}
-                  className="flex-1 h-[48px] flex items-center justify-center font-['Nunito'] font-bold text-[#737076] text-[16px] hover:bg-[#f0edf4] rounded-[16px] transition-colors"
-                >
-                  View Live Page
-                </button>
-                <button
-                  onClick={onClose}
-                  className="flex-1 h-[48px] bg-[#b85f38] hover:bg-[#a15331] rounded-[16px] flex items-center justify-center transition-colors shadow-[0px_4px_12px_rgba(184,95,56,0.25)]"
-                >
-                  <span className="font-['Nunito'] font-bold text-[#fef6f5] text-[16px]">
-                    Continue
-                  </span>
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        </>
-      )}
-    </AnimatePresence>
+      {/* Actions */}
+      <div className="w-full flex items-center gap-[16px]">
+        <Button
+          variant="ghost"
+          onClick={onViewLive}
+          className="flex-1 no-underline text-[var(--Text-Primary-Caption)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] hover:no-underline rounded-[16px] whitespace-nowrap"
+        >
+          View Live Page
+        </Button>
+        <Button
+          variant="primary"
+          onClick={onClose}
+          className="flex-1 bg-[var(--Surface-Warning-icon-bg-surface)] hover:bg-[var(--Surface-Warning-icon-bg-surface)] rounded-[16px] shadow-[0px_4px_12px_rgba(184,95,56,0.25)] border-0 whitespace-nowrap"
+        >
+          <span className="text-[var(--Text-Error-Text-default)]">
+            Continue
+          </span>
+        </Button>
+      </div>
+    </CenterModal>
   );
 }

@@ -11,7 +11,7 @@ export const SkillbeekSingleStar = ({
   rating = 0, 
   className = "", 
   iconClassName = "w-[24px] h-[24px]",
-  textClassName = "font-['Nunito'] font-bold text-[#171519] text-[14px] leading-[20px] tracking-[1px]"
+  textClassName = "font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[14px] leading-[20px] tracking-[1px]"
 }: SkillbeekSingleStarProps) => {
   // 1. Calculate the percentage (e.g., 4.2 out of 5.0 = 84%)
   // Math.min/max ensures the value never breaks outside of 0-100%

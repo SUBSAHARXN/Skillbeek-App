@@ -14,12 +14,12 @@ export function FakeKeyboard({ className, isVisible }: FakeKeyboardProps) {
       animate={{ y: isVisible ? 0 : "100%" }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
       className={cn(
-        "absolute bottom-0 left-0 right-0 h-[288px] bg-[#f8efff] rounded-t-[16px] shadow-lg flex flex-col z-50",
+        "absolute bottom-0 left-0 right-0 h-[288px] bg-[var(--Surface-UI-surface-surface-variant)] rounded-t-[16px] shadow-lg flex flex-col z-50",
         className
       )}
     >
       {/* Keyboard Toolbar layer (mocked) */}
-      <div className="flex items-center justify-between px-4 pt-2 pb-1 bg-[#f8efff] h-[40px] rounded-t-[16px]">
+      <div className="flex items-center justify-between px-4 pt-2 pb-1 bg-[var(--Surface-UI-surface-surface-variant)] h-[40px] rounded-t-[16px]">
         {/* Mocked toolbar icons */}
         <div className="flex gap-4">
           <div className="w-5 h-5 bg-gray-300 rounded-sm opacity-50"></div>
@@ -38,7 +38,7 @@ export function FakeKeyboard({ className, isVisible }: FakeKeyboardProps) {
           {["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"].map((key) => (
             <div
               key={key}
-              className="flex-1 h-[40px] bg-[#fbf6ff] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-['Nunito'] text-[20px] text-[#171519] pb-1"
+              className="flex-1 h-[40px] bg-[var(--Surface-Primary-Background)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-['Nunito'] text-[20px] text-[var(--Text-Primary-heading-1)] pb-1"
             >
               {key}
             </div>
@@ -50,7 +50,7 @@ export function FakeKeyboard({ className, isVisible }: FakeKeyboardProps) {
           {["a", "s", "d", "f", "g", "h", "j", "k", "l"].map((key) => (
             <div
               key={key}
-              className="flex-1 h-[40px] bg-[#fbf6ff] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-['Nunito'] text-[20px] text-[#171519] pb-1"
+              className="flex-1 h-[40px] bg-[var(--Surface-Primary-Background)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-['Nunito'] text-[20px] text-[var(--Text-Primary-heading-1)] pb-1"
             >
               {key}
             </div>
@@ -59,19 +59,19 @@ export function FakeKeyboard({ className, isVisible }: FakeKeyboardProps) {
 
         {/* Row 3 */}
         <div className="flex justify-center gap-[4px] px-[2px]">
-          <div className="w-[36px] h-[40px] bg-[#d5a0fa] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center">
+          <div className="w-[36px] h-[40px] bg-[var(--Button-UI-comp-sur-Stroke-Stroke)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center">
             {/* Shift icon mock */}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2"><path d="M12 2v20M12 2l-7 7m7-7l7 7"/></svg>
           </div>
           {["z", "x", "c", "v", "b", "n", "m"].map((key) => (
             <div
               key={key}
-              className="flex-1 max-w-[36px] h-[40px] bg-[#fbf6ff] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-['Nunito'] text-[20px] text-[#171519] pb-1"
+              className="flex-1 max-w-[36px] h-[40px] bg-[var(--Surface-Primary-Background)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-['Nunito'] text-[20px] text-[var(--Text-Primary-heading-1)] pb-1"
             >
               {key}
             </div>
           ))}
-          <div className="w-[48px] h-[40px] bg-[#d5a0fa] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center">
+          <div className="w-[48px] h-[40px] bg-[var(--Button-UI-comp-sur-Stroke-Stroke)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center">
             {/* Delete icon mock */}
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM18 9l-6 6M12 9l6 6"/></svg>
           </div>
@@ -79,22 +79,22 @@ export function FakeKeyboard({ className, isVisible }: FakeKeyboardProps) {
 
         {/* Row 4 */}
         <div className="flex justify-center gap-[4px] px-[2px]">
-          <div className="w-[52px] h-[40px] bg-[#d5a0fa] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-['Nunito'] font-bold text-[14px]">
+          <div className="w-[52px] h-[40px] bg-[var(--Button-UI-comp-sur-Stroke-Stroke)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-['Nunito'] font-bold text-[14px]">
             ?123
           </div>
-          <div className="w-[32px] h-[40px] bg-[#d5a0fa] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center">
+          <div className="w-[32px] h-[40px] bg-[var(--Button-UI-comp-sur-Stroke-Stroke)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center">
              @
           </div>
-          <div className="w-[32px] h-[40px] bg-[#fbf6ff] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center text-[18px]">
+          <div className="w-[32px] h-[40px] bg-[var(--Surface-Primary-Background)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center text-[18px]">
              ☺
           </div>
-          <div className="flex-1 w-[148px] h-[40px] bg-[#fbf6ff] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)]">
+          <div className="flex-1 w-[148px] h-[40px] bg-[var(--Surface-Primary-Background)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)]">
              {/* Spacebar */}
           </div>
-          <div className="w-[32px] h-[40px] bg-[#d5a0fa] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-bold text-[16px] pb-1">
+          <div className="w-[32px] h-[40px] bg-[var(--Button-UI-comp-sur-Stroke-Stroke)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center font-bold text-[16px] pb-1">
              .
           </div>
-          <div className="w-[52px] h-[40px] bg-[#8c35be] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center">
+          <div className="w-[52px] h-[40px] bg-[var(--Text-Primary-Text-brandPrimary)] rounded-[6px] shadow-[0px_1px_0px_0px_rgba(56,12,81,0.25)] flex items-center justify-center">
              {/* Enter icon mock (white) */}
              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M9 10l-5 5 5 5M4 15h11a4 4 0 0 0 4-4V4"/></svg>
           </div>
@@ -102,7 +102,7 @@ export function FakeKeyboard({ className, isVisible }: FakeKeyboardProps) {
       </div>
       
       {/* Dragger / Handle */}
-      <div className="absolute bottom-[5px] left-1/2 -translate-x-1/2 w-[120px] h-[3px] bg-[#d5a0fa] rounded-full"></div>
+      <div className="absolute bottom-[5px] left-1/2 -translate-x-1/2 w-[120px] h-[3px] bg-[var(--Button-UI-comp-sur-Stroke-Stroke)] rounded-full"></div>
     </motion.div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { CloseIcon } from "../../../components/common/Icons";
+import { BottomSheet } from "../../../components/ui/BottomSheet";
+import { Button } from "../../../components/ui/Button";
 
 interface TimePickerModalProps {
   isOpen: boolean;
@@ -9,6 +9,7 @@ interface TimePickerModalProps {
   mode?: "single" | "range";
   initialStartTime?: string;
   initialEndTime?: string;
+  zIndex?: number;
 }
 
 const HOURS = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
@@ -16,7 +17,7 @@ const MINUTES = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0
 const PERIODS = ["AM", "PM"];
 const ITEM_HEIGHT = 44;
 
-export function TimePickerModal({ isOpen, onClose, onApply, mode = "range", initialStartTime, initialEndTime }: TimePickerModalProps) {
+export function TimePickerModal({ isOpen, onClose, onApply, mode = "range", initialStartTime, initialEndTime, zIndex }: TimePickerModalProps) {
   const [step, setStep] = useState<"start" | "end">("start");
   
   const parseTime = (timeStr?: string, defaultTime = { h: "9", m: "00", p: "AM" }) => {
@@ -129,7 +130,7 @@ export function TimePickerModal({ isOpen, onClose, onApply, mode = "range", init
           >
             <span
               className={`picker-label font-['Nunito'] font-bold text-[24px] tracking-[-0.7px] transition-colors block will-change-transform ${
-                val === currentVal ? "text-[#171519]" : "text-[#a09da3]"
+                val === currentVal ? "text-[var(--Text-Primary-heading-1)]" : "text-[var(--Text-Primary-Text-placeholder)]"
               }`}
             >
               {val}
@@ -141,123 +142,110 @@ export function TimePickerModal({ isOpen, onClose, onApply, mode = "range", init
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 z-[140] bg-[#2f2c32]/[0.26] backdrop-blur-[4px] rounded-[32px]"
-          />
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-[150] bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col items-center shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] select-none"
+    <BottomSheet 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={mode === "single" ? "Set time" : step === "start" ? "Set start time" : "Set end time"}
+      zIndex={zIndex}
+    >
+      <div className="w-full flex flex-col items-center">
+        {/* Subtitle */}
+        {mode !== "single" && (
+          <div className="px-[16px] w-full text-left mb-[16px]">
+            <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
+              Set the specific hours you are available to swap.
+            </p>
+          </div>
+        )}
+
+        {/* Breadcrumb for end time */}
+        {step === "end" && (
+          <div 
+            className="w-full flex items-center justify-center mb-[16px] cursor-pointer hover:opacity-70 transition-opacity"
+            onClick={() => setStep("start")}
           >
-            <div className="w-full flex flex-col items-center">
-              {/* Drag Handle */}
-              <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
+            <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-Text-brand)] text-[24px] leading-[32px] tracking-[-0.7px]">
+              {startTime.h}:{startTime.m} {startTime.p} -
+            </span>
+          </div>
+        )}
 
-              {/* Header */}
-              <div className="w-full flex items-center justify-between px-[16px] mb-[16px]">
-                <div className="w-[48px]" />
-                <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
-                  {mode === "single" ? "Set time" : step === "start" ? "Set start time" : "Set end time"}
-                </h3>
-                <button
-                  onClick={onClose}
-                  className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors"
-                >
-                  <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
-                </button>
-              </div>
+        {/* Picker Wheels */}
+        <div 
+          className="relative w-full h-[220px] transition-all duration-300"
+          style={{
+            WebkitMaskImage: "linear-gradient(to bottom, transparent, black 30%, black 70%, transparent)",
+            maskImage: "linear-gradient(to bottom, transparent, black 30%, black 70%, transparent)"
+          }}
+        >
+          {/* Highlight Background */}
+          <div 
+            className="absolute left-[32px] right-[32px] bg-[var(--Surface-UI-surface-Surface-Universal-Hover)] rounded-[12px] pointer-events-none z-0"
+            style={{ top: ITEM_HEIGHT * 2, height: ITEM_HEIGHT }}
+          />
 
-              {/* Divider */}
-              <div className="w-full h-[1px] bg-[#e0dce3] mb-[16px]" />
+          <div className="flex w-full h-full relative z-10 px-[16px] gap-[16px]">
+            {renderColumn("h", HOURS, hourRef)}
+            {renderColumn("m", MINUTES, minRef)}
+            {renderColumn("p", PERIODS, perRef)}
+          </div>
+        </div>
 
-              {/* Subtitle */}
-              {mode !== "single" && (
-                <div className="px-[16px] w-full text-left mb-[16px]">
-                  <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
-                    Set the specific hours you are available to swap.
-                  </p>
-                </div>
-              )}
+        {/* Action Buttons */}
+        <div className="w-full flex items-center justify-between px-[16px] mt-[24px]">
+          <Button 
+            variant="ghost" 
+            onClick={() => {
+              if (step === "end") setStep("start");
+              else onClose();
+            }}
+          >
+            {step === "end" ? "Back" : "Cancel"}
+          </Button>
+          <Button 
+            variant="primary"
+            className="min-w-[101px]"
+            onClick={() => {
+              if (mode === "single") {
+                onApply(`${startTime.h}:${startTime.m} ${startTime.p}`, "");
+              } else {
+                if (step === "start") {
+                  // Set end time to 1 minute after start time
+                  let hour = parseInt(startTime.h, 10);
+                  let min = parseInt(startTime.m, 10);
+                  let period = startTime.p;
 
-              {/* Breadcrumb for end time */}
-              {step === "end" && (
-                <div 
-                  className="w-full flex items-center justify-center mb-[16px] cursor-pointer hover:opacity-70 transition-opacity"
-                  onClick={() => setStep("start")}
-                >
-                  <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[24px] leading-[32px] tracking-[-0.7px]">
-                    {startTime.h}:{startTime.m} {startTime.p} -
-                  </span>
-                </div>
-              )}
-
-              {/* Picker Wheels */}
-              <div 
-                className="relative w-full h-[220px] transition-all duration-300"
-                style={{
-                  WebkitMaskImage: "linear-gradient(to bottom, transparent, black 30%, black 70%, transparent)",
-                  maskImage: "linear-gradient(to bottom, transparent, black 30%, black 70%, transparent)"
-                }}
-              >
-                {/* Highlight Background */}
-                <div 
-                  className="absolute left-[32px] right-[32px] bg-[#e0dce3] rounded-[12px] pointer-events-none z-0"
-                  style={{ top: ITEM_HEIGHT * 2, height: ITEM_HEIGHT }}
-                />
-
-                <div className="flex w-full h-full relative z-10 px-[16px] gap-[16px]">
-                  {renderColumn("h", HOURS, hourRef)}
-                  {renderColumn("m", MINUTES, minRef)}
-                  {renderColumn("p", PERIODS, perRef)}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="w-full flex items-center justify-between px-[16px] mt-[24px]">
-                <button 
-                  onClick={() => {
-                    if (step === "end") setStep("start");
-                    else onClose();
-                  }}
-                  className="px-[16px] py-[12px] h-[48px] flex items-center justify-center"
-                >
-                  <span className="font-['Nunito'] font-bold text-[#a09da3] text-[16px] underline leading-[24px]">
-                    Cancel
-                  </span>
-                </button>
-                <button 
-                  onClick={() => {
-                    if (mode === "single") {
-                      const s = `${startTime.h}:${startTime.m} ${startTime.p}`;
-                      onApply(s, s);
-                    } else if (step === "start") {
-                      setStep("end");
-                    } else {
-                      const s = `${startTime.h}:${startTime.m} ${startTime.p}`;
-                      const e = `${endTime.h}:${endTime.m} ${endTime.p}`;
-                      onApply(s, e);
+                  min += 1;
+                  if (min >= 60) {
+                    min -= 60;
+                    hour += 1;
+                    if (hour === 12) {
+                      period = period === "AM" ? "PM" : "AM";
+                    } else if (hour > 12) {
+                      hour = 1;
                     }
-                  }}
-                  className="px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] flex items-center justify-center bg-[#171519] text-[#fbf6ff] shadow-[0px_1px_3px_rgba(18,9,0,0.1)] hover:bg-[#2f2c32] transition-colors"
-                >
-                  <span className="font-['Nunito'] font-bold text-[16px] leading-[24px]">
-                    {mode === "single" ? "Apply" : step === "start" ? "Set end time" : "Apply"}
-                  </span>
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+                  }
+                  
+                  setEndTime({
+                    h: hour.toString(),
+                    m: min.toString().padStart(2, "0"),
+                    p: period
+                  });
+                  
+                  setStep("end");
+                } else {
+                  onApply(
+                    `${startTime.h}:${startTime.m} ${startTime.p}`,
+                    `${endTime.h}:${endTime.m} ${endTime.p}`
+                  );
+                }
+              }
+            }}
+          >
+            {mode === "single" || step === "end" ? "Apply" : "Set end time"}
+          </Button>
+        </div>
+      </div>
+    </BottomSheet>
   );
 }

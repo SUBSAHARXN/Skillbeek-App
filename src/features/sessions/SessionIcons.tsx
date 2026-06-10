@@ -130,7 +130,7 @@ export const InPersonIcon = () => (
   </svg>
 );
 
-export const CustomLinkIcon = ({ stroke = "var(--stroke-inverse, #171519)" }: { stroke?: string }) => (
+export const CustomLinkIcon = ({ stroke = "#171519" }: { stroke?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
     <path d="M10.5 7.13596L13.3181 4.32346C14.1644 3.4909 15.3053 3.02645 16.4924 3.03129C17.6795 3.03612 18.8166 3.50984 19.6561 4.34927C20.4955 5.18869 20.9692 6.32581 20.974 7.51293C20.9789 8.70004 20.5144 9.84098 19.6819 10.6872L16.8638 13.5006" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M7.13596 10.5L4.32346 13.3181C3.4909 14.1644 3.02645 15.3053 3.03129 16.4924C3.03612 17.6795 3.50984 18.8166 4.34927 19.6561C5.18869 20.4955 6.32581 20.9692 7.51293 20.974C8.70004 20.9789 9.84098 20.5144 10.6872 19.6819L13.5006 16.8638" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

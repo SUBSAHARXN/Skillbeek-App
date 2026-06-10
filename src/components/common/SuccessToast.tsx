@@ -11,6 +11,7 @@ interface SuccessToastProps {
   iconBg?: string;
   bgColor?: string;
   borderColor?: string;
+  className?: string;
 }
 
 const CheckIcon = ({ className }: { className?: string }) => (
@@ -39,7 +40,8 @@ export function SuccessToast({
   customIcon,
   iconBg,
   bgColor,
-  borderColor
+  borderColor,
+  className
 }: SuccessToastProps) {
   React.useEffect(() => {
     if (isVisible) {
@@ -58,7 +60,7 @@ export function SuccessToast({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 350 }}
-          className="absolute bottom-[80px] left-[16px] right-[16px] z-[300] pointer-events-auto"
+          className={className || "absolute bottom-[80px] left-[16px] w-[calc(100%-32px)] z-[300] pointer-events-auto"}
         >
           <div 
             className="w-full h-[72px] rounded-[16px] border shadow-[0px_10px_30px_rgba(0,0,0,0.08)] flex items-center justify-between px-[16px]"
@@ -69,12 +71,12 @@ export function SuccessToast({
           >
             <div className="flex items-center gap-[12px]">
               <div 
-                className="w-[44px] h-[44px] rounded-full flex items-center justify-center text-white shrink-0"
+                className="w-[44px] h-[44px] rounded-full flex items-center justify-center text-[var(--Text-Primary-Title-alt)] shrink-0"
                 style={{ backgroundColor: iconBg || "#349024" }}
               >
                 {customIcon || <CheckIcon className="w-[24px] h-[24px]" />}
               </div>
-              <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px]">
+              <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
                 {message}
               </span>
             </div>
@@ -82,7 +84,7 @@ export function SuccessToast({
             {onAction && (
               <button
                 onClick={onAction}
-                className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] underline hover:opacity-70 transition-opacity px-[8px] whitespace-nowrap"
+                className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] underline hover:opacity-70 transition-opacity px-[8px] whitespace-nowrap"
               >
                 {actionLabel}
               </button>

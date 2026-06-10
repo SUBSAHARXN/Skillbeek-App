@@ -130,10 +130,10 @@ export function OTPInputView({ email, selectedMethod, mode = "login", onBack, on
   const formattedTime = `00:${countdown.toString().padStart(2, '0')}`;
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Top Status Bar Placeholder (mocked) */}
       <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]"></div>
       </div>
 
       {/* Main Content Area */}
@@ -149,10 +149,10 @@ export function OTPInputView({ email, selectedMethod, mode = "login", onBack, on
 
         {/* Text Headers */}
         <div className="w-full flex flex-col items-start gap-[12px] mb-[44px]">
-          <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[32px] tracking-[0px]">
+          <h1 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[32px] tracking-[0px]">
             Enter Your security Code
           </h1>
-          <p className="font-['Nunito'] font-medium text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+          <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] tracking-[0.1px]">
             {getDescription()}
           </p>
         </div>
@@ -172,11 +172,11 @@ export function OTPInputView({ email, selectedMethod, mode = "login", onBack, on
                 value={digit}
                 onChange={(e) => handleInputChange(index, e.target.value.replace(/[^0-9]/g, ''))}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className={`w-[44px] h-[48px] bg-[#faf7fe] rounded-[8px] flex items-center justify-center text-center font-['Nunito'] font-semibold text-[28px] focus:outline-none transition-all duration-200 ${hasError
-                    ? "border-[1.5px] border-[#870113] text-[#870113] focus:ring-2 focus:ring-[#870113] shadow-skillbeek-xs"
+                className={`w-[44px] h-[48px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[8px] flex items-center justify-center text-center font-['Nunito'] font-semibold text-[28px] focus:outline-none transition-all duration-200 ${hasError
+                    ? "border-[1.5px] border-[var(--Button-Error-Stroke-error)] text-[var(--Text-Error-primary)] focus:ring-2 focus:ring-[var(--Text-Error-primary)] shadow-skillbeek-xs"
                     : successIndex !== null && index <= successIndex
-                    ? "border-[1.5px] border-[#349024] text-[#171519] ring-2 ring-[#349024] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-xs"
-                    : "border-none text-[#171519] shadow-skillbeek-xs focus:ring-2 focus:ring-[#b7812f]"
+                    ? "border-[1.5px] border-[var(--Surface-Success-icon-bg-surface)] text-[var(--Text-Primary-heading-1)] ring-2 ring-[var(--Surface-Success-icon-bg-surface)] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-xs"
+                    : "border-none text-[var(--Text-Primary-heading-1)] shadow-skillbeek-xs focus:ring-2 focus:ring-[var(--Text-Primary-Text-brand)]"
                   }`}
               />
             ))}
@@ -192,7 +192,7 @@ export function OTPInputView({ email, selectedMethod, mode = "login", onBack, on
               >
                 <div className="w-full max-w-[352px] flex items-start gap-[6px]">
                   <ErrorIcon className="w-[14px] h-[14px] shrink-0 mt-[3px]" />
-                  <span className="font-['Nunito'] font-medium text-[#870113] text-[12px] leading-[20px] tracking-[0.5px]">
+                  <span className="font-['Nunito'] font-medium text-[var(--Text-Error-primary)] text-[12px] leading-[20px] tracking-[0.5px]">
                     {errorMsg}
                   </span>
                 </div>
@@ -207,7 +207,7 @@ export function OTPInputView({ email, selectedMethod, mode = "login", onBack, on
             <button
               type="button"
               onClick={handleContinue}
-              className="w-full max-w-[352px] h-[48px] rounded-[16px] flex items-center justify-center font-['Nunito'] font-bold text-[16px] transition-all duration-300 bg-[#171519] text-[#fbf6ff] shadow-skillbeek-sm hover:bg-[#2f2c32]"
+              className="w-full max-w-[352px] h-[48px] rounded-[16px] flex items-center justify-center font-['Nunito'] font-bold text-[16px] transition-all duration-300 bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] shadow-skillbeek-sm hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)]"
             >
               Verify
             </button>
@@ -217,13 +217,13 @@ export function OTPInputView({ email, selectedMethod, mode = "login", onBack, on
         {/* Resend Code / Timer */}
         <div className="flex flex-col gap-[16px] items-start w-full">
           {countdown > 0 ? (
-            <p className="font-['Nunito'] font-medium text-[#171519] text-[16px] tracking-[0.1px]">
+            <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-heading-1)] text-[16px] tracking-[0.1px]">
               Resend Code in <span className="font-bold">{formattedTime}</span>
             </p>
           ) : (
             <button
               onClick={() => setCountdown(15)}
-              className="font-['Nunito'] font-bold text-[#171519] text-[16px] underline hover:text-[#b7812f] transition-colors"
+              className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] underline hover:text-[var(--Text-Primary-Text-brand)] transition-colors"
             >
               Resend Code
             </button>
@@ -233,7 +233,7 @@ export function OTPInputView({ email, selectedMethod, mode = "login", onBack, on
             onClick={onMoreOptions}
             className="flex items-center justify-center group"
           >
-            <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] tracking-[0.16px] underline group-hover:text-[#b7812f] transition-colors">
+            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] tracking-[0.16px] underline group-hover:text-[var(--Text-Primary-Text-brand)] transition-colors">
               More Options
             </span>
           </button>
@@ -242,7 +242,7 @@ export function OTPInputView({ email, selectedMethod, mode = "login", onBack, on
 
       {/* Bottom Home Indicator */}
       <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px]">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]"></div>
       </div>
 
       {/* Cancel Authentication Modal — the open state IS the animation trigger */}

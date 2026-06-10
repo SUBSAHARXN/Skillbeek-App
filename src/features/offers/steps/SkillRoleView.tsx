@@ -3,6 +3,7 @@ import { OfferProgressBar } from "../components/OfferProgressBar";
 import { SaveExitModal } from "../components/SaveExitModal";
 import { CustomAnimatedRadioButton } from "../../../components/common/CustomAnimatedRadioButton";
 import { NeumorphicDivider } from "../../../components/common/NeumorphicDivider";
+import { Button } from "../../../components/ui/Button";
 
 interface SkillRoleViewProps {
   selectedSkills: string[];
@@ -25,37 +26,30 @@ export function SkillRoleView({ selectedSkills, onBack, onNext }: SkillRoleViewP
   const isNextEnabled = selectedSkills.every((skill) => roles[skill] !== "");
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Status Bar */}
-      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[#fbf6ff]">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
+      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[var(--Surface-Primary-Background)]">
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]" />
       </div>
 
       {/* Header Action Buttons (Fixed at Top) */}
-      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
-        <button
-          onClick={() => setIsSaveModalOpen(true)}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
-        >
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-            Save and Exit
-          </span>
-        </button>
-        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
-            Questions?
-          </span>
-        </button>
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[var(--Surface-Primary-Background)] z-20">
+        <Button variant="outline" size="sm" onClick={() => setIsSaveModalOpen(true)}>
+          Save and Exit
+        </Button>
+        <Button variant="outline" size="sm">
+          Questions?
+        </Button>
       </div>
 
       <div className="flex-1 overflow-y-auto w-full flex flex-col relative pt-[0px] availability-scrollbar">
 
         {/* Page Header */}
         <div className="w-full px-[16px] flex flex-col gap-[12px] mb-[32px]">
-          <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
+          <h1 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[36px] tracking-[-1.2px]">
             How will you share this skill
           </h1>
-          <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
+          <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
             Choose the role you want to take on during the session. This sets clear expectations for whoever books with you.
           </p>
         </div>
@@ -65,7 +59,7 @@ export function SkillRoleView({ selectedSkills, onBack, onNext }: SkillRoleViewP
           {selectedSkills.map((skill, index) => (
             <React.Fragment key={skill}>
               <div className="flex flex-col gap-[12px]">
-                <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px]">
+                <h3 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px]">
                   {skill}
                 </h3>
                 <div className="flex flex-col">
@@ -79,7 +73,7 @@ export function SkillRoleView({ selectedSkills, onBack, onNext }: SkillRoleViewP
                       >
                         <CustomAnimatedRadioButton checked={isSelected} />
                         <span
-                          className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] leading-[24px] text-[#2f2c32] tracking-[0.1px] transition-all`}
+                          className={`font-['Nunito'] ${isSelected ? "font-bold" : "font-semibold"} text-[16px] leading-[24px] text-[var(--Text-Primary-heading-3)] tracking-[0.1px] transition-all`}
                         >
                           {role}
                         </span>
@@ -98,7 +92,7 @@ export function SkillRoleView({ selectedSkills, onBack, onNext }: SkillRoleViewP
       </div>
 
       {/* Fixed Footer */}
-      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
+      <div className="absolute bottom-0 left-0 w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
         {/* Progress Bar */}
         <div className="w-full flex justify-center">
           <OfferProgressBar currentStep={2} subStepProgress={50} />
@@ -106,28 +100,23 @@ export function SkillRoleView({ selectedSkills, onBack, onNext }: SkillRoleViewP
 
         {/* Buttons */}
         <div className="w-full flex items-center justify-between px-[16px]">
-          <button
-            onClick={onBack}
-            className="flex h-[48px] items-center justify-center px-[16px] py-[12px] font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] tracking-[0.16px] underline"
-          >
+          <Button variant="ghost" onClick={onBack}>
             Back
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="primary"
+            className="w-[101px]"
             onClick={() => isNextEnabled && onNext(roles)}
             disabled={!isNextEnabled}
-            className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
-                ? "bg-[#171519] text-[#fbf6ff]"
-                : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
-              }`}
           >
             Next
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Home Indicator */}
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]" />
       </div>
 
       <SaveExitModal

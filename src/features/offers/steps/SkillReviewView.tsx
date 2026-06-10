@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import { OfferProgressBar } from "../components/OfferProgressBar";
 import { CustomAnimatedCheckbox } from "../../../components/common/CustomAnimatedCheckbox";
 import { SaveExitModal } from "../components/SaveExitModal";
-import { CloseIcon, GripIcon, InfoIcon, PlusIcon } from "../../../components/common/Icons";
+import { CloseIcon, GripIcon, PlusIcon } from "../../../components/common/Icons";
 import { ProficiencyTag } from "../../../components/common/ProficiencyTag";
+import { InfoIconButton } from "../../../components/common/InfoIconButton";
+import { GlobalAddTagsModal } from "../components/GlobalAddTagsModal";
 
 // Badge components
 function BBadge({ size = 20 }: { size?: number }) {
@@ -214,24 +216,24 @@ export function SkillReviewView({
   };
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Status Bar */}
-      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[#fbf6ff]">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
+      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-10 relative bg-[var(--Surface-Primary-Background)]">
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]" />
       </div>
 
       {/* Header Action Buttons (Fixed at Top) */}
-      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[var(--Surface-Primary-Background)] z-20">
         <button
           onClick={() => setIsSaveModalOpen(true)}
-          className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white"
+          className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]"
         >
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">
             Save and Exit
           </span>
         </button>
-        <button className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">
+        <button className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">
             Questions?
           </span>
         </button>
@@ -246,23 +248,20 @@ export function SkillReviewView({
       >
         {/* Page Header */}
         <div className="w-full pb-[16px] flex flex-col">
-          <div className="flex items-center gap-[4px]">
-            <h1 className="font-['Nunito'] font-bold text-[28px] leading-[36px] text-[#171519] tracking-[-1.2px]">
+          <div className="flex items-center gap-[8px]">
+            <h1 className="font-['Nunito'] font-bold text-[28px] leading-[36px] text-[var(--Text-Primary-heading-1)] tracking-[-1.2px]">
               Review your selection
             </h1>
             {/* Info icon — tappable, opens badge legend */}
-            <button
+            <InfoIconButton
               onClick={() => {
                 console.log("Info icon clicked");
                 setIsBadgeInfoOpen(true);
               }}
-              className="shrink-0 flex items-center justify-center w-[44px] h-[44px] -mr-[14px]"
-              aria-label="What do these badges mean"
-            >
-              <InfoIcon className="w-[16px] h-[16px] text-[#171519]" />
-            </button>
+              label="What do these badges mean"
+            />
           </div>
-          <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#49464c] tracking-[0.1px] mt-[8px]">
+          <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[var(--Text-Primary-Body)] tracking-[0.1px] mt-[8px]">
             Your top skill is what the community sees first. Drag to reorder.
           </p>
         </div>
@@ -315,8 +314,8 @@ export function SkillReviewView({
                   }
                 }}
                 onClick={() => handleOpenTagsModal(skill)}
-                className={`w-full bg-[#faf7fe] rounded-[16px] flex flex-col items-start px-[20px] py-[20px] gap-[16px] overflow-hidden min-h-[148px] cursor-pointer transition-all duration-300 border-2 ${
-                  isPrimary ? "border-[#b7812f] shadow-sm" : "border-transparent"
+                className={`w-full bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] flex flex-col items-start px-[20px] py-[20px] gap-[16px] overflow-hidden min-h-[148px] cursor-pointer transition-all duration-300 border-2 ${
+                  isPrimary ? "border-[var(--Text-Primary-Text-brand)] shadow-sm" : "border-transparent"
                 }`}
                 style={{
                   boxShadow: isPrimary ? "0px 4px 12px 0px rgba(18,9,0,0.15)" : "0px 4px 12px 0px rgba(18,9,0,0.15)",
@@ -331,7 +330,7 @@ export function SkillReviewView({
                 <div className="flex items-start justify-between w-full gap-[12px]">
                   {/* Left Side Wrapper: items-start allows title text to wrap downward natively */}
                   <div className="flex items-start gap-[8px] flex-1 min-w-0">
-                    <h2 className="font-['Nunito'] font-bold text-[24px] leading-[32px] text-[#171519] tracking-[-0.7px] break-words">
+                    <h2 className="font-['Nunito'] font-bold text-[24px] leading-[32px] text-[var(--Text-Primary-heading-1)] tracking-[-0.7px] break-words">
                       {skill.toLowerCase()}
                     </h2>
                     {/* PBadge hidden on Receive side — verification status is irrelevant when selecting desired partner skills */}
@@ -355,7 +354,7 @@ export function SkillReviewView({
                           setVisibleSkills(updated);
                         }
                       }}
-                      className="cursor-grab active:cursor-grabbing p-[4px] text-[#c0bcc3] hover:opacity-80 transition-opacity"
+                      className="cursor-grab active:cursor-grabbing p-[4px] text-[var(--Text-Primary-Caption-alt)] hover:opacity-80 transition-opacity"
                       title="Drag to reorder"
                     >
                       <GripIcon className="w-[16px] h-[24px]" />
@@ -384,16 +383,16 @@ export function SkillReviewView({
                     {shownTags.map((tag) => (
                       <div
                         key={tag}
-                        className="bg-[#f0edf4] rounded-[12px] p-[12px] flex items-center shrink-0"
+                        className="bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[12px] p-[12px] flex items-center shrink-0"
                       >
-                        <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[1px] whitespace-nowrap">
+                        <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[var(--Text-Primary-Text-brand)] tracking-[1px] whitespace-nowrap">
                           {tag}
                         </span>
                       </div>
                     ))}
                     {!isExpanded && tags.length > MAX_VISIBLE_TAGS && (
-                      <div className="bg-[#f0edf4] rounded-[12px] p-[12px] flex items-center shrink-0">
-                        <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[1px]">
+                      <div className="bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[12px] p-[12px] flex items-center shrink-0">
+                        <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[var(--Text-Primary-Text-brand)] tracking-[1px]">
                           +{tags.length - MAX_VISIBLE_TAGS}
                         </span>
                       </div>
@@ -410,7 +409,7 @@ export function SkillReviewView({
                     }}
                     className="mt-[16px] flex items-center gap-[4px]"
                   >
-                    <span className="font-['Nunito'] font-bold text-[16px] leading-[24px] text-[#49464c] tracking-[0.16px] underline decoration-solid">
+                    <span className="font-['Nunito'] font-bold text-[16px] leading-[24px] text-[var(--Text-Primary-Body)] tracking-[0.16px] underline decoration-solid">
                       {isExpanded ? "View less" : "View more"}
                     </span>
                   </button>
@@ -452,11 +451,11 @@ export function SkillReviewView({
           pointerEvents: showFAB ? "auto" : "none",
         }}
       >
-        <PlusIcon className="w-[24px] h-[24px] text-[#fbf6ff]" />
+        <PlusIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-Body-alt)]" />
       </motion.button>
 
       {/* Fixed Footer */}
-      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
+      <div className="absolute bottom-0 left-0 w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col gap-[32px] items-center pt-[0px] pb-[44px] z-20">
         {/* Progress Bar */}
         <div className="w-full flex justify-center">
           <OfferProgressBar currentStep={3} subStepProgress={100} totalSteps={3} />
@@ -466,7 +465,7 @@ export function SkillReviewView({
         <div className="w-full flex items-center justify-between px-[16px]">
           <button
             onClick={onBack}
-            className="flex h-[48px] items-center justify-center px-[16px] py-[12px] font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] tracking-[0.16px] underline"
+            className="flex h-[48px] items-center justify-center px-[16px] py-[12px] font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.16px] underline"
           >
             Back
           </button>
@@ -474,8 +473,8 @@ export function SkillReviewView({
             onClick={handleNext}
             disabled={!isNextEnabled}
             className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] leading-[24px] tracking-[0.16px] transition-colors ${isNextEnabled
-              ? "bg-[#171519] text-[#fbf6ff]"
-              : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+              ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)]"
+              : "bg-[var(--Button-Primary-Surface-disabled)] text-[var(--Text-Primary-Disabled)] cursor-not-allowed"
               }`}
           >
             {visibleSkills.length <= 1 ? "Add skill" : "Add skills"}
@@ -485,93 +484,21 @@ export function SkillReviewView({
 
       {/* Home Indicator */}
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]" />
       </div>
 
       {/* ── Add Tags Modal ─────────────────────────────── */}
-      {/* Overlay */}
-      <div
-        className={`absolute inset-0 z-50 bg-[#2f2c32]/26 backdrop-blur-[4px] transition-opacity duration-300 ${isTagsModalOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-          }`}
-        onClick={() => setIsTagsModalOpen(false)}
+      <GlobalAddTagsModal
+        isOpen={isTagsModalOpen}
+        onClose={() => setIsTagsModalOpen(false)}
+        tags={tempTags}
+        onToggleTag={toggleTag}
+        onApply={handleApplyTags}
+        onClear={handleClearTags}
+        tagInput={tagInput}
+        setTagInput={setTagInput}
+        onTagInputKeyDown={handleTagInputKeyDown}
       />
-      {/* Bottom Sheet */}
-      <div
-        className={`absolute bottom-0 left-0 w-full bg-[#faf7fe] rounded-t-[24px] flex flex-col pt-[8px] pb-[44px] z-[60] transition-transform duration-300 ${isTagsModalOpen ? "translate-y-0 ease-out" : "translate-y-full ease-in"
-          }`}
-      >
-        <div className="w-full flex flex-col items-center gap-[32px]">
-          {/* Header */}
-          <div className="w-full px-[16px] flex flex-col gap-[16px] items-center">
-            <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px]" />
-            <div className="w-full flex items-center justify-between relative h-[24px]">
-              <div className="flex-1 flex justify-center">
-                <h3 className="font-['Nunito'] font-bold text-[20px] leading-[28px] text-[#171519] tracking-[-0.2px]">
-                  Add tags
-                </h3>
-              </div>
-              <button
-                onClick={() => setIsTagsModalOpen(false)}
-                className="absolute right-0 w-[24px] h-[24px] flex items-center justify-center"
-              >
-              <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
-              </button>
-            </div>
-            <div className="w-full h-px bg-[#e0dce3]" />
-            <p className="font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#49464c] text-center px-[16px]">
-              Add up to 5 specific tags to help others discover you. Separate each with a comma.
-            </p>
-          </div>
-
-          {/* Tags */}
-          <div className="w-full px-[16px] flex flex-col gap-[24px]">
-            {tempTags.length > 0 && (
-              <div className="flex flex-wrap gap-[12px]">
-                {tempTags.map(tag => (
-                  <div
-                    key={tag}
-                    onClick={() => toggleTag(tag)}
-                    className="flex items-center gap-[12px] px-[12px] py-[12px] rounded-[12px] bg-[#f0edf4] cursor-pointer transition-all duration-200 active:scale-95"
-                  >
-                    <span className="font-['Nunito'] font-semibold text-[14px] leading-[20px] text-[#b7812f] tracking-[1px]">
-                      {tag}
-                    </span>
-                    <CloseIcon className="w-[24px] h-[24px] text-[#b7812f]" />
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="w-full bg-[#faf7fe] rounded-[12px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] px-[12px] py-[16px]">
-              <input
-                type="text"
-                placeholder="wireframing, prototyping,"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagInputKeyDown}
-                className="w-full bg-transparent border-none outline-none font-['Nunito'] font-medium text-[16px] leading-[24px] text-[#171519] placeholder-[#a09da3]"
-              />
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="w-full flex items-center justify-between px-[16px]">
-            <button
-              onClick={handleClearTags}
-              className="font-['Nunito'] font-bold text-[16px] leading-[24px] text-[#49464c] underline px-[16px] py-[12px]"
-            >
-              Clear all
-            </button>
-            <button
-              onClick={handleApplyTags}
-              disabled={tempTags.length === 0}
-              className={`flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] transition-colors ${tempTags.length > 0 ? "bg-[#171519] text-[#fbf6ff]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
-                }`}
-            >
-              Apply
-            </button>
-          </div>
-        </div>
-      </div>
       {/* ──────────────────────────────────────────────────── */}
 
       {/* ── Badge Info Overlay ─────────────────────────────── */}
@@ -589,14 +516,14 @@ export function SkillReviewView({
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 -translate-y-2 pointer-events-none"
           }`}
-        style={{ top: "200px" }} // Moved up by 44px from 244px
+        style={{ top: "188px" }}
       >
         {/* Arrow pointing up — aligned to info icon */}
         <div
           className="absolute"
           style={{
             top: "-8px",
-            right: "58px", // Moved left by another 4px (increased from 54px)
+            right: "66px",
             width: 0,
             height: 0,
             borderLeft: "8px solid transparent",
@@ -606,10 +533,10 @@ export function SkillReviewView({
         />
 
         {/* Card */}
-        <div className="w-full bg-[#f9f4ee] rounded-[12px] p-[12px] flex gap-[12px] items-start">
+        <div className="w-full bg-[var(--Button-Primary-Surface-default-sec)] rounded-[12px] p-[12px] flex gap-[12px] items-start">
           {/* Content column */}
           <div className="flex-1 flex flex-col gap-[8px]">
-            <p className="font-['Nunito'] font-bold text-[18px] leading-[28px] text-[#171519] tracking-[0px]">
+            <p className="font-['Nunito'] font-bold text-[18px] leading-[28px] text-[var(--Text-Primary-heading-1)] tracking-[0px]">
               What do these badges mean
             </p>
 
@@ -617,7 +544,7 @@ export function SkillReviewView({
               {/* B badge row */}
               <div className="flex gap-[12px] items-start">
                 <BBadge size={24} />
-                <p className="flex-1 font-['Nunito'] font-medium text-[14px] leading-[20px] text-[#2f2c32] tracking-[1px]">
+                <p className="flex-1 font-['Nunito'] font-medium text-[14px] leading-[20px] text-[var(--Text-Primary-heading-3)] tracking-[1px]">
                   This badge indicates a high level of trust, verified by consistent, high-quality sessions on the platform.
                 </p>
               </div>
@@ -625,7 +552,7 @@ export function SkillReviewView({
               {/* P badge row */}
               <div className="flex gap-[12px] items-start">
                 <PBadge size={24} />
-                <p className="flex-1 font-['Nunito'] font-medium text-[14px] leading-[20px] text-[#2f2c32] tracking-[1px]">
+                <p className="flex-1 font-['Nunito'] font-medium text-[14px] leading-[20px] text-[var(--Text-Primary-heading-3)] tracking-[1px]">
                   A skill in progress. The user is claiming this skill but has not yet verified it through a session or provided full details.
                 </p>
               </div>
@@ -638,7 +565,7 @@ export function SkillReviewView({
             className="shrink-0 w-[44px] h-[44px] flex items-center justify-center"
             aria-label="Close"
           >
-            <CloseIcon className="w-[20px] h-[20px] text-[#171519]" />
+            <CloseIcon className="w-[20px] h-[20px] text-[var(--Text-Primary-heading-1)]" />
           </button>
         </div>
       </div>

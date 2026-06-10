@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { BottomSheet } from "../../../components/ui/BottomSheet";
+import { Button } from "../../../components/ui/Button";
 import { CustomAnimatedCheckbox } from "../../../components/common/CustomAnimatedCheckbox";
 import { CloseIcon, GripIcon, PlusIcon } from "../../../components/common/Icons";
+import { motion } from "framer-motion";
 
 interface ReviewSelectionModalProps {
   isOpen: boolean;
@@ -66,214 +68,169 @@ export function ReviewSelectionModal({
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 bg-[#2f2c32]/[0.26] z-40 backdrop-blur-[4px] rounded-[32px]"
-          />
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Review your selection">
+      <div className="w-full flex flex-col items-center">
+        {/* Subtitle */}
+        <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] text-center px-[16px] mb-[16px]">
+          I need you to modifiy this copy because it is break my design
+        </p>
 
-          {/* Bottom Sheet */}
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute bottom-0 left-0 w-full z-50 bg-[#faf7fe] rounded-t-[24px] pb-[44px] pt-[8px] flex flex-col shadow-[0px_-10px_30px_rgba(0,0,0,0.1)] max-h-[90%]"
-          >
-            {/* Handle */}
-            <div className="w-full flex justify-center">
-              <div className="w-[64px] h-[8px] bg-[#f0edf4] rounded-[4px] mb-[16px]" />
-            </div>
+        {/* Skills List */}
+        <div 
+          onScroll={handleScroll}
+          className="flex flex-col gap-[24px] w-full max-h-[400px] overflow-y-auto pr-0 pb-[24px] modal-scrollbar"
+        >
+          {orderedSkills.map((skill, index) => {
+            const skillTags = tags[skill] || [];
+            const isPrimary = index === 0;
 
-            <div className="w-full flex flex-col gap-[24px]">
-              {/* Header */}
-              <div className="flex flex-col gap-[16px] relative px-[16px]">
-                <div className="flex items-center justify-center">
-                  <h3 className="font-['Nunito'] font-bold text-[#171519] text-[20px] leading-[28px] tracking-[-0.2px]">
-                    Review your selection
-                  </h3>
-                  <button
-                    onClick={onClose}
-                    className="absolute right-[16px] w-[48px] h-[48px] rounded-[32px] flex items-center justify-center bg-[#fbf6ff]"
-                  >
-                    <CloseIcon className="w-[24px] h-[24px] text-[#171519]" />
-                  </button>
-                </div>
-                <div className="w-full h-[1px] bg-[#e0dce3]" />
-                <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] text-center px-[16px]">
-                  I need you to modifiy this copy because it is break my design
-                </p>
-              </div>
-
-              {/* Skills List */}
+            return (
               <div 
-                onScroll={handleScroll}
-                className="flex flex-col gap-[24px] w-full max-h-[400px] overflow-y-auto pr-0 pb-[24px] modal-scrollbar"
+                key={skill} 
+                className="px-[16px]"
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData("text/plain", skill);
+                  e.dataTransfer.effectAllowed = "move";
+                  setTimeout(() => {
+                    if (e.target instanceof HTMLElement) {
+                      e.target.classList.add("opacity-50", "scale-[1.02]");
+                    }
+                  }, 0);
+                }}
+                onDragEnd={(e) => {
+                  if (e.target instanceof HTMLElement) {
+                    e.target.classList.remove("opacity-50", "scale-[1.02]");
+                  }
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const draggedSkill = e.dataTransfer.getData("text/plain");
+                  if (!draggedSkill || draggedSkill === skill) return;
+
+                  const fromIdx = orderedSkills.indexOf(draggedSkill);
+                  const toIdx = orderedSkills.indexOf(skill);
+                  if (fromIdx !== -1 && toIdx !== -1) {
+                    const updated = [...orderedSkills];
+                    updated.splice(fromIdx, 1);
+                    updated.splice(toIdx, 0, draggedSkill);
+                    setOrderedSkills(updated);
+                    onReorderSkills?.(updated);
+                  }
+                }}
               >
-                {orderedSkills.map((skill, index) => {
-                  const skillTags = tags[skill] || [];
-                  const isPrimary = index === 0;
-
-                  return (
-                    <div 
-                      key={skill} 
-                      className="px-[16px]"
-                      draggable
-                      onDragStart={(e) => {
-                        e.dataTransfer.setData("text/plain", skill);
-                        e.dataTransfer.effectAllowed = "move";
-                        setTimeout(() => {
-                          if (e.target instanceof HTMLElement) {
-                            e.target.classList.add("opacity-50", "scale-[1.02]");
-                          }
-                        }, 0);
-                      }}
-                      onDragEnd={(e) => {
-                        if (e.target instanceof HTMLElement) {
-                          e.target.classList.remove("opacity-50", "scale-[1.02]");
-                        }
-                      }}
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = "move";
-                      }}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const draggedSkill = e.dataTransfer.getData("text/plain");
-                        if (!draggedSkill || draggedSkill === skill) return;
-
-                        const fromIdx = orderedSkills.indexOf(draggedSkill);
-                        const toIdx = orderedSkills.indexOf(skill);
-                        if (fromIdx !== -1 && toIdx !== -1) {
-                          const updated = [...orderedSkills];
-                          updated.splice(fromIdx, 1);
-                          updated.splice(toIdx, 0, draggedSkill);
-                          setOrderedSkills(updated);
-                          onReorderSkills?.(updated);
-                        }
-                      }}
-                    >
-                      <div 
-                        onClick={() => onEditTags(skill)}
-                        className={`bg-[#faf7fe] rounded-[16px] p-[20px] flex flex-col gap-[16px] cursor-pointer transition-all duration-300 border-2 ${
-                          isPrimary ? "border-[#b7812f] shadow-sm" : "border-transparent"
-                        }`}
-                        style={{
-                          boxShadow: "0px 4px 12px 0px rgba(18,9,0,0.15)"
-                        }}
-                      >
-                        {/* Header row: aligned to items-start so controls stay top-right if long text wraps */}
-                        <div className="flex items-start justify-between w-full gap-[12px]">
-                          {/* Left side wrapper: flex-col cleanly stacks wrapped title and proficiency badge vertically */}
-                          <div className="flex flex-col items-start gap-[6px] flex-1 min-w-0">
-                            <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] break-words block">
-                              {skill}
-                            </span>
-                            <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                              <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
-                                {formatProficiency(proficiencies[skill])}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Right Controls Wrapper: perfectly aligned to the top alongside the text copy */}
-                          <div className="flex items-center gap-[16px] shrink-0 mt-0">
-                            <div
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                const fromIdx = orderedSkills.indexOf(skill);
-                                if (fromIdx > 0) {
-                                  const updated = [...orderedSkills];
-                                  updated.splice(fromIdx, 1);
-                                  updated.unshift(skill);
-                                  setOrderedSkills(updated);
-                                  onReorderSkills?.(updated);
-                                }
-                              }}
-                              className="cursor-grab active:cursor-grabbing p-[4px] text-[#c0bcc3] hover:opacity-80 transition-opacity"
-                              title="Drag to reorder"
-                            >
-                              <GripIcon className="w-[16px] h-[24px]" />
-                            </div>
-
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onRemoveSkill(skill);
-                              }}
-                              className="shrink-0 flex items-center justify-center"
-                            >
-                              <CustomAnimatedCheckbox checked={true} />
-                            </button>
-                          </div>
-                        </div>
-
-                        {skillTags.length > 0 && (
-                          <div className="flex flex-wrap gap-[12px]">
-                            {skillTags.map(tag => (
-                              <div key={tag} className="bg-[#f0edf4] px-[12px] py-[12px] rounded-[12px]">
-                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
-                                  {tag}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                <div 
+                  onClick={() => onEditTags(skill)}
+                  className={`bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] p-[20px] flex flex-col gap-[16px] cursor-pointer transition-all duration-300 border-2 ${
+                    isPrimary ? "border-[var(--Text-Primary-Text-brand)] shadow-sm" : "border-transparent"
+                  }`}
+                  style={{
+                    boxShadow: "0px 4px 12px 0px rgba(18,9,0,0.15)"
+                  }}
+                >
+                  {/* Header row: aligned to items-start so controls stay top-right if long text wraps */}
+                  <div className="flex items-start justify-between w-full gap-[12px]">
+                    {/* Left side wrapper: flex-col cleanly stacks wrapped title and proficiency badge vertically */}
+                    <div className="flex flex-col items-start gap-[6px] flex-1 min-w-0">
+                      <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[24px] leading-[32px] tracking-[-0.7px] break-words block">
+                        {skill}
+                      </span>
+                      <div className="bg-[var(--Surface-UI-surface-surface-variant)] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                        <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-[12px] leading-[16px] tracking-[1.1px]">
+                          {formatProficiency(proficiencies[skill])}
+                        </span>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-  
-                {/* Footer Actions */}
-                <div className="w-full flex items-center justify-between px-[16px] pt-[8px]">
-                  <button
-                    onClick={onClose}
-                    className="font-['Nunito'] font-bold text-[16px] leading-[24px] text-[#49464c] underline px-[16px] py-[12px]"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={onApply || onClose}
-                    className="flex items-center justify-center px-[16px] py-[12px] rounded-[16px] min-w-[101px] h-[48px] font-['Nunito'] font-bold text-[16px] bg-[#171519] text-[#fbf6ff] hover:bg-[#2f2c32] transition-colors shadow-[0px_4px_12px_rgba(0,0,0,0.15)]"
-                  >
-                    Apply
-                  </button>
+
+                    {/* Right Controls Wrapper: perfectly aligned to the top alongside the text copy */}
+                    <div className="flex items-center gap-[16px] shrink-0 mt-0">
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const fromIdx = orderedSkills.indexOf(skill);
+                          if (fromIdx > 0) {
+                            const updated = [...orderedSkills];
+                            updated.splice(fromIdx, 1);
+                            updated.unshift(skill);
+                            setOrderedSkills(updated);
+                            onReorderSkills?.(updated);
+                          }
+                        }}
+                        className="cursor-grab active:cursor-grabbing p-[4px] text-[var(--Text-Primary-Caption-alt)] hover:opacity-80 transition-opacity"
+                        title="Drag to reorder"
+                      >
+                        <GripIcon className="w-[16px] h-[24px]" />
+                      </div>
+
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRemoveSkill(skill);
+                        }}
+                        className="shrink-0 flex items-center justify-center"
+                      >
+                        <CustomAnimatedCheckbox checked={true} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {skillTags.length > 0 && (
+                    <div className="flex flex-wrap gap-[12px]">
+                      {skillTags.map(tag => (
+                        <div key={tag} className="bg-[var(--Mapped-Surface-UI-surface-surface-variant)] px-[12px] py-[12px] rounded-[12px]">
+                          <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-Text-brand)] text-[14px] leading-[20px] tracking-[1px]">
+                            {tag}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            </motion.div>
+            );
+          })}
+        </div>
 
-          {/* Floating Add Button — absolute inside phone frame */}
-          <motion.div
-            initial={{ y: 60, opacity: 0, scale: 0 }}
-            animate={{ 
-              y: 0, 
-              opacity: showFAB ? 1 : 0, 
-              scale: showFAB ? 1 : 0 
-            }}
-            exit={{ y: 60, opacity: 0, scale: 0 }}
-            transition={{ type: "spring", damping: 15, stiffness: 350 }}
-            className="absolute bottom-[128px] right-[16px] z-[60]"
-            style={{ pointerEvents: showFAB ? "auto" : "none" }}
+        {/* Footer Actions */}
+        <div className="w-full flex items-center justify-between px-[16px] pt-[8px]">
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button 
+            variant="primary"
+            className="min-w-[101px]"
+            onClick={onApply || onClose}
           >
-            <button
-              onClick={() => {
-                onClose();
-                onAddMore();
-              }}
-              className="w-[56px] h-[56px] rounded-[16px] bg-[#b7812f] shadow-[0px_12px_32px_rgba(18,9,0,0.15),0px_8px_4px_rgba(18,9,0,0.05)] flex items-center justify-center"
-            >
-              <PlusIcon className="w-[24px] h-[24px] text-[#fbf6ff]" />
-            </button>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+            Apply
+          </Button>
+        </div>
+      </div>
+
+      {/* Floating Add Button — absolute relative to bottom sheet */}
+      <motion.div
+        initial={{ y: 60, opacity: 0, scale: 0 }}
+        animate={{ 
+          y: 0, 
+          opacity: showFAB ? 1 : 0, 
+          scale: showFAB ? 1 : 0 
+        }}
+        exit={{ y: 60, opacity: 0, scale: 0 }}
+        transition={{ type: "spring", damping: 15, stiffness: 350 }}
+        className="absolute bottom-[100px] right-[16px] z-[60]"
+        style={{ pointerEvents: showFAB ? "auto" : "none" }}
+      >
+        <button
+          onClick={() => {
+            onClose();
+            onAddMore();
+          }}
+          className="w-[56px] h-[56px] rounded-[16px] bg-[var(--Button-Primary-Surface-default)] shadow-[0px_12px_32px_rgba(18,9,0,0.15),0px_8px_4px_rgba(18,9,0,0.05)] flex items-center justify-center"
+        >
+          <PlusIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-Body-alt)]" />
+        </button>
+      </motion.div>
+    </BottomSheet>
   );
 }

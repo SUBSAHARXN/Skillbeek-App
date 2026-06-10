@@ -37,18 +37,14 @@ interface OfferPreviewViewProps {
 }
 
 function formatDuration(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (h === 0) return `${m} Minutes`;
-  if (m === 0) return `${h} hour${h > 1 ? "s" : ""}`;
-  return `${h} hr ${m} min`;
+  return `${minutes} minutes`;
 }
 
 function NeumorphicDivider() {
   return (
     <div className="w-full flex items-center justify-center my-[16px]">
       <div
-        className="w-full h-[2px] rounded-full bg-[#fbf6ff]"
+        className="w-full h-[2px] rounded-full bg-[var(--Surface-Primary-Background)]"
         style={{ boxShadow: "inset 2px 2px 12px rgba(192, 188, 195, 0.5), inset -2px -2px 12px rgba(255, 255, 255, 0.9)" }}
       />
     </div>
@@ -190,56 +186,56 @@ export function OfferPreviewView({
   };
 
   return (
-    <div className="w-full max-w-[384px] h-full bg-[#fbf6ff] rounded-3xl overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-full bg-[var(--Surface-Primary-Background)] rounded-3xl overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       <div className="relative z-[60] w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-3xl" />
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-3xl" />
       </div>
 
       <div className="relative z-[60] w-full px-[16px] py-[8px] flex items-center shrink-0 h-[64px]">
         <div className="flex flex-[1_0_0] items-center gap-[4px] min-w-0">
           <button
             onClick={onBack}
-            className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors shrink-0"
+            className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors shrink-0"
           >
-            <BackArrowIcon className="w-[24px] h-[24px] text-[#171519]" />
+            <BackArrowIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
           </button>
           <div className="flex flex-[1_0_0] flex-col items-start justify-center min-w-0">
-            <h1 className="font-nunito font-bold text-[#171519] text-[20px] leading-[28px] truncate w-full">
+            <h1 className="font-nunito font-bold text-[var(--Text-Primary-heading-1)] text-[20px] leading-[28px] truncate w-full">
               Edit Your Offer
             </h1>
           </div>
         </div>
         <button
           onClick={() => setIsMenuOpen(true)}
-          className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[#f0edf4] transition-colors relative shrink-0"
+          className="w-[48px] h-[48px] flex items-center justify-center rounded-[32px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors relative shrink-0"
         >
-          <MoreIcon className="w-[24px] h-[24px] text-[#171519]" />
+          <MoreIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto px-0 pb-[180px] pt-[8px] preview-scrollbar">
         <div className="flex flex-col gap-[16px] min-w-0 w-full px-[16px]">
-          <div className="bg-[#FEF0EA] px-[8px] py-[8px] rounded-[8px] self-start">
-            <span className="font-['Nunito'] font-black text-[#b85f38] text-[12px] leading-[16px] tracking-[1.1px] uppercase">
+          <div className="bg-[var(--Surface-Warning-bg-surface-padding)] px-[8px] py-[8px] rounded-[8px] self-start">
+            <span className="font-['Nunito'] font-black text-[var(--Text-Warning-Text-primary)] text-[12px] leading-[16px] tracking-[1.1px] uppercase">
               Unpublished
             </span>
           </div>
 
           <div className="flex flex-col gap-[24px] min-w-0 w-full">
-            <div className="w-full min-w-0 bg-[#faf7fe] rounded-[12px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-skillbeek-sm">
-              <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">
+            <div className="w-full min-w-0 bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[12px] px-[24px] py-[16px] flex flex-col gap-[12px] shadow-skillbeek-sm">
+              <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
                 Profile
               </span>
               <div className="flex flex-col items-center gap-[12px]">
                 <PersonaPfpSet className="w-[109px] h-[109px]" persona="01" />
                 <div className="flex flex-col items-center gap-[8px] w-full">
-                  <span className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[32px] text-center w-full">
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[32px] text-center w-full">
                     Aiko Tanaka
                   </span>
                   <div className="flex items-center gap-[6px]">
                     <SkillbeekSingleStar rating={4.7} />
-                    <div className="w-[4px] h-[4px] rounded-full bg-[#171519]" />
-                    <button className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px] underline">
+                    <div className="w-[4px] h-[4px] rounded-full bg-[var(--Surface-UI-surface-Surface-Universal-alternate)]" />
+                    <button className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] underline">
                       34 reviews
                     </button>
                   </div>
@@ -249,13 +245,13 @@ export function OfferPreviewView({
 
             <div className="flex flex-col gap-[16px] min-w-0 w-full">
               <SectionCard title="Topic" onEdit={() => openEdit("title")}>
-                <p className="font-['Nunito'] font-medium text-[#49464c] text-[20px] leading-[28px] tracking-[-0.2px] overflow-hidden text-ellipsis whitespace-nowrap min-w-0">
+                <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[20px] leading-[28px] tracking-[-0.2px] overflow-hidden text-ellipsis whitespace-nowrap min-w-0">
                   {title}
                 </p>
               </SectionCard>
 
               <SectionCard title="Offer description" onEdit={() => openEdit("description")}>
-                <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[1px] line-clamp-5 overflow-hidden break-words break-all w-full min-w-0">
+                <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[1px] line-clamp-5 overflow-hidden break-words break-all w-full min-w-0">
                   {description}
                 </p>
               </SectionCard>
@@ -267,14 +263,14 @@ export function OfferPreviewView({
                       <React.Fragment key={i}>
                         <div className="flex flex-col gap-[12px]">
                           <div className="flex items-center gap-[8px]">
-                            <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
-                            <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                            <CalendarIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                            <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] tracking-[0.1px]">
                               {getRecurringDaysText(slot.days)}
                             </span>
                           </div>
                           <div className="flex items-center gap-[8px]">
-                            <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
-                            <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                            <ClockIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                            <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] tracking-[0.1px]">
                               {slot.timeRange.start} - {slot.timeRange.end}
                             </span>
                           </div>
@@ -287,14 +283,14 @@ export function OfferPreviewView({
                       <React.Fragment key={i}>
                         <div className="flex flex-col gap-[12px]">
                           <div className="flex items-center gap-[8px]">
-                            <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
-                            <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                            <CalendarIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                            <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] tracking-[0.1px]">
                               {getSpecificDatesText(slot.dateRange)}
                             </span>
                           </div>
                           <div className="flex items-center gap-[8px]">
-                            <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
-                            <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                            <ClockIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                            <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] tracking-[0.1px]">
                               {slot.timeRange.start} - {slot.timeRange.end}
                             </span>
                           </div>
@@ -303,7 +299,7 @@ export function OfferPreviewView({
                       </React.Fragment>
                     ))
                   ) : (
-                    <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px] tracking-[0.1px]">
+                    <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px] tracking-[0.1px]">
                       Not set
                     </span>
                   )}
@@ -312,10 +308,10 @@ export function OfferPreviewView({
                     onClick={() => setIsTimezoneModalOpen(true)}
                     className="flex items-center gap-[4px] self-start mt-[4px]"
                   >
-                    <span className="font-['Nunito'] font-bold text-[#b7812f] text-[16px] leading-[24px]">
+                    <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brand)] text-[16px] leading-[24px]">
                       {localAvailability?.timezone?.split("/").pop()?.replace(/_/g, " ") || "Lagos"}
                     </span>
-                    <PencilIcon className="w-[16px] h-[16px] text-[#b7812f]" />
+                    <PencilIcon className="w-[16px] h-[16px] text-[var(--Text-Primary-Text-brand)]" />
                   </button>
                 </div>
               </SectionCard>
@@ -336,11 +332,11 @@ export function OfferPreviewView({
                         <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
                         <div className="flex-1 flex flex-col gap-[16px]">
                           <div className="flex items-center gap-[8px]">
-                            <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
+                            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
                               {firstSkill}
                             </span>
-                            <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                              <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
+                            <div className="bg-[var(--Surface-UI-surface-surface-variant)] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                              <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
                                 {formatProficiency(localReviewProficiencies[firstSkill])}
                               </span>
                             </div>
@@ -349,15 +345,15 @@ export function OfferPreviewView({
                           {firstTags.length > 0 && (
                             <div className="flex flex-nowrap items-center gap-[6px] overflow-hidden">
                               {displayedTags.map(tag => (
-                                <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0 max-w-[100px]">
-                                  <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] truncate block">
+                                <div key={tag} className="bg-[var(--Mapped-Surface-UI-surface-surface-variant)] p-[12px] rounded-[12px] flex items-center shrink-0 max-w-[100px]">
+                                  <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-Text-brand)] text-[14px] leading-[20px] tracking-[1px] truncate block">
                                     {tag}
                                   </span>
                                 </div>
                               ))}
                               {extraTags > 0 && (
-                                <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0">
-                                  <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
+                                <div className="bg-[var(--Mapped-Surface-UI-surface-surface-variant)] p-[12px] rounded-[12px] flex items-center shrink-0">
+                                  <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-Text-brand)] text-[14px] leading-[20px] tracking-[1px]">
                                     +{extraTags}
                                   </span>
                                 </div>
@@ -367,7 +363,7 @@ export function OfferPreviewView({
 
                           {localReviewSkills.length > 1 && (
                             <div className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start">
-                              <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
+                              <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Caption)] text-[16px] leading-[24px] tracking-[0.16px]">
                                 + {localReviewSkills.length - 1} more
                               </span>
                             </div>
@@ -380,11 +376,11 @@ export function OfferPreviewView({
                       <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
                       <div className="flex-1 flex flex-col gap-[6px]">
                         <div className="flex items-center gap-[8px]">
-                          <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
+                          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[18px] leading-[28px] w-[132px] truncate block">
                             3D modelling
                           </span>
-                          <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                            <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
+                          <div className="bg-[var(--Surface-UI-surface-surface-variant)] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-[12px] leading-[16px] tracking-[1.1px]">
                               Intermediate
                             </span>
                           </div>
@@ -410,11 +406,11 @@ export function OfferPreviewView({
                       <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
                       <div className="flex-1 flex flex-col gap-[16px]">
                         <div className="flex items-center gap-[8px]">
-                          <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
+                          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[24px] leading-[32px] tracking-[-0.7px] w-[140px] truncate block">
                             {firstSkill}
                           </span>
-                          <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                            <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
+                          <div className="bg-[var(--Surface-UI-surface-surface-variant)] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-[12px] leading-[16px] tracking-[1.1px] truncate block">
                               {formatProficiency(localReceiveProficiencies[firstSkill])}
                             </span>
                           </div>
@@ -423,15 +419,15 @@ export function OfferPreviewView({
                         {firstTags.length > 0 && (
                           <div className="flex flex-nowrap items-center gap-[6px] overflow-hidden">
                             {displayedTags.map(tag => (
-                              <div key={tag} className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0 max-w-[100px]">
-                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px] truncate block">
+                              <div key={tag} className="bg-[var(--Mapped-Surface-UI-surface-surface-variant)] p-[12px] rounded-[12px] flex items-center shrink-0 max-w-[100px]">
+                                <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-Text-brand)] text-[14px] leading-[20px] tracking-[1px] truncate block">
                                   {tag}
                                 </span>
                               </div>
                             ))}
                             {extraTags > 0 && (
-                              <div className="bg-[#f0edf4] p-[12px] rounded-[12px] flex items-center shrink-0">
-                                <span className="font-['Nunito'] font-semibold text-[#b7812f] text-[14px] leading-[20px] tracking-[1px]">
+                              <div className="bg-[var(--Mapped-Surface-UI-surface-surface-variant)] p-[12px] rounded-[12px] flex items-center shrink-0">
+                                <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-Text-brand)] text-[14px] leading-[20px] tracking-[1px]">
                                   +{extraTags}
                                 </span>
                               </div>
@@ -441,7 +437,7 @@ export function OfferPreviewView({
 
                         {localReceiveSkills.length > 1 && (
                           <div className="h-[48px] py-[12px] rounded-[16px] bg-transparent border-none outline-none flex items-center justify-center self-start">
-                            <span className="font-['Nunito'] font-bold text-[#737076] text-[16px] leading-[24px] tracking-[0.16px]">
+                            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Caption)] text-[16px] leading-[24px] tracking-[0.16px]">
                               + {localReceiveSkills.length - 1} more
                             </span>
                           </div>
@@ -454,11 +450,11 @@ export function OfferPreviewView({
                     <UniversalSkillIcon className="w-[40px] h-[40px] shrink-0" />
                     <div className="flex-1 flex flex-col gap-[6px]">
                       <div className="flex items-center gap-[8px]">
-                        <span className="font-['Nunito'] font-bold text-[#171519] text-[18px] leading-[28px] w-[132px] truncate block">
+                        <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[18px] leading-[28px] w-[132px] truncate block">
                           UI design
                         </span>
-                        <div className="bg-[#f8efff] px-[8px] py-[4px] rounded-[8px] shrink-0">
-                          <span className="font-['Nunito'] font-bold text-[#8c35be] text-[12px] leading-[16px] tracking-[1.1px]">
+                        <div className="bg-[var(--Surface-UI-surface-surface-variant)] px-[8px] py-[4px] rounded-[8px] shrink-0">
+                          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-[12px] leading-[16px] tracking-[1.1px]">
                             Basic
                           </span>
                         </div>
@@ -472,7 +468,7 @@ export function OfferPreviewView({
                 <SectionCard title="Rate (per session)" onEdit={() => setIsRateModalOpen(true)}>
                   <div className="flex items-center gap-[12px]">
                     <TimeCreditIcon className="w-[24px] h-[24px]" />
-                    <span className="font-['Nunito'] font-bold text-[#171519] text-[24px] leading-[32px] tracking-[-0.7px]">
+                    <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[24px] leading-[32px] tracking-[-0.7px]">
                       {localTimeCreditRate}
                     </span>
                   </div>
@@ -481,8 +477,8 @@ export function OfferPreviewView({
 
               <SectionCard title="Session length" onEdit={() => setIsDurationModalOpen(true)}>
                 <div className="flex items-center gap-[6px]">
-                  <TimerIcon className="w-[24px] h-[24px] text-[#171519]" />
-                  <span className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px] tracking-[0.1px]">
+                  <TimerIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                  <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-[16px] leading-[24px] tracking-[0.1px]">
                     {formatDuration(localSessionDuration.minutes)}
                   </span>
                 </div>
@@ -494,12 +490,12 @@ export function OfferPreviewView({
 
       <div className="absolute bottom-0 left-0 w-full flex flex-col items-center pointer-events-none z-30">
         {/* Gradient Overlay for Floating Effect */}
-        <div className="w-[calc(100%-4px)] h-[156px] bg-gradient-to-t from-[#faf7fe] via-[#faf7fe]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-none">
+        <div className="w-[calc(100%-4px)] h-[156px] bg-gradient-to-t from-[var(--Surface-UI-surface-Background)] via-[var(--Surface-UI-surface-Background)]/90 to-transparent flex items-center justify-center px-[16px] pb-[44px] pointer-events-none">
           <button
             onClick={() => setIsGoLiveModalOpen(true)}
-            className="w-full max-w-[352px] h-[48px] bg-[#171519] rounded-[16px] flex items-center justify-center hover:bg-[#2f2c32] transition-colors shadow-[0px_4px_12px_rgba(0,0,0,0.15)] pointer-events-auto"
+            className="w-full max-w-[352px] h-[48px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[16px] flex items-center justify-center hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] transition-colors shadow-[0px_4px_12px_rgba(0,0,0,0.15)] pointer-events-auto"
           >
-            <span className="font-['Nunito'] font-bold text-[#fbf6ff] text-[16px]">
+            <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body-alt)] text-[16px]">
               Go Live
             </span>
           </button>
@@ -507,7 +503,7 @@ export function OfferPreviewView({
       </div>
 
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-[60] pointer-events-none">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]" />
       </div>
 
       <AnimatePresence>
@@ -542,13 +538,13 @@ export function OfferPreviewView({
             transition={{ duration: 0.2 }}
             className="absolute inset-0 z-50 flex"
           >
-            <div className="absolute inset-0 bg-[#2f2c3242] backdrop-blur-[4px]" onClick={() => setIsMenuOpen(false)} />
+            <div className="absolute inset-0 bg-[var(--Surface-UI-surface-Background)]/[0.15] backdrop-blur-[2px]" onClick={() => setIsMenuOpen(false)} />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: -10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute right-[28px] top-[120px] w-[279px] bg-[#faf7fe] rounded-[16px] p-[8px] flex flex-col gap-[8px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]"
+              className="absolute right-[28px] top-[120px] w-[279px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] p-[8px] flex flex-col gap-[8px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)]"
             >
               <button
                 onClick={() => {
@@ -559,20 +555,20 @@ export function OfferPreviewView({
                     actionLabel: "View drafts"
                   });
                 }}
-                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f0edf4] transition-colors"
+                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
               >
-                <DocumentIcon className="w-[24px] h-[24px] text-[#171519]" />
-                <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px]">Save Draft</span>
+                <DocumentIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">Save Draft</span>
               </button>
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
                   setIsDeleteModalOpen(true);
                 }}
-                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#fef6f5] transition-colors"
+                className="w-full bg-transparent rounded-[12px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[var(--Surface-Error-bg-surface)] transition-colors"
               >
-                <TrashIcon className="w-[24px] h-[24px] text-[#870113]" />
-                <span className="font-['Nunito'] font-bold text-[#870113] text-[16px] leading-[24px]">Delete Offer</span>
+                <TrashIcon className="w-[24px] h-[24px] text-[var(--Text-Error-primary)]" />
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Error-primary)] text-[16px] leading-[24px]">Delete Offer</span>
               </button>
             </motion.div>
           </motion.div>

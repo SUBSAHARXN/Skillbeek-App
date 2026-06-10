@@ -16,12 +16,12 @@ export const OfferDuration = ({
   return (
     <section
       aria-label="Offer duration and price"
-      className="relative flex w-full items-center justify-between rounded-xl bg-[#f8efff] px-3 py-4"
+      className="relative flex w-full items-center justify-between rounded-xl bg-[var(--Surface-UI-surface-surface-variant)] px-3 py-4"
     >
       <div className="relative flex flex-1 min-w-0 items-center gap-3">
         <div
           aria-hidden="true"
-          className="relative inline-flex flex-[0_0_auto] items-center gap-[5.45px] rounded-[4.36px] bg-[#eacfff] p-[5.45px]"
+          className="relative inline-flex flex-[0_0_auto] items-center gap-[5.45px] rounded-[4.36px] bg-[var(--Button-UI-comp-sur-Surface-Primary)] p-[5.45px]"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="!relative !h-4 !w-4">
             <g clipPath="url(#clip0_3785_16913)">
@@ -40,10 +40,10 @@ export const OfferDuration = ({
           </svg>
         </div>
         <div className="relative flex flex-1 min-w-0 flex-col items-start">
-          <p className="relative mt-[-1.00px] self-stretch [font-family:'Nunito-Bold',Helvetica] text-base font-bold leading-6 tracking-[1.00px] text-[#171519] truncate w-full">
+          <p className="relative mt-[-1.00px] self-stretch [font-family:'Nunito-Bold',Helvetica] text-base font-bold leading-6 tracking-[1.00px] text-[var(--Text-Primary-heading-1)] truncate w-full">
             {duration}
           </p>
-          <p className="relative self-stretch [font-family:'Nunito-SemiBold',Helvetica] text-xs font-semibold leading-4 tracking-[1.10px] text-[#656268] truncate w-full">
+          <p className="relative self-stretch [font-family:'Nunito-SemiBold',Helvetica] text-xs font-semibold leading-4 tracking-[1.10px] text-[var(--Text-Primary-Subtitle)] truncate w-full">
             {label}
           </p>
         </div>
@@ -53,7 +53,7 @@ export const OfferDuration = ({
           <div
             className="w-[2px] h-11 relative rounded-full shrink-0"
             style={{
-              backgroundColor: "var(--Mapped-Button-UI-comp-sur-Stroke, var(--mapped-button-ui-comp-sur-stroke, #eacfff))",
+              backgroundColor: "var(--Mapped-Button-UI-comp-sur-Stroke, #eacfff)",
               boxShadow: "inset 1px 1px 4px rgba(192, 188, 195, 0.5), inset -1px -1px 4px rgba(255, 255, 255, 0.9)"
             }}
             aria-hidden="true"
@@ -62,8 +62,8 @@ export const OfferDuration = ({
             aria-label={`Price ${price}`}
             className="relative inline-flex flex-[0_0_auto] items-center gap-1.5"
           >
-            <TimeCreditIcon className="w-6 h-6 text-[#171519]" aria-hidden="true" />
-            <div className="relative mt-[-1.00px] flex w-fit items-center whitespace-nowrap [font-family:'Nunito-Bold',Helvetica] text-xl font-bold leading-7 tracking-[-0.20px] text-[#171519]">
+            <TimeCreditIcon className="w-6 h-6 text-[var(--Text-Primary-heading-1)]" aria-hidden="true" />
+            <div className="relative mt-[-1.00px] flex w-fit items-center whitespace-nowrap [font-family:'Nunito-Bold',Helvetica] text-xl font-bold leading-7 tracking-[-0.20px] text-[var(--Text-Primary-heading-1)]">
               {price}
             </div>
           </div>

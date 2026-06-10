@@ -173,17 +173,17 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
   }, [searchQuery, appliedFilters]);
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Top Status Bar Placeholder */}
-      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-30 relative bg-[#fbf6ff]">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
+      <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0 z-30 relative bg-[var(--Surface-Primary-Background)]">
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]"></div>
       </div>
 
       {/* Header Action Buttons */}
-      <div className="w-full px-[16px] flex justify-between items-center pt-[16px] mb-[16px] shrink-0 relative z-30 bg-[#fbf6ff]">
+      <div className="w-full px-[16px] flex justify-between items-center pt-[16px] mb-[16px] shrink-0 relative z-30 bg-[var(--Surface-Primary-Background)]">
         <button
           onClick={onBack}
-          className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[#faf7fe] hover:bg-[#f0edf4] transition-colors shrink-0"
+          className="w-[48px] h-[48px] flex items-center justify-center rounded-full bg-[var(--Surface-UI-surface-surface-elevated)] hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors shrink-0"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="#171519" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-[24px] h-[24px]">
             <path d="M15 18l-6-6 6-6" />
@@ -192,11 +192,11 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
       </div>
 
       {/* Top Fade Overlay (Fades cards as they scroll behind the search bar area) */}
-      <div className="absolute top-[136px] left-0 right-0 h-[88px] bg-gradient-to-b from-[#fbf6ff] via-[#fbf6ff]/90 to-transparent pointer-events-none z-10" />
+      <div className="absolute top-[136px] left-0 right-0 h-[88px] bg-gradient-to-b from-[var(--Surface-Primary-Background)] via-[var(--Surface-Primary-Background)]/90 to-transparent pointer-events-none z-10" />
 
       {/* Search Bar Area */}
       <div className="w-full px-[16px] pb-[32px] shrink-0 z-20 relative bg-transparent">
-        <div className="w-full h-[56px] bg-[#faf7fe] rounded-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] flex items-center justify-between px-[12px]">
+        <div className="w-full h-[56px] bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[16px] shadow-[0px_4px_12px_rgba(18,9,0,0.15)] flex items-center justify-between px-[12px]">
           <div className="flex items-center gap-[8px] flex-1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a09da3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
@@ -207,7 +207,7 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
               placeholder="Search Offers"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none font-['Nunito'] font-medium text-[16px] tracking-[0.1px] text-[#171519] placeholder-[#a09da3]"
+              className="flex-1 bg-transparent border-none outline-none font-['Nunito'] font-medium text-[16px] tracking-[0.1px] text-[var(--Text-Primary-heading-1)] placeholder-[#a09da3]"
             />
           </div>
           <button
@@ -233,15 +233,15 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
             <div
               key={offer.id}
               onClick={() => onOfferClick && onOfferClick(offer.id)}
-              className="cursor-pointer flex flex-col justify-between items-start p-4 relative bg-[#faf7fe] rounded-[32px] shadow-[0px_12px_32px_0px_rgba(23,21,25,0.08)] shrink-0 w-full select-none"
+              className="cursor-pointer flex flex-col justify-between items-start p-4 relative bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[32px] shadow-[0px_12px_32px_0px_rgba(23,21,25,0.08)] shrink-0 w-full select-none"
             >
               <header className="flex flex-col w-full items-start gap-3 bg-transparent relative flex-[0_0_auto]">
               <div className="flex items-center justify-between self-stretch w-full relative flex-[0_0_auto]">
                 {offer.badge ? (
                   <div className={`inline-flex items-center gap-1.5 p-3 rounded-xl relative flex-[0_0_auto] ${
-                    offer.badge.type === 'hot' ? 'bg-[#fef6f5]' :
-                    offer.badge.type === 'closing' ? 'bg-[#fffbf2]' :
-                    'bg-[#f0f4ff]'
+                    offer.badge.type === 'hot' ? 'bg-[var(--Surface-Error-bg-surface)]' :
+                    offer.badge.type === 'closing' ? 'bg-[var(--Surface-Warning-bg-surface)]' :
+                    'bg-[var(--Surface-Information-bg-surface)]'
                   }`}>
                     <div className="relative w-6 h-6" aria-hidden="true">
                       {offer.badge.type === 'hot' && <FlameIcon className="w-full h-full" />}
@@ -249,9 +249,9 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
                       {offer.badge.type === 'new' && <CodeSparkleIcon />}
                     </div>
                     <div className={`relative w-fit font-['Nunito'] font-bold text-sm tracking-[1.00px] leading-5 whitespace-nowrap ${
-                      offer.badge.type === 'hot' ? 'text-[#870113]' :
-                      offer.badge.type === 'closing' ? 'text-[#b87d18]' :
-                      'text-[#133aa8]'
+                      offer.badge.type === 'hot' ? 'text-[var(--Text-Error-primary)]' :
+                      offer.badge.type === 'closing' ? 'text-[var(--Text-Primary-Text-brand)]' :
+                      'text-[var(--Text-Information-primary)]'
                     }`}>
                       {offer.badge.text}
                     </div>
@@ -264,15 +264,15 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
               <div className="flex flex-col items-start gap-2 relative self-stretch w-full flex-[0_0_auto]">
                 {offer.time ? (
                   <div className="inline-flex items-center gap-1.5 relative flex-[0_0_auto]">
-                    <ClockIcon className="!relative !w-6 !h-6 text-[#656268] stroke-[2.5]" />
-                    <div className="relative flex items-center w-fit font-['Nunito'] font-semibold text-[#656268] text-sm tracking-[1px] leading-5 whitespace-nowrap">
+                    <ClockIcon className="!relative !w-6 !h-6 text-[var(--Text-Primary-Subtitle)] stroke-[2.5]" />
+                    <div className="relative flex items-center w-fit font-['Nunito'] font-semibold text-[var(--Text-Primary-Subtitle)] text-sm tracking-[1px] leading-5 whitespace-nowrap">
                       {offer.time}
                     </div>
                   </div>
                 ) : (
                   <div className="h-[24px]" />
                 )}
-                <h1 className="[display:-webkit-box] items-center self-stretch tracking-normal overflow-hidden text-ellipsis [-webkit-line-clamp:3] [-webkit-box-orient:vertical] relative font-['Nunito'] font-bold text-[#171519] text-lg leading-[28px]">
+                <h1 className="[display:-webkit-box] items-center self-stretch tracking-normal overflow-hidden text-ellipsis [-webkit-line-clamp:3] [-webkit-box-orient:vertical] relative font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-lg leading-[28px]">
                   {offer.title}
                 </h1>
               </div>
@@ -283,9 +283,9 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
                       (tag as any).hasBadge ? (
                         <div
                           key={tagIndex}
-                          className="gap-1.5 p-2 bg-[#f8efff] rounded-lg inline-flex items-center relative flex-[0_0_auto]"
+                          className="gap-1.5 p-2 bg-[var(--Surface-UI-surface-surface-variant)] rounded-lg inline-flex items-center relative flex-[0_0_auto]"
                         >
-                          <div className="relative font-['Nunito'] font-bold text-[#49464c] text-xs tracking-[1.10px] leading-4 whitespace-nowrap">
+                          <div className="relative font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-xs tracking-[1.10px] leading-4 whitespace-nowrap">
                             {tag.label.length > 16 ? tag.label.substring(0, 16) + '...' : tag.label}
                           </div>
                           <BBadge size={16}>B</BBadge>
@@ -293,9 +293,9 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
                       ) : (
                         <div
                           key={tagIndex}
-                          className="inline-flex items-center justify-center gap-2.5 p-2 relative flex-[0_0_auto] bg-[#f8efff] rounded-lg"
+                          className="inline-flex items-center justify-center gap-2.5 p-2 relative flex-[0_0_auto] bg-[var(--Surface-UI-surface-surface-variant)] rounded-lg"
                         >
-                          <div className="relative w-fit font-['Nunito'] font-bold text-[#8c35be] text-xs tracking-[1.10px] leading-4 whitespace-nowrap">
+                          <div className="relative w-fit font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-xs tracking-[1.10px] leading-4 whitespace-nowrap">
                             {tag.label.length > 16 ? tag.label.substring(0, 16) + '...' : tag.label}
                           </div>
                         </div>
@@ -304,7 +304,7 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
                   </div>
                   {offer.extraTagsCount > 0 && (
                     <div className="inline-flex items-center justify-center p-2 relative flex-[0_0_auto]">
-                      <span className="font-['Nunito'] font-bold text-[#656268] text-xs tracking-[0.16px] leading-6">
+                      <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-xs tracking-[0.16px] leading-6">
                         +{offer.extraTagsCount}
                       </span>
                     </div>
@@ -321,10 +321,10 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
                   <div className="flex-col items-start justify-center gap-2 flex relative flex-1 grow min-w-0">
                     <div className="items-center gap-1.5 inline-flex relative flex-[0_0_auto]">
                       <div className="flex-col items-start gap-1 inline-flex relative flex-[0_0_auto]">
-                        <h2 className="relative flex items-end w-fit font-['Nunito'] font-bold text-[#171519] text-base tracking-[1.00px] leading-6 whitespace-nowrap">
+                        <h2 className="relative flex items-end w-fit font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-base tracking-[1.00px] leading-6 whitespace-nowrap">
                           {offer.profile.name}
                         </h2>
-                        <p className="relative w-fit font-['Nunito'] font-semibold text-[#656268] text-sm leading-5 tracking-[1px] whitespace-nowrap">
+                        <p className="relative w-fit font-['Nunito'] font-semibold text-[var(--Text-Primary-Subtitle)] text-sm leading-5 tracking-[1px] whitespace-nowrap">
                           {offer.profile.role}
                         </p>
                       </div>
@@ -332,14 +332,14 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
                     <div className="flex items-center gap-1.5 relative self-stretch w-full flex-[0_0_auto]">
                       <div className="inline-flex items-center gap-1 relative flex-[0_0_auto]">
                         <div className="inline-flex items-center gap-1.5 relative flex-[0_0_auto]">
-                          <StarIcon className="relative w-4 h-4 text-[#b7812f]" />
+                          <StarIcon className="relative w-4 h-4 text-[var(--Text-Primary-Text-brand)]" />
                         </div>
-                        <div className="relative font-['Nunito'] font-bold text-[#656268] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
+                        <div className="relative font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
                           {offer.profile.rating.toFixed(1)}
                         </div>
                       </div>
-                      <div className="w-px h-3 relative bg-[#656268]/40" aria-hidden="true" />
-                      <span className="font-['Nunito'] font-bold text-[#8C35BE] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
+                      <div className="w-px h-3 relative bg-[var(--Text-Primary-Subtitle)]/40" aria-hidden="true" />
+                      <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brandPrimary)] text-sm tracking-[1.00px] leading-5 whitespace-nowrap">
                         {offer.profile.reviewsCount} reviews
                       </span>
                     </div>
@@ -417,12 +417,12 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
           style={{
             pointerEvents: showBackToTop ? "auto" : "none"
           }}
-          className="inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[#2F2C32] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)] cursor-pointer"
+          className="inline-flex items-center justify-center gap-[6px] px-[16px] py-[12px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)] rounded-[16px] shadow-[0_1px_3px_0_rgba(18,9,0,0.10)] cursor-pointer"
         >
-          <span className="font-['Nunito'] font-bold text-[#FAF8FC] text-[16px] leading-[24px]">
+          <span className="font-['Nunito'] font-bold text-[var(--Button-UI-comp-sur-Text-primary)] text-[16px] leading-[24px]">
             Back to top
           </span>
-          <ChevronUpIcon className="w-[18px] h-[18px] text-[#FAF8FC]" />
+          <ChevronUpIcon className="w-[18px] h-[18px] text-[var(--Button-UI-comp-sur-Text-primary)]" />
         </motion.button>
       </div>
 
@@ -434,7 +434,7 @@ export function AllOffersView({ onBack, onOfferClick }: AllOffersViewProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-0 left-0 right-0 h-[80px] bg-gradient-to-t from-[#fbf6ff] via-[#fbf6ff]/80 to-transparent pointer-events-none z-10"
+            className="absolute bottom-0 left-0 right-0 h-[80px] bg-gradient-to-t from-[var(--Surface-Primary-Background)] via-[var(--Surface-Primary-Background)]/80 to-transparent pointer-events-none z-10"
           />
         )}
       </AnimatePresence>

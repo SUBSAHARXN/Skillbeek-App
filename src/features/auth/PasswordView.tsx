@@ -15,10 +15,10 @@ export function PasswordView({ email, onBack, onForgotPassword }: { email: strin
   const isContinueEnabled = password.length > 0;
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Top Status Bar Placeholder (mocked) */}
       <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]"></div>
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]"></div>
       </div>
 
       {/* Main Content Area */}
@@ -35,7 +35,7 @@ export function PasswordView({ email, onBack, onForgotPassword }: { email: strin
 
         {/* Header */}
         <div className="w-full flex items-center justify-center mb-[44px]">
-          <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[32px] tracking-[-0.7px] text-center w-full">
+          <h1 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[32px] tracking-[-0.7px] text-center w-full">
             Enter your password
           </h1>
         </div>
@@ -44,12 +44,12 @@ export function PasswordView({ email, onBack, onForgotPassword }: { email: strin
           {/* Password Input Wrapper */}
           <div className="w-[352px] flex flex-col items-start shrink-0">
             <div
-              className={`w-[352px] h-[56px] relative bg-[#fbf6ff] flex items-center justify-between px-[16px] cursor-text transition-all duration-300 shrink-0 ${
+              className={`w-[352px] h-[56px] relative bg-[var(--Surface-Primary-Background)] flex items-center justify-between px-[16px] cursor-text transition-all duration-300 shrink-0 ${
                 isSuccessAnimation
                   ? "border-[1.5px] border-transparent rounded-[16px] shadow-[0px_0px_10px_rgba(52,144,36,0.3)] shadow-skillbeek-sm"
                   : isActive
-                  ? "border-2 border-[#b7812f] rounded-[16px] shadow-skillbeek-sm"
-                  : "border-[1.5px] border-[#c0bcc3] rounded-[16px] shadow-skillbeek-xs hover:border-[#b7812f]"
+                  ? "border-2 border-[var(--Text-Primary-Text-brand)] rounded-[16px] shadow-skillbeek-sm"
+                  : "border-[1.5px] border-[var(--Button-Primary-Stroke-Stroke-default)] rounded-[16px] shadow-skillbeek-xs hover:border-[var(--Text-Primary-Text-brand)]"
               }`}
               onClick={() => {
                 if (!isActive && !isSuccessAnimation) {
@@ -76,7 +76,7 @@ export function PasswordView({ email, onBack, onForgotPassword }: { email: strin
               <div className="flex-1 relative h-full mr-[8px]">
                 {/* Floating Label (Pure CSS GPU transform) */}
                 <span 
-                  className={`absolute left-0 top-[16px] font-['Nunito'] font-semibold text-[#656268] text-[16px] leading-[24px] tracking-[1.1px] transition-transform duration-300 ease-out pointer-events-none origin-top-left will-change-transform ${
+                  className={`absolute left-0 top-[16px] font-['Nunito'] font-semibold text-[var(--Text-Primary-Subtitle)] text-[16px] leading-[24px] tracking-[1.1px] transition-transform duration-300 ease-out pointer-events-none origin-top-left will-change-transform ${
                     isActive || password.length > 0 
                       ? "-translate-y-[8px] scale-[0.75]" 
                       : "translate-y-0 scale-100"
@@ -95,7 +95,7 @@ export function PasswordView({ email, onBack, onForgotPassword }: { email: strin
                   onBlur={() => {
                     if (!password) setIsActive(false);
                   }}
-                  className={`w-full bg-transparent border-none outline-none font-['Nunito'] font-semibold text-[#171519] tracking-[2px] text-[16px] leading-[24px] transition-opacity duration-300 ${
+                  className={`w-full bg-transparent border-none outline-none font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] tracking-[2px] text-[16px] leading-[24px] transition-opacity duration-300 ${
                     isActive || password.length > 0 ? "opacity-100 absolute bottom-[8px] left-0 z-10" : "opacity-0 absolute inset-0 z-10"
                   }`}
                 />
@@ -103,7 +103,7 @@ export function PasswordView({ email, onBack, onForgotPassword }: { email: strin
 
               {/* password visibility toggle */}
               <button 
-                className="w-[24px] h-[24px] flex items-center justify-center text-[#656268] hover:text-[#171519] transition-colors shrink-0 ml-[8px]"
+                className="w-[24px] h-[24px] flex items-center justify-center text-[var(--Text-Primary-Subtitle)] hover:text-[var(--Text-Primary-heading-1)] transition-colors shrink-0 ml-[8px]"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsPasswordVisible(!isPasswordVisible);
@@ -117,7 +117,7 @@ export function PasswordView({ email, onBack, onForgotPassword }: { email: strin
               <button 
                 type="button" 
                 onClick={onForgotPassword}
-                className="font-['Nunito'] font-bold text-[#06000c] text-[16px] leading-[24px] underline tracking-[0.16px]"
+                className="font-['Nunito'] font-bold text-[var(--Text-Information-primary-darker)] text-[16px] leading-[24px] underline tracking-[0.16px]"
               >
                 Forgot password?
               </button>
@@ -135,8 +135,8 @@ export function PasswordView({ email, onBack, onForgotPassword }: { email: strin
                 }}
                 className={`w-[352px] h-[48px] rounded-[16px] flex items-center justify-center font-['Nunito'] font-bold text-[16px] transition-all duration-300 ${
                   isContinueEnabled
-                    ? "bg-[#171519] text-[#fbf6ff] shadow-skillbeek-sm hover:bg-[#2f2c32]"
-                    : "bg-[#f0edf4] text-[#a09da3] shadow-skillbeek-xs"
+                    ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] shadow-skillbeek-sm hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)]"
+                    : "bg-[var(--Surface-UI-surface-surface-elevated)] text-[var(--Text-Primary-Text-placeholder)] shadow-skillbeek-xs"
                 }`}
               >
                 Continue
@@ -148,7 +148,7 @@ export function PasswordView({ email, onBack, onForgotPassword }: { email: strin
       
       {/* Bottom Home Indicator */}
       <div className="absolute bottom-0 w-full h-[34px] flex items-center justify-center pb-[8px]">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]"></div>
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]"></div>
       </div>
 
       <SuccessAuthModal

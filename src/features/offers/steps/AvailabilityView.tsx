@@ -69,7 +69,7 @@ function NeumorphicDivider() {
   return (
     <div className="w-full flex items-center justify-center my-[16px]">
       <div
-        className="w-full h-[2px] rounded-full bg-[#fbf6ff]"
+        className="w-full h-[2px] rounded-full bg-[var(--Surface-Primary-Background)]"
         style={{ boxShadow: "inset 2px 2px 12px rgba(192, 188, 195, 0.5), inset -2px -2px 12px rgba(255, 255, 255, 0.9)" }}
       />
     </div>
@@ -100,21 +100,21 @@ export function SlotCard({
       <div className="flex items-center justify-end">
         <button
           onClick={onDelete}
-          className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-[#f0edf4] transition-colors"
+          className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-[var(--Surface-UI-surface-surface-elevated)] transition-colors"
           title="Remove this schedule"
         >
-          <CloseIcon className="w-[16px] h-[16px] text-[#a09da3]" />
+          <CloseIcon className="w-[16px] h-[16px] text-[var(--Text-Primary-Text-placeholder)]" />
         </button>
       </div>
       <div
         onClick={onEditDays}
-        className="bg-[#faf7fe] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] rounded-[12px] px-[16px] py-[24px] flex items-center justify-between cursor-pointer"
+        className="bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] rounded-[12px] px-[16px] py-[24px] flex items-center justify-between cursor-pointer"
       >
         <div className="flex items-center gap-[6px]">
-          <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
+          <CalendarIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
         </div>
         <div className="flex items-center gap-[8px]">
-          <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">
+          <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
             {(() => {
               const match = daysText.match(/^(.+?)(\s\+\d+)$/);
               return match
@@ -122,22 +122,22 @@ export function SlotCard({
                 : daysText;
             })()}
           </span>
-          <ChevronDownIcon className="w-[24px] h-[24px] text-[#171519]" />
+          <ChevronDownIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
         </div>
       </div>
 
       <div
         onClick={onEditTime}
-        className="bg-[#faf7fe] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] rounded-[12px] px-[16px] py-[24px] flex items-center justify-between cursor-pointer"
+        className="bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] rounded-[12px] px-[16px] py-[24px] flex items-center justify-between cursor-pointer"
       >
         <div className="flex items-center gap-[6px]">
-          <ClockIcon className="w-[24px] h-[24px] text-[#171519]" />
+          <ClockIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
         </div>
         <div className="flex items-center gap-[8px]">
-          <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">
+          <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">
             {timeText}
           </span>
-          <ChevronDownIcon className="w-[24px] h-[24px] text-[#171519]" />
+          <ChevronDownIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
         </div>
       </div>
     </div>
@@ -313,29 +313,29 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
   };
 
   return (
-    <div className="w-full max-w-[384px] h-[812px] bg-[#fbf6ff] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
+    <div className="w-full max-w-[384px] h-[812px] bg-[var(--Surface-Primary-Background)] rounded-[32px] overflow-hidden relative flex flex-col mx-auto shadow-2xl">
       {/* Status Bar */}
       <div className="w-full h-[56px] flex items-center justify-center pt-[12px] shrink-0">
-        <div className="w-[140px] h-[36px] bg-[#171519] rounded-[32px]" />
+        <div className="w-[140px] h-[36px] bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] rounded-[32px]" />
       </div>
 
       {/* Header Action Buttons (Fixed at Top) */}
-      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[#fbf6ff] z-20">
-        <button onClick={onSaveExit} className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">Save and Exit</span>
+      <div className="w-full px-[16px] flex justify-between items-center py-[16px] shrink-0 bg-[var(--Surface-Primary-Background)] z-20">
+        <button onClick={onSaveExit} className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">Save and Exit</span>
         </button>
-        <button onClick={onQuestions} className="h-[44px] px-[16px] border-2 border-[#c0bcc3] hover:border-[#656268] active:border-[#171519] rounded-[99px] flex items-center justify-center transition-colors bg-white">
-          <span className="font-['Nunito'] font-bold text-[#49464c] text-[16px]">Questions?</span>
+        <button onClick={onQuestions} className="h-[44px] px-[16px] border-2 border-[var(--Button-Primary-Stroke-Stroke-default)] hover:border-[var(--Text-Primary-Subtitle)] active:border-[var(--Button-Primary-Stroke-Stroke-tertiary-default)] rounded-[99px] flex items-center justify-center transition-colors bg-[var(--Surface-Primary-Background)]">
+          <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px]">Questions?</span>
         </button>
       </div>
 
       {/* Scrollable Content */}
       <div className="flex-1 px-[16px] pt-[0px] overflow-y-auto availability-scrollbar">
         <div className="flex flex-col gap-[12px] mb-[24px]">
-          <h1 className="font-['Nunito'] font-bold text-[#171519] text-[28px] leading-[36px] tracking-[-1.2px]">
+          <h1 className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[28px] leading-[36px] tracking-[-1.2px]">
             Set your availability
           </h1>
-          <p className="font-['Nunito'] font-medium text-[#49464c] text-[16px] leading-[24px] tracking-[0.1px]">
+          <p className="font-['Nunito'] font-medium text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] tracking-[0.1px]">
             Set your typical availability for this offer so partners know when to book.
           </p>
         </div>
@@ -344,17 +344,17 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
         {!hasSlots && (
           <div
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#faf7fe] rounded-[12px] p-[24px] flex items-center justify-between shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] border border-[#e0dce3] cursor-pointer"
+            className="bg-[var(--Surface-UI-surface-surface-elevated)] rounded-[12px] p-[24px] flex items-center justify-between shadow-[0px_1px_1.5px_rgba(18,9,0,0.1)] border border-[var(--Button-Primary-Stroke-Stroke-secondary-hover)] cursor-pointer"
           >
             <div className="flex items-center gap-[6px]">
-              <CalendarIcon className="w-[24px] h-[24px] text-[#171519]" />
-              <span className="font-['Nunito'] font-medium text-[#656268] text-[16px] leading-[24px]">
+              <CalendarIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
+              <span className="font-['Nunito'] font-medium text-[var(--Text-Primary-Subtitle)] text-[16px] leading-[24px]">
                 {availabilityType === "Recurring Weekly" ? "Recurring days" : availabilityType === "Specific Dates" ? "Specific dates" : "availability type"}
               </span>
             </div>
             <div className="flex items-center gap-[8px]">
-              <span className="font-['Nunito'] font-semibold text-[#171519] text-[16px] leading-[24px]">Choose</span>
-              <ChevronDownIcon className="w-[24px] h-[24px] text-[#171519]" />
+              <span className="font-['Nunito'] font-semibold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">Choose</span>
+              <ChevronDownIcon className="w-[24px] h-[24px] text-[var(--Text-Primary-heading-1)]" />
             </div>
           </div>
         )}
@@ -367,13 +367,13 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
               onClick={() => setIsTimezoneModalOpen(true)}
               className="flex items-center gap-[6px] py-[4px] mb-[16px] cursor-pointer hover:opacity-70 transition-opacity w-fit"
             >
-              <span className="font-['Nunito'] font-bold text-[#b7812f] text-[16px] leading-[24px]">{timezoneLabel}</span>
-              <PencilIcon className="w-[18px] h-[18px] text-[#b7812f]" />
+              <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-Text-brand)] text-[16px] leading-[24px]">{timezoneLabel}</span>
+              <PencilIcon className="w-[18px] h-[18px] text-[var(--Text-Primary-Text-brand)]" />
             </button>
 
             {/* "Available on" header — X just collapses back to type selector, doesn't wipe slots */}
             <div className="flex items-center justify-between mb-[12px]">
-              <h2 className="font-['Nunito'] font-bold text-[#656268] text-[14px] leading-[20px] tracking-[1px] uppercase">
+              <h2 className="font-['Nunito'] font-bold text-[var(--Text-Primary-Subtitle)] text-[14px] leading-[20px] tracking-[1px] uppercase">
                 Available on
               </h2>
             </div>
@@ -416,8 +416,8 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
                 onClick={handleAddMore}
                 className="flex items-center gap-[8px] mt-[16px] py-[12px] cursor-pointer hover:opacity-70 transition-opacity w-fit"
               >
-                <PlusIcon className="w-[20px] h-[20px] text-[#171519]" />
-                <span className="font-['Nunito'] font-bold text-[#171519] text-[16px] leading-[24px]">Add more hours</span>
+                <PlusIcon className="w-[20px] h-[20px] text-[var(--Text-Primary-heading-1)]" />
+                <span className="font-['Nunito'] font-bold text-[var(--Text-Primary-heading-1)] text-[16px] leading-[24px]">Add more hours</span>
               </button>
             )}
           </div>
@@ -427,18 +427,18 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
       </div>
 
       {/* Fixed Footer */}
-      <div className="absolute bottom-0 left-0 w-full bg-[#faf7fe] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col items-center gap-[32px] pt-[0px] pb-[44px] z-20">
+      <div className="absolute bottom-0 left-0 w-full bg-[var(--Surface-UI-surface-surface-elevated)] shadow-[0px_-12px_24px_rgba(18,9,0,0.02),0px_-12px_12px_rgba(18,9,0,0.04)] flex flex-col items-center gap-[32px] pt-[0px] pb-[44px] z-20">
         <div className="w-full flex justify-center">
           <OfferProgressBar currentStep={2} subStepProgress={0} />
         </div>
         <div className="w-full flex items-center justify-between px-[16px]">
-          <button onClick={onBack} className="font-['Nunito'] font-bold text-[#49464c] text-[16px] leading-[24px] underline">
+          <button onClick={onBack} className="font-['Nunito'] font-bold text-[var(--Text-Primary-Body)] text-[16px] leading-[24px] underline">
             Back
           </button>
           <button
             onClick={() => onNext && onNext({ type: availabilityType, recurringSlots, specificSlots, timezone })}
             disabled={!hasSlots}
-            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${hasSlots ? "bg-[#171519] text-[#fbf6ff] cursor-pointer hover:bg-[#2f2c32]" : "bg-[#f0edf4] text-[#a09da3] cursor-not-allowed"
+            className={`font-['Nunito'] font-bold text-[16px] leading-[24px] px-[16px] py-[12px] rounded-[16px] w-[101px] h-[48px] transition-all ${hasSlots ? "bg-[var(--Surface-UI-surface-Surface-Universal-alternate)] text-[var(--Text-Primary-Body-alt)] cursor-pointer hover:bg-[var(--Surface-UI-surface-Surface-Universal-alternate-lighter)]" : "bg-[var(--Button-Primary-Surface-disabled)] text-[var(--Text-Primary-Disabled)] cursor-not-allowed"
               }`}
           >
             Next
@@ -448,7 +448,7 @@ export function AvailabilityView({ onBack, onNext, onSaveExit, onQuestions }: Av
 
       {/* Home Indicator */}
       <div className="absolute bottom-0 left-0 w-full h-[34px] flex items-center justify-center pb-[8px] z-30 pointer-events-none">
-        <div className="w-[144px] h-[5px] bg-[#c0bcc3] rounded-[100px]" />
+        <div className="w-[144px] h-[5px] bg-[var(--Text-Primary-Caption-alt)] rounded-[100px]" />
       </div>
 
       {/* ── Modals ── */}
